@@ -1,0 +1,29 @@
+{
+  "26A-A-Q2a": {
+    "directed": false,
+    "note": "Counterexample graph from the official solution (complete graph K4, distinct positive weights)",
+    "vertices": ["A", "B", "C", "D"],
+    "edges": [
+      {"u": "A", "v": "B", "w": 1},
+      {"u": "C", "v": "D", "w": 2},
+      {"u": "B", "v": "C", "w": 3},
+      {"u": "A", "v": "C", "w": 4},
+      {"u": "B", "v": "D", "w": 5},
+      {"u": "A", "v": "D", "w": 6}
+    ],
+    "mst": [["A", "B"], ["C", "D"], ["B", "C"]]
+  },
+  "26A-A-Q3a": {
+    "directed": true,
+    "note": "Huffman tree from the official solution; edge w is the code bit, vertex ids end in the leaf frequency",
+    "vertices": ["86", "37", "49", "a22", "15i", "d24", "25", "g8", "7", "b15", "f10", "c3", "e4"],
+    "edges": [
+      {"u": "86", "v": "37", "w": 0}, {"u": "86", "v": "49", "w": 1},
+      {"u": "37", "v": "a22", "w": 1}, {"u": "37", "v": "15i", "w": 0},
+      {"u": "49", "v": "d24", "w": 0}, {"u": "49", "v": "25", "w": 1},
+      {"u": "15i", "v": "g8", "w": 1}, {"u": "15i", "v": "7", "w": 0},
+      {"u": "25", "v": "b15", "w": 1}, {"u": "25", "v": "f10", "w": 0},
+      {"u": "7", "v": "c3", "w": 0}, {"u": "7", "v": "e4", "w": 1}
+    ]
+  }
+}
