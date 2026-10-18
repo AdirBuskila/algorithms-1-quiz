@@ -1,0 +1,95 @@
+{
+  "slug": "algorithms-1",
+  "titleHe": "אלגוריתמים 1",
+  "descriptionHe": "תרגול מבחנים - אלגוריתמים 1",
+  "accent": "#c4b5fd",
+  "accent2": "#7c3aed",
+  "sourceFolder": "C:/Users/Adir/Desktop/BSC/שנה ב/סמסטר א/אלגוריתמים",
+  "topics": [
+    [
+      "complexity_recurrence",
+      "סיבוכיות ונוסחאות נסיגה"
+    ],
+    [
+      "divide_conquer",
+      "הפרד ומשול ו-Select"
+    ],
+    [
+      "dp_sequences",
+      "תכנות דינמי: סדרות ותת-סדרות"
+    ],
+    [
+      "dp_optimization",
+      "תכנות דינמי: תרמיל, מסלולים ומטריצות"
+    ],
+    [
+      "graphs_search",
+      "גרפים: ייצוג, BFS ו-DFS"
+    ],
+    [
+      "graph_proofs",
+      "גרפים: טענות והוכחות"
+    ],
+    [
+      "mst",
+      "עצים פורשים מינימליים"
+    ],
+    [
+      "greedy",
+      "אלגוריתמים חמדניים"
+    ],
+    [
+      "huffman",
+      "קוד הופמן"
+    ],
+    [
+      "randomized",
+      "אלגוריתמים הסתברותיים"
+    ],
+    [
+      "kmp_strings",
+      "מחרוזות: KMP ופונקציית רישא"
+    ],
+    [
+      "suffix_structures",
+      "עצי סיפות ומערכי סיפות"
+    ],
+    [
+      "approximation",
+      "אלגוריתמי קירוב"
+    ]
+  ],
+  "briefs": [],
+  "needHelp": [
+    {
+      "id": "dp_ladder",
+      "titleHe": "תכנות דינמי: מנוסחת נסיגה לאלגוריתם",
+      "icon": "🧩",
+      "topic": "dp_sequences",
+      "entryLabelHe": "צריך עזרה בתכנות דינמי?"
+    },
+    {
+      "id": "greedy_proofs",
+      "titleHe": "אלגוריתם חמדן והוכחת נכונות",
+      "icon": "🎯",
+      "topic": "greedy",
+      "entryLabelHe": "צריך עזרה באלגוריתמים חמדניים?"
+    },
+    {
+      "id": "kmp_prefix",
+      "titleHe": "KMP ופונקציית רישא",
+      "icon": "🔤",
+      "topic": "kmp_strings",
+      "entryLabelHe": "צריך עזרה ב-KMP?"
+    },
+    {
+      "id": "graph_search",
+      "titleHe": "גרפים: BFS, DFS וטענות על גרפים",
+      "icon": "🕸️",
+      "topic": "graphs_search",
+      "entryLabelHe": "צריך עזרה בגרפים?"
+    }
+  ],
+  "storePrefix": "algorithms-1",
+  "includeDrafts": false
+}

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>אלגוריתמים 1</title>
+<meta name="description" content="תרגול מבחנים - אלגוריתמים 1">
+<link rel="icon" href="favicon.svg?v=1" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css?v=3">
+<script>
+  // Apply saved theme before first paint to avoid a flash of the wrong theme.
+  (function(){ try{ var t=localStorage.getItem("algorithms-1_theme"); if(t==="light"||t==="dark") document.documentElement.dataset.theme=t; }catch(e){} })();
+</script>
+<script data-goatcounter="https://adirbuskila.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand" id="brandHome" role="button" tabindex="0" title="לדף הבית" aria-label="חזרה לדף הבית">
+    <span class="logo" aria-hidden="true"><img src="favicon.svg?v=1" alt="" width="30" height="30"></span>
+    <div>
+      <h1 id="appTitle">אלגוריתמים 1</h1>
+      <p class="sub" id="appSub">תרגול מבחנים - אלגוריתמים 1</p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="topstats" id="topStats"></div>
+    <button id="learnEntry" class="btn ghost learn-entry" type="button">📖 מצב לימוד</button>
+    <button id="helpEntry" class="btn ghost crs-entry" type="button" title="קורסים מודרכים בנושאים הקשים: משיעור קצר ועד שאלות מבחן" style="display:none">🧭 צריך עזרה?</button>
+    <button id="themeToggle" class="theme-toggle" type="button" aria-label="החלפת מצב תצוגה (בהיר/כהה)" title="מצב בהיר/כהה"></button>
+  </div>
+</header>
+
+<main id="app">
+  <!-- START -->
+  <section id="screen-start" class="screen">
+    <!-- guided "need help?" course cards (filled by course-ui.js from course.config.json needHelp; hidden when empty) -->
+    <div id="helpCards" class="crs-promos hidden"></div>
+    <div class="card">
+      <h2>בחירת אופן תרגול</h2>
+
+      <div class="modes modes3">
+        <label class="mode-card">
+          <input type="radio" name="mode" value="topic" checked>
+          <div class="mode-body">
+            <span class="mode-title">לפי נושא</span>
+            <span class="mode-desc">שאלות מכל המבחנים בנושא שבחרתם, בלי הגבלת זמן.</span>
+          </div>
+        </label>
+        <label class="mode-card">
+          <input type="radio" name="mode" value="exam">
+          <div class="mode-body">
+            <span class="mode-title">לפי מבחן</span>
+            <span class="mode-desc">מבחן אחד מההתחלה ועד הסוף, שאלה אחרי שאלה.</span>
+          </div>
+        </label>
+        <label class="mode-card">
+          <input type="radio" name="mode" value="sim">
+          <div class="mode-body">
+            <span class="mode-title">סימולציית מבחן</span>
+            <span class="mode-desc">ישיבה מלאה בזמן קצוב, ואחריה בדיקה עצמית לפי מחוון וציון כולל.</span>
+          </div>
+        </label>
+      </div>
+
+      <div id="topicBox">
+        <h3>נושא</h3>
+        <div id="topicGrid" class="topic-grid"></div>
+      </div>
+
+      <div id="examOpts" class="exam-opts hidden">
+        <label>מבחן
+          <select id="examPick"></select>
+        </label>
+        <label id="examMinutesWrap">זמן (דקות)
+          <select id="examMinutes"><option>60</option><option>90</option><option>120</option><option>180</option><option selected>240</option></select>
+        </label>
+      </div>
+
+      <div class="options-row">
+        <label class="chk just-show"><input type="checkbox" id="justShow"> <span><b>רק להראות לי</b> — לפתוח פתרונות כברירת מחדל ולהסתיר את הצעדים</span></label>
+      </div>
+
+      <button id="startBtn" class="btn primary big">התחל ▶</button>
+      <p id="poolInfo" class="poolinfo"></p>
+    </div>
+  </section>
+
+  <!-- QUESTION -->
+  <section id="screen-question" class="screen hidden">
+    <div class="quizbar">
+      <button id="quitBtn" class="btn ghost">⟵ יציאה</button>
+      <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+      <div id="quizMeta" class="quiz-meta"></div>
+    </div>
+
+    <div class="card question-card">
+      <div class="q-head">
+        <span id="qTopic" class="chip"></span>
+        <span id="qSource" class="chip soft"></span>
+        <span id="qPoints" class="chip"></span>
+        <span id="qBadge" class="chip"></span>
+        <span id="qConf" class="chip lowconf hidden">ביטחון נמוך בפתרון</span>
+      </div>
+      <div id="qContext" class="q-context"></div>
+      <div id="questionText" class="question-text"></div>
+      <div id="qExtras" class="q-extras"></div>
+      <div id="qBody"></div>
+    </div>
+
+    <div class="quizfoot">
+      <div id="streakBox" class="streak"></div>
+      <button id="prevBtn" class="btn ghost">⟶ הקודמת</button>
+      <button id="nextBtn" class="btn primary">הבאה ⟵</button>
+      <button id="submitExamBtn" class="btn primary hidden">סיום והגשה</button>
+    </div>
+  </section>
+
+  <!-- LEARN (filled from learn.js; the entry button hides itself when there are no chapters) -->
+  <section id="screen-learn" class="screen hidden">
+    <div class="learn-bar">
+      <button id="learnBackBtn" class="btn ghost">⟵ חזרה לתרגול</button>
+      <div class="learn-progress" aria-hidden="true"><div id="learnProgressFill"></div></div>
+      <button id="learnTocToggle" class="btn ghost learn-toc-toggle" type="button" aria-expanded="false">☰ פרקים</button>
+    </div>
+    <div class="learn-layout">
+      <nav id="learnToc" class="learn-toc" aria-label="ניווט פרקים"></nav>
+      <article id="learnContent" class="card learn-content" tabindex="-1"></article>
+    </div>
+    <div id="learnBackdrop" class="learn-backdrop hidden"></div>
+    <div class="learn-foot">
+      <button id="learnPrev" class="btn ghost">⟶ הקודם</button>
+      <span id="learnPos" class="learn-pos"></span>
+      <button id="learnNext" class="btn primary">הבא ⟵</button>
+    </div>
+  </section>
+
+  <!-- GUIDED COURSE ("צריך עזרה?"): level map -> lesson -> quiz -> summary (course-ui.js) -->
+  <section id="screen-course" class="screen hidden">
+    <div id="crsMapView">
+      <div class="card">
+        <div class="crs-head"><div class="grow"><h2 id="crsTitle"></h2><p id="crsIntro" class="sub"></p></div></div>
+        <div id="crsOverall" class="crs-overall"></div>
+        <div id="crsMap" class="crs-map"></div>
+        <div class="crs-actions"><button id="crsHomeBtn" class="btn ghost" type="button">⟵ חזרה לדף הבית</button>
+          <button id="crsResetBtn" class="btn ghost" type="button">איפוס התקדמות הקורס</button></div>
+      </div>
+    </div>
+    <div id="crsLessonView" class="hidden">
+      <article id="crsLesson" class="card crs-lesson"></article>
+      <div class="crs-actions">
+        <button id="crsLessonBack" class="btn ghost" type="button">⟵ למפת השלבים</button>
+        <button id="crsLessonGo" class="btn primary" type="button">לשאלות ▶</button>
+      </div>
+    </div>
+    <div id="crsQuizView" class="hidden">
+      <div class="quizbar">
+        <button id="crsQuitBtn" class="btn ghost" type="button">⟵ לשיעור</button>
+        <div class="progress"><div id="crsProgressFill" class="progress-fill"></div></div>
+        <div id="crsQuizMeta" class="quiz-meta"></div>
+      </div>
+      <div class="card question-card">
+        <div id="crsQHead" class="q-head"></div>
+        <div id="crsQContext" class="q-context"></div>
+        <div id="crsQText" class="question-text"></div>
+        <div id="crsQExtras" class="q-extras"></div>
+        <div id="crsQBody"></div>
+      </div>
+      <div class="quizfoot"><button id="crsNextBtn" class="btn primary hidden" type="button">הבאה ⟵</button></div>
+    </div>
+    <div id="crsSumView" class="hidden">
+      <div id="crsSum" class="card crs-sum"></div>
+    </div>
+  </section>
+
+  <!-- RESULTS (exam simulation: rubric self-grade + total) -->
+  <section id="screen-results" class="screen hidden">
+    <div class="card">
+      <h2>בדיקה עצמית וציון</h2>
+      <div id="resultsSummary" class="results-summary"></div>
+      <p class="results-hint">עברו על כל שאלה, השוו את התשובה שלכם לפתרון וסמנו במחוון את הסעיפים שהשגתם. הציון הכולל מתעדכן מיד.</p>
+      <div id="resultsReview" class="review"></div>
+      <div class="quizfoot">
+        <button id="backHomeBtn" class="btn primary">חזרה למסך הראשי</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="תצוגת תמונה מוגדלת">
+  <button id="lightboxClose" class="lightbox-close" type="button" aria-label="סגירה">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<div id="qpeek" class="qpeek hidden" role="dialog" aria-modal="true" aria-label="תצוגת שאלה מהמאגר">
+  <div class="qpeek-panel" role="document">
+    <div class="qpeek-head">
+      <span id="qpeekId" class="chip mono"></span>
+      <span id="qpeekSource" class="chip soft"></span>
+      <span id="qpeekBadge" class="chip"></span>
+      <button id="qpeekClose" class="qpeek-close" type="button" aria-label="סגירה">✕</button>
+    </div>
+    <div id="qpeekBody" class="qpeek-body"></div>
+    <div class="qpeek-foot">
+      <button id="qpeekDrill" class="btn primary" type="button">תרגל את הנושא ▶</button>
+    </div>
+  </div>
+</div>
+
+<footer class="appfoot">
+  <span id="datasetInfo"></span> ·
+  <button id="resetProgress" class="linkbtn">איפוס התקדמות</button>
+  <span class="disclaimer">צעדים ומחווני בדיקה המסומנים "נבנה בעזרת AI ונבדק" הוכנו מחומר הקורס ואינם רשמיים — מומלץ לאמת מול המקור.</span>
+  <div class="feedback-line" id="feedbackLine"></div>
+  <a class="deck-link" href="https://adirbuskila.github.io/">
+    <span class="deck-arrow" aria-hidden="true">↗</span>
+    עוד כלי תרגול לקורסים אחרים
+  </a>
+</footer>
+
+<script src="questions.js?v=1"></script>
+<script src="learn.js?v=1"></script>
+<script src="courses.js?v=1"></script>
+<script src="normalize.js?v=5"></script>
+<script src="steps.js?v=1"></script>
+<script src="aiprompt.js?v=1"></script>
+<script src="app.js?v=4"></script>
+<script src="feedback.js?v=1"></script>
+<script src="course-ui.js?v=2"></script>
+</body>
+</html>
