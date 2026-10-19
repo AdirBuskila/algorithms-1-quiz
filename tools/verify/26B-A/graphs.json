@@ -1,0 +1,34 @@
+{
+  "26B-A-Q3a": {
+    "directed": false,
+    "note": "BFS example graph of Q3a (4-cycle s-u-v-w-s); BFS from s discovers s, u, w, v",
+    "vertices": ["s", "u", "v", "w"],
+    "edges": [
+      {"u": "s", "v": "u", "w": 1},
+      {"u": "u", "v": "v", "w": 1},
+      {"u": "v", "v": "w", "w": 1},
+      {"u": "w", "v": "s", "w": 1}
+    ]
+  },
+  "26B-A-Q4b": {
+    "directed": false,
+    "note": "Weighted graph of Q4b; the weight of edge D-F is the unknown X (null here)",
+    "vertices": ["A", "B", "C", "D", "E", "F", "G", "H"],
+    "edges": [
+      {"u": "A", "v": "D", "w": 7},
+      {"u": "A", "v": "C", "w": 2},
+      {"u": "A", "v": "B", "w": 6},
+      {"u": "A", "v": "F", "w": 8},
+      {"u": "C", "v": "D", "w": 1},
+      {"u": "C", "v": "B", "w": 3},
+      {"u": "C", "v": "F", "w": 9},
+      {"u": "D", "v": "F", "w": null},
+      {"u": "D", "v": "E", "w": 4},
+      {"u": "E", "v": "F", "w": 5},
+      {"u": "E", "v": "G", "w": 2},
+      {"u": "G", "v": "F", "w": 7},
+      {"u": "G", "v": "H", "w": 3},
+      {"u": "F", "v": "H", "w": 4}
+    ]
+  }
+}

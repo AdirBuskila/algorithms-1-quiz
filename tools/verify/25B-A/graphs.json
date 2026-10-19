@@ -1,0 +1,24 @@
+{
+  "25B-A-Q1a": {
+    "directed": false,
+    "note": "Graph of Q1a (DFS that always takes the lightest edge). The figure labels a with 1/ (discovery time 1).",
+    "vertices": ["a", "b", "c"],
+    "edges": [
+      {"u": "a", "v": "b", "w": 7},
+      {"u": "a", "v": "c", "w": 5},
+      {"u": "b", "v": "c", "w": 4}
+    ],
+    "mst": [["a", "c"], ["b", "c"]]
+  },
+  "25B-A-Q3a": {
+    "directed": true,
+    "note": "Huffman tree from the official solution of Q3a(ii); edge w is the code bit, vertex ids end in the leaf letter (a=5, b=2, c=5, d=7, e=7)",
+    "vertices": ["26", "12", "14", "c5", "7", "b2", "a5", "d7", "e7"],
+    "edges": [
+      {"u": "26", "v": "12", "w": 0}, {"u": "26", "v": "14", "w": 1},
+      {"u": "12", "v": "c5", "w": 0}, {"u": "12", "v": "7", "w": 1},
+      {"u": "7", "v": "b2", "w": 0}, {"u": "7", "v": "a5", "w": 1},
+      {"u": "14", "v": "d7", "w": 0}, {"u": "14", "v": "e7", "w": 1}
+    ]
+  }
+}
