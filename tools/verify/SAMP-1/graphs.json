@@ -1,0 +1,187 @@
+{
+ "SAMP-1-Q5": {
+  "directed": true,
+  "note": "Suffix trie of banana$ (all 7 suffixes; the slide omits the lone $ branch)",
+  "vertices": [
+   "r",
+   "b",
+   "ba",
+   "ban",
+   "bana",
+   "banan",
+   "banana",
+   "banana$",
+   "a",
+   "an",
+   "ana",
+   "anan",
+   "anana",
+   "anana$",
+   "n",
+   "na",
+   "nan",
+   "nana",
+   "nana$",
+   "ana$",
+   "na$",
+   "a$",
+   "$"
+  ],
+  "edges": [
+   {
+    "u": "r",
+    "v": "b",
+    "w": "b"
+   },
+   {
+    "u": "b",
+    "v": "ba",
+    "w": "a"
+   },
+   {
+    "u": "ba",
+    "v": "ban",
+    "w": "n"
+   },
+   {
+    "u": "ban",
+    "v": "bana",
+    "w": "a"
+   },
+   {
+    "u": "bana",
+    "v": "banan",
+    "w": "n"
+   },
+   {
+    "u": "banan",
+    "v": "banana",
+    "w": "a"
+   },
+   {
+    "u": "banana",
+    "v": "banana$",
+    "w": "$"
+   },
+   {
+    "u": "r",
+    "v": "a",
+    "w": "a"
+   },
+   {
+    "u": "a",
+    "v": "an",
+    "w": "n"
+   },
+   {
+    "u": "an",
+    "v": "ana",
+    "w": "a"
+   },
+   {
+    "u": "ana",
+    "v": "anan",
+    "w": "n"
+   },
+   {
+    "u": "anan",
+    "v": "anana",
+    "w": "a"
+   },
+   {
+    "u": "anana",
+    "v": "anana$",
+    "w": "$"
+   },
+   {
+    "u": "r",
+    "v": "n",
+    "w": "n"
+   },
+   {
+    "u": "n",
+    "v": "na",
+    "w": "a"
+   },
+   {
+    "u": "na",
+    "v": "nan",
+    "w": "n"
+   },
+   {
+    "u": "nan",
+    "v": "nana",
+    "w": "a"
+   },
+   {
+    "u": "nana",
+    "v": "nana$",
+    "w": "$"
+   },
+   {
+    "u": "ana",
+    "v": "ana$",
+    "w": "$"
+   },
+   {
+    "u": "na",
+    "v": "na$",
+    "w": "$"
+   },
+   {
+    "u": "a",
+    "v": "a$",
+    "w": "$"
+   },
+   {
+    "u": "r",
+    "v": "$",
+    "w": "$"
+   }
+  ]
+ },
+ "SAMP-1-Q4": {
+  "directed": false,
+  "note": "Circles of the printed example as (center, radius); interval = [c-r, c+r]",
+  "vertices": [
+   "c1",
+   "c2",
+   "c3",
+   "c4",
+   "c5",
+   "c6",
+   "c7"
+  ],
+  "edges": [],
+  "circles": {
+   "c1": [
+    -4.5,
+    2
+   ],
+   "c2": [
+    0,
+    2
+   ],
+   "c3": [
+    0,
+    3
+   ],
+   "c4": [
+    5,
+    4
+   ],
+   "c5": [
+    6,
+    2
+   ],
+   "c6": [
+    7,
+    5
+   ],
+   "c7": [
+    8,
+    3
+   ]
+  }
+ }
+}
