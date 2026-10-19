@@ -47,6 +47,27 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Needed: route to the solver; Q5 needs the graph redrawn as new art.
 - Status: hold
 
+### 25B-A Q1a - official total weight is 13, the printed weights give 11
+- Page: solution p.2
+- Question: the counterexample (DFS from c) lists tree edges cb and ab with total 13; with w(ab)=7 and w(cb)=4 the total is 11. Verdict (false, MST = 9) is unaffected. Official text kept, flagged inside the solution.
+- Needed: nothing blocking; the step-author should use 11 (or avoid the number).
+- Status: note only (not held)
+
+### 25B-A Q3a(ii) - d = 5 or 6 also give an optimal-cost code
+- Page: solution p.8
+- Question: official answer d = 7 (the only frequency for which the Huffman algorithm itself builds this tree). d = 5 or 6 give the same shape with optimal cost, but the algorithm would not build it. Official answer kept.
+- Needed: step-author rule: accept only 7.
+- Status: note only (not held)
+
+### 25A-C Q2a - points not printed
+- Page: 2
+- Question: Q2a has no printed points (Q2b prints 10) and the Q2 header has no total. Omitted, not inferred.
+- Status: note only; the whole sitting is held no-key
+
+### 26A-B, 26B-A, 25A-C - no answer source
+- Question: all items held "no-key" for the solver. 26B-A is the new choose-2-of-3 form (Q3 and Q4 parts, items per part). Reference facts (not an official key) are printed by tools/verify/26B-A/checks.py.
+- Status: hold (no-key)
+
 <!-- Entry format:
 ### <exam code> Q<number> - <short title>
 - Path: <absolute file path>
