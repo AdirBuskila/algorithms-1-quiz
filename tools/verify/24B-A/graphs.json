@@ -1,0 +1,40 @@
+{
+  "24B-A-Q1a": {
+    "directed": false,
+    "note": "Counterexample from the official solution (Q1a): two disjoint triangles, |V|=|E|=6, not connected",
+    "vertices": ["0", "1", "2", "3", "4", "5"],
+    "edges": [
+      {"u": "0", "v": "1"}, {"u": "1", "v": "2"}, {"u": "0", "v": "2"},
+      {"u": "3", "v": "4"}, {"u": "4", "v": "5"}, {"u": "3", "v": "5"}
+    ]
+  },
+  "24B-A-Q1b": {
+    "directed": false,
+    "note": "Counterexample from the official solution (Q1b): |V|=|E|=5, vertex 4 isolated; BFS from 0 and the DFS forest both have 3 edges",
+    "vertices": ["0", "1", "2", "3", "4"],
+    "edges": [
+      {"u": "0", "v": "1"}, {"u": "0", "v": "2"}, {"u": "1", "v": "2"},
+      {"u": "1", "v": "3"}, {"u": "2", "v": "3"}
+    ]
+  },
+  "24B-A-Q3a": {
+    "directed": true,
+    "note": "Huffman tree from the official solution (Q3a); edge w is the code bit, vertex ids end in the letter or the total weight",
+    "vertices": ["8", "4L", "4R", "c", "d", "e", "2", "a", "b"],
+    "edges": [
+      {"u": "8", "v": "4L", "w": 0}, {"u": "8", "v": "4R", "w": 1},
+      {"u": "4L", "v": "c", "w": 0}, {"u": "4L", "v": "d", "w": 1},
+      {"u": "4R", "v": "e", "w": 0}, {"u": "4R", "v": "2", "w": 1},
+      {"u": "2", "v": "a", "w": 0}, {"u": "2", "v": "b", "w": 1}
+    ]
+  },
+  "24B-A-Q3b": {
+    "directed": false,
+    "note": "Counterexample from the official solution (Q3b): the weight-10 edge is a bridge, so it is in every spanning tree",
+    "vertices": ["0", "1", "2", "3"],
+    "edges": [
+      {"u": "0", "v": "2", "w": 2}, {"u": "0", "v": "1", "w": 2},
+      {"u": "2", "v": "1", "w": 2}, {"u": "2", "v": "3", "w": 10}
+    ]
+  }
+}

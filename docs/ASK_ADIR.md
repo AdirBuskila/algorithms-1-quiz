@@ -68,6 +68,34 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Question: all items held "no-key" for the solver. 26B-A is the new choose-2-of-3 form (Q3 and Q4 parts, items per part). Reference facts (not an official key) are printed by tools/verify/26B-A/checks.py.
 - Status: hold (no-key)
 
+### 25A-A Q1c - official answer returns the average, not the r-th smallest
+- Page: solution p.1
+- Question: the official answer Return(mid(A[1..r],B[1..r])) gives the average of the two middle elements of the 2r chosen elements (A=[1,2], B=[3,4], r=2 gives 2.5; the r-th smallest is 2).
+- Needed: a correct solution (looking only at the first r elements of each array is right).
+- Status: hold
+
+### 25A-A Q2a - printed recurrence is wrong or undefined
+- Page: solution p.2
+- Question: rows 3 and 8 of the official piecewise recurrence write T(i,j-1,k) (k should drop to k-1) and no row covers S1[i]!=S3[k] with S2[j]!=S3[k]. Checked against brute force (tools/verify/25A-A/checks.py).
+- Needed: a corrected recurrence for the solver; Q2b (the worked example) is held with it.
+- Status: hold
+
+### 25A-A Q4a - the official note is not an algorithm and is unsafe
+- Page: solution p.4
+- Question: the solution gives only a remark (compute the KMP pi array, return its maximum). max(pi) differs from pi[n-1] (abcabcd). The question examples also conflict with its wording (aaaa gives 4, aabcdaabc gives 4).
+- Needed: a solver answer (pi[n-1], proper-border reading); confirm which reading the lecturer intends.
+- Status: hold
+
+### 24B-B Q2b - question text missing from the booklet
+- Page: 6
+- Question: the page shows only a stray "A. ..." line and the empty answer box for part b. No answer source either.
+- Needed: the printed wording of part b (10 points inferred from 25 - 15), or drop it.
+- Status: hold
+
+### 25A-B, 24B-B - no answer source
+- Question: no key for any item of either sitting; all items are held no-key for the solver. The 24B-B cover says "מועד א" (14.8.24), treated as 24B-B per GATE1.
+- Status: hold (no-key)
+
 <!-- Entry format:
 ### <exam code> Q<number> - <short title>
 - Path: <absolute file path>

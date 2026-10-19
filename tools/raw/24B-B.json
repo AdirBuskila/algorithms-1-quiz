@@ -1,0 +1,142 @@
+{
+ "examCode": "24B-B",
+ "examLabel": "אלגוריתמים 1 (60172), סמסטר ב' תשפ\"ד, מועד ב (14.8.2024)",
+ "year": 2024,
+ "examDate": "14.8.2024",
+ "sourceFile": "24B-B exam pp.1-17 (cover says moed A, dated 14.8.24)",
+ "solutionFile": "none (no answer source)",
+ "contexts": {
+  "c1": {
+   "kind": "text",
+   "title": "שאלה 1: BFS ו-DFS בגרף מכוון",
+   "text": "יהיו $G=(V,E)$ גרף מכוון, $s\\in V$ וגם $|E|\\neq\\emptyset$. נסמן $E_{BFS}$ - קבוצת קשתות של עץ BFS לאחר הרצה $BFS(G,s)$, $E_{DFS}$ - קבוצת קשתות של יער DFS לאחר הרצה $DFS(G)$ **שמתחילה מצומת $s$** וממשיכה את הסריקה של כל הגרף.\nשלוש הטענות הבאות מתייחסות לגרף זה.\nכתבו נכון או לא נכון על כל הטענה, נמקו תשובתכם (אם הטענה לא נכונה, הביאו דוגמה נגדית, ואם הינה נכונה, הסבירו מדוע):"
+  },
+  "c3": {
+   "kind": "text",
+   "title": "שאלה 3: מסעדות לאורך כביש 40",
+   "text": "IGreg שוקלת לפתוח שורה של מסעדות לאורך הכביש 40 מפתח-תקווה עד מצפה רמון. המיקומים הזמינים הם לאורך הכביש; המרחקים (בקילומטרים) של מיקומים אלה מתחילת הכביש בפתח-תקווה הם: $d_1<d_2<\\cdots<d_n$.\nההגבלות הן כדלקמן:\n1. בכל מקום, IGreg רשאית לפתוח מסעדה אחת לכל היותר. הרווח הצפוי מפתיחת מסעדה במקום $d_i$ הוא $p_i$.\n2. כל שתי מסעדות צריכות להיות במרחק של $k$ קילומטרים לפחות זה מזה.\nהציעו אלגוריתם יעיל לחישוב הרווח הכולל המקסימלי הצפוי בכפוף לאילוצים הנתונים.\nהבעיה ניתנת לפתרון בתכנון דינמי."
+  },
+  "c4": {
+   "kind": "text",
+   "title": "שאלה 4: מסעדות עם רווח קבוע",
+   "text": "נשנה קצת את הבעיה משאלה 3. IGreg שוקלת לפתוח שורה של מסעדות לאורך הכביש 40 מפתח-תקווה עד מצפה רמון. המיקומים הזמינים הם לאורך הכביש; המרחקים (בקילומטרים) של מיקומים אלה מתחילת הכביש בפתח-תקווה הם: $d_1<d_2<\\cdots<d_n$.\nההגבלות הן כדלקמן:\n1. בכל מקום, IGreg רשאית לפתוח מסעדה אחת לכל היותר. הרווח הצפוי מפתיחת מסעדה הוא $p$, ולא תלוי במיקום.\n2. כל שתי מסעדות צריכות להיות במרחק של $k$ קילומטרים לפחות זה מזה.\nהציעו אלגוריתם יעיל לחישוב הרווח הכולל המקסימלי הצפוי בכפוף לאילוצים הנתונים.\n**לדוגמה:** עבור $n=8$ המיקומים: $[1,2,15,20,26,27,30,35]$ ומרחק $k=10$, קיים פתרון אופטימלי עם 3 מסעדות: $[2,20,30]$.\nהבעיה ניתנת לפתרון באמצעות **אלגוריתם חמדן**."
+  }
+ },
+ "questions": [
+  {
+   "num": 1,
+   "kind": "truefalse",
+   "topic": "graph_proofs",
+   "question": "אם $E_{DFS}=E_{BFS}$, אזי $s$ הוא שורש (צומת שממנו יש מסלול לכל צומת בגרף).",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "א",
+   "points": 8,
+   "contextId": "c1"
+  },
+  {
+   "num": 1,
+   "kind": "truefalse",
+   "topic": "graph_proofs",
+   "question": "אם $E_{DFS}=E_{BFS}$ וגם דרגת כניסה $deg^-(x)\\neq 0$ וגם דרגת יציאה $deg^+(x)\\neq 0$ שונות מ-0 לכל צומת $x\\in V$, אזי $s$ הוא שורש.",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "ב",
+   "points": 9,
+   "contextId": "c1"
+  },
+  {
+   "num": 1,
+   "kind": "truefalse",
+   "topic": "graph_proofs",
+   "question": "אם $E_{DFS}=E_{BFS}$ וגם סכום דרגות כניסה וגם יציאה $deg^+(x)+deg^-(x)\\neq 0$ שונות מ-0 לכל צומת $x\\in V$, אזי $s$ הוא שורש.",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "ג",
+   "points": 8,
+   "contextId": "c1"
+  },
+  {
+   "num": 2,
+   "kind": "computation",
+   "topic": "huffman",
+   "question": "עבור מחרוזת $S$ מעל א\\\"ב $\\Sigma=\\{a,b,c,d,e\\}$ נתון כי:\n- האות $a$ מופיעה 7 פעמים, האות $b$ מופיעה 4 פעמים והאות $e$ מופיעה 7 פעמים.\n- קוד הופמן של האותיות הוא: $a$ - `10`, $b$ - `00`, $c$ - `010`, $d$ - `011`, $e$ - `11`.\n- מספר ההופעות של \\\"אח\\\" השמאלי הוא לא יותר גדול ממספר ההופעות של \\\"אח\\\" הימני.\nהניחו שסיבית הקוד לצומת הימני היא 1 ולשמאלי 0.\nרשמו את כל האופציות האפשריות לשכיחויות של אותיות $c$ ו-$d$ במחרוזת $S$. נמקו את תשובתכם.",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "א",
+   "points": 15
+  },
+  {
+   "num": 2,
+   "part": "ב",
+   "kind": "algorithm",
+   "points": 10,
+   "hold": "no-key: the question text of Q2b is missing from the booklet (p.6 shows only a stray 'A. ...' line and the empty answer box); no answer source either"
+  },
+  {
+   "num": 3,
+   "kind": "algorithm",
+   "topic": "dp_optimization",
+   "question": "הציגו נוסחה רקורסיבית לחישוב הרווח הכולל המקסימלי. יש להגדיר (במילים) את הפונקציה הרקורסיבית ולנמק בקצרה את הנכונות של הנוסחה.",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "א",
+   "points": 15,
+   "contextId": "c3"
+  },
+  {
+   "num": 3,
+   "kind": "computation",
+   "topic": "complexity_recurrence",
+   "question": "מה סיבוכיות הזמן וסיבוכיות המקום לאלגוריתם תכנון דינמי למציאת הרווח הכולל המקסימלי? נמקו תשובתכם (אין צורך לפרט את האלגוריתם עצמו).",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "ב",
+   "points": 5,
+   "contextId": "c3"
+  },
+  {
+   "num": 3,
+   "kind": "computation",
+   "topic": "complexity_recurrence",
+   "question": "מה סיבוכיות הזמן וסיבוכיות המקום של אלגוריתם תכנון דינמי המחזיר את הפתרון עצמו - המקומות למסעדות? נמקו את תשובתכם (אין צורך לפרט את האלגוריתם עצמו).",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "ג",
+   "points": 5,
+   "contextId": "c3"
+  },
+  {
+   "num": 4,
+   "kind": "computation",
+   "topic": "greedy",
+   "question": "האם קיים פתרון אופטימלי יחיד לבעיה? אם כן, נמקו תשובתכם. אם לא, הציגו פתרון נוסף (לא בהכרח חמדן) עבור הדוגמה.",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "א",
+   "points": 5,
+   "contextId": "c4"
+  },
+  {
+   "num": 4,
+   "kind": "algorithm",
+   "topic": "greedy",
+   "question": "כתבו אלגוריתם (או פסודו-קוד) לפתרון הבעיה.",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "ב",
+   "points": 10,
+   "contextId": "c4"
+  },
+  {
+   "num": 4,
+   "kind": "proof",
+   "topic": "greedy",
+   "question": "הוכיחו שהאלגוריתם שפיתחתם מחזיר פתרון אופטימלי.",
+   "hold": "no-key: no answer source for this sitting",
+   "part": "ג",
+   "points": 10,
+   "contextId": "c4"
+  },
+  {
+   "num": 5,
+   "kind": "truefalse",
+   "topic": "suffix_structures",
+   "question": "**שאלת בונוס (5 נקודות)** - ענו, אין צורך לנמק.\nנתון suffix tree עבור מחרוזת $T$.\nמהי תת-המחרוזת (רצף אותיות) החוזרת (שמופיעה לפחות פעמיים ב-$T$) הארוכה ביותר? (אין צורך לנמק)",
+   "hold": "no-key: no answer source for this sitting",
+   "points": 5,
+   "image": "images/exams/24B-B-Q5-suffix-tree.png"
+  }
+ ]
+}

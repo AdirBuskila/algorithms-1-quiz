@@ -1,0 +1,203 @@
+{
+ "examCode": "25A-A",
+ "examLabel": "אלגוריתמים 1 (70162), סמסטר א' תשפ\"ה, מועד א (10.2.2025)",
+ "year": 2025,
+ "examDate": "10.2.2025",
+ "sourceFile": "25A-A exam pp.1-15",
+ "solutionFile": "25A-A official solution pp.1-6",
+ "contexts": {
+  "c1": {
+   "kind": "text",
+   "title": "שאלה 1: חציון של שני מערכים ממוינים",
+   "text": "נתונים שני מערכי מספרים ממוינים $A[1..\\frac{n}{2}]$, $B[1..\\frac{n}{2}]$ שכל אחד מהם בגודל $\\frac{n}{2}$.\nהניחו שבכל מערך האיברים שונים זה מזה וכל איברי מערך אחד שונים מכל איברי המערך השני. כמו כן, הניחו כי המספר $n$ הוא חזקה של 2, ז\\\"א קיים מספר טבעי $k$ כך ש: $n=2^k$.\n**תזכורת:** נניח שיש לנו $n$ מספרים מסודרים בסדר עולה: $x_1,x_2,\\ldots,x_n$. כאשר $n$ זוגי ($2k=n$ עבור $k$ שלם), החציון ($M$) מחושב כך: $M=\\frac{x_k+x_{k+1}}{2}$. כלומר, הוא הממוצע של **האיבר במקום ה-$k$ והאיבר במקום ה-$1+k$** (**שני האיברים האמצעיים**).\n**דוגמה:** נניח שיש לנו את הקבוצה הבאה של 6 מספרים (כמות זוגית): $2,3,5,8,10,12$. האיברים האמצעיים הם 5 ו-8 (האיברים במקומות ה-3 וה-4). החציון יהיה: $M=\\frac{5+8}{2}=\\frac{13}{2}=6.5$."
+  },
+  "c2": {
+   "kind": "text",
+   "title": "שאלה 2: מחרוזת שילוב",
+   "text": "**הגדרה:** יהיו $S_1,S_2,S_3$ שלוש מחרוזות. נאמר שמחרוזת $S_3$ הינה \\\"מחרוזת שילוב\\\" של $S_1,S_2$ אם:\n1. $S_3$ מכילה את כל התווים של $S_1,S_2$ ורק אותם (ז\\\"א, ללא תווים נוספים מעבר לתווים שיש במחרוזות $S_1,S_2$).\n2. סדר התווים שבמחרוזות $S_1,S_2$ נשמר כפי שהוא במחרוזת $S_3$.\n**דוגמה למחרוזת $S_3$ שהינה \\\"מחרוזת שילוב\\\" של $S_1,S_2$:**\n`S1=\\\"abc\\\", s2=\\\"def\\\", s3=\\\"adbcef\\\"`\n`S1=\\\"abc\\\", s2=\\\"dec\\\", s3=\\\"adbcec\\\"`\n**דוגמה למחרוזת $S_3$ שאינה \\\"מחרוזת שילוב\\\" של $S_1,S_2$:**\n`S1=\\\"abc\\\", s2=\\\"def\\\", s3=\\\"bdacef\\\"`\n`S1=\\\"abc\\\", s2=\\\"def\\\", s3=\\\"adbce\\\"`\nלהלן בעיית מחרוזת שילוב:\n**קלט:** שלוש מחרוזות $S_1,S_2,S_3$\n**פלט:** אמת, אם המחרוזת $S_3$ הינה \\\"מחרוזת שילוב\\\" של $S_1,S_2$, אחרת, שקר\nבעיית מחרוזת שילוב ניתנת לפתרון בעזרת תכנות דינמי."
+  },
+  "c3": {
+   "kind": "text",
+   "title": "שאלה 3: בעיית ריבוי איברים",
+   "text": "להלן תיאור בעיית \\\"ריבוי איברים\\\":\n**קלט:** מספר טבעי $n$ ורשימה $L$ של $m$ מספרים טבעים.\n**פלט:** הכמות המקסימלית של האיברים מהרשימה $L$ כך שסכומם לכל היותר $n$.\n**לדוגמה:** עבור הקלט $n=6$ והרשימה $L$ הבאה (של חמישה מספרים): $2,5,3,8,10$\nהפלט הוא 2 כי סכום האיבר הראשון והשלישי הוא, $2+3=5<6$ ובמגבלה של $n=6$ קל לראות כי לא ניתן לבחור יותר מ-2 איברים מהרשימה.\nבעיית ריבוי איברים ניתנת לפתרון בעזרת אלגוריתם חמדני."
+  },
+  "c4a": {
+   "kind": "text",
+   "title": "שאלה 4א: הרישא סיפא הארוכה ביותר",
+   "text": "להלן הגדרת \\\"בעיית הרישא סיפא הארוכה ביותר\\\":\n**קלט:** מחרוזת $S$\n**פלט:** אורך הרישא (prefix) הארוכה ביותר של $S$ שהיא גם סיפא (suffix) של $S$.\nלהלן שתי דוגמאות:\nקלט: `S=aabcdaabc`, פלט: 4 (`aabc` היא הרישא וגם הסיפא הארוכה ביותר של $S$).\nקלט: `S=aaaa`, פלט: 4 (`aaaa` היא הרישא וגם הסיפא הארוכה ביותר של $S$)."
+  },
+  "c4b": {
+   "kind": "text",
+   "title": "שאלה 4ב: מופעי מילה בעץ סיפות",
+   "text": "נתונה הבעיה הבאה:\n**קלט:** מילה $w$ ועץ סיפות עם **קיבוץ מסלולים** לטקסט $T$, שבו רשום בכל עלה, האינדקס בטקסט של מיקום תחילת הסיפא המתאימה לאותו עלה.\n**פלט:** מיקום כל המופעים של $w$ בטקסט (כלומר, כל האינדקסים בטקסט $T$ ששם מתחילה המילה $w$)."
+  },
+  "c5": {
+   "kind": "text",
+   "title": "שאלת בונוס: סריקת DFS",
+   "text": "**שאלת בונוס - 15 נקודות** (יש להקיף את התשובה הנכונה).\nהסעיפים הבאים מתייחסים לגרף $G$ המיוצג על ידי מטריצת סמיכויות.\nהנח כי הסריקה DFS בוצעה על הגרף $G$, וברשותנו, מערך $\\Pi$ (תוצאת עץ הסריקה); מערך $D$ של זמני התחלה של כל קודקוד ב-$G$; מערך $F$ של זמני הסיום של כל קודקוד ב-$G$:"
+  }
+ },
+ "questions": [
+  {
+   "num": 1,
+   "kind": "algorithm",
+   "topic": "divide_conquer",
+   "question": "כתבו פסודו קוד/אלגוריתם רקורסיבי למציאת החציון במערך המאוחד של $A,B$. זמן הריצה הנדרש $\\theta(\\log n)$.",
+   "solution": "**פתרון רשמי** (25A-A פתרון עמ' 1):\n```\nMid(A[i..j],B[k..l1])\nIf A[(i+j-1)/2]< B[(k+l-1)/2]< B[(k+l+1)/2)] <A[(i+j+1)/2] return((B[(k+l-1)/2]+ B[(k+l+1)/2)])\nIf B[(k+l-1)/2]<A[(i+j-1)/2]< A[(i+j+1)/2] <B[(k+l+1)/2)] return((A[(i+j-1)/2]+ A[(i+j+1)/2)])\nIf i=j return((A[i]+B[k])/2)\nIf A[(i+j-1)/2]< A[(i+j+1)/2]< B[(k+l-1)/2]< B[(k+l+1)/2)] mid(A[(i+j+1)/2..j],B[k.. (k+l-1)/2])\nIf A[(i+j-1)/2] < B[(k+l-1)/2] < A[(i+j+1)/2]< B[(k+l+1)/2)] mid(A[(i+j+1)/2..j],B[k.. (k+l-1)/2])\nIf B[(k+l-1)/2] < B[(k+l+1)/2)] < A[(i+j-1)/2]< A[(i+j+1)/2] mid(B[((k+l)-1/2)..l],A[(i..(i+j-1)/2]\nIf B[(k+l-1)/2] < A[(i+j-1)/2]< B[(k+l+1)/2)] < A[(i+j+1)/2] mid(B[((k+l)-1/2)..l],A[(i..(i+j-1)/2]\n```\nהקריאה תתבצע על: `Mid(A[1..n/2],B[1..n/2])`",
+   "solutionSource": "official-pdf",
+   "official": true,
+   "confidence": "med",
+   "part": "א",
+   "points": 10,
+   "contextId": "c1"
+  },
+  {
+   "num": 1,
+   "kind": "proof",
+   "topic": "complexity_recurrence",
+   "question": "הוכח שסיבוכיות זמן הריצה של הפסודו קוד/אלגוריתם שהצגתם בסעיף הקודם הינו $\\theta(\\log n)$.",
+   "solution": "**פתרון רשמי** (25A-A פתרון עמ' 1):\n$$T(n)=T(n/2)+1$$\nלפי משפט האב, מקרה 2, הגענו לסיבוכיות הדרושה: $\\Theta(\\log n)$.",
+   "solutionSource": "official-pdf",
+   "official": true,
+   "confidence": "high",
+   "part": "ב",
+   "points": 5,
+   "contextId": "c1"
+  },
+  {
+   "num": 1,
+   "kind": "algorithm",
+   "topic": "divide_conquer",
+   "question": "כתבו פסודו קוד/אלגוריתם למציאת האיבר ה-$r$ בגודלו במערך המאוחד של $A,B$, כאשר $1\\le r\\le\\frac{n}{2}$. זמן הריצה הנדרש $\\theta(\\log r)$.",
+   "part": "ג",
+   "points": 10,
+   "contextId": "c1",
+   "hold": "key-disagreement: the official answer Return(mid(A[1..r],B[1..r])) returns the average of the two middle elements of the 2r chosen elements, not the r-th smallest (A=[1,2], B=[3,4], r=2 gives 2.5, the r-th smallest is 2); see docs/ASK_ADIR.md"
+  },
+  {
+   "num": 2,
+   "kind": "algorithm",
+   "topic": "dp_sequences",
+   "question": "כתבו נוסחה רקורסיבית $T(i,j,k)$ המקבלת שלושה אינדקסים אי שליליים מחזירה אמת אם המחרוזת $S_3$ הינה \\\"מחרוזת שילוב\\\" של $S_1,S_2$, אחרת, שקר.\nפרטו מה מייצג הקלט בנוסחה $T$.",
+   "part": "א",
+   "points": 15,
+   "contextId": "c2",
+   "hold": "key-disagreement: the official recurrence keeps k in two rows (T(i,j-1,k)) and has no row for S1[i]!=S3[k] and S2[j]!=S3[k]; against brute force it is wrong or undefined; see docs/ASK_ADIR.md"
+  },
+  {
+   "num": 2,
+   "kind": "computation",
+   "topic": "dp_sequences",
+   "question": "הדגימו בצורה ברורה את חישוב הנוסחה הרקורסיבית עבור הקלט הבא: $S_1=$`ebc`, $S_2=$`dec`.",
+   "part": "ב",
+   "points": 5,
+   "contextId": "c2",
+   "hold": "no-key: the solution file only says that similar demonstrations were done in the course"
+  },
+  {
+   "num": 2,
+   "kind": "computation",
+   "topic": "dp_sequences",
+   "question": "מה סיבוכיות הזמן וסיבוכיות המקום במקרה הגרוע לאלגוריתם תכנות דינמי הפותר את בעיית מחרוזת שילוב?\nנמקו תשובתכם בקצרה ובבהירות (אין צורך לפרט את האלגוריתם עצמו).",
+   "solution": "**פתרון רשמי** (25A-A פתרון עמ' 3):\nללא חסכון במקום יש למלא טבלה ריבועית כתלות במחרוזת השלישית. ניתן למלא לפי עמודות או שורות.\nבהנחה שהמחרוזות באורך $n$, זמן הפתרון הוא ריבועי ($\\Theta(n^2)$), בעוד מקום הוא ריבועי, או לינארי בגודל הקלט (שמירת שורה אחת בלבד).",
+   "solutionSource": "official-pdf",
+   "official": true,
+   "confidence": "high",
+   "part": "ג",
+   "points": 5,
+   "contextId": "c2"
+  },
+  {
+   "num": 3,
+   "kind": "algorithm",
+   "topic": "greedy",
+   "question": "כתוב פסודו קוד/אלגוריתם היעיל ביותר לפתרון בעיית ריבוי איברים.",
+   "solution": "**פתרון רשמי** (25A-A פתרון עמ' 3): פסאודו-קוד של האלגוריתם:\n```\nGreedy-Subset-Sum(L, n)\n1. Sort L in non-decreasing order\n2. sum <- 0\n3. count <- 0\n4. for i <- 1 to length(L) do\n5.     if sum + L[i] <= n then\n6.         sum <- sum + L[i]\n7.         count <- count + 1\n8.     else\n9.         return count\n10. return count\n```",
+   "solutionSource": "official-pdf",
+   "official": true,
+   "confidence": "high",
+   "part": "א",
+   "points": 12.5,
+   "contextId": "c3"
+  },
+  {
+   "num": 3,
+   "kind": "proof",
+   "topic": "greedy",
+   "question": "הוכח את נכונות הפתרון שהצגת בסעיף א'.",
+   "solution": "**פתרון רשמי** (25A-A פתרון עמ' 4):\n**(א) בחירה חמדנית.** תהי $L[1..l]$ רשימה ממוינת בסדר עולה של האיברים. לכל $1\\le i\\le j\\le l$ נסמן ב-$S_{i,j,k}$ תת-קבוצה בגודל מקסימלי מתוך תת-הרשימה $L[i..j]$ כך שהסכום שלהם לא גדול מ-$k$ (פתרון אופטימלי עבור תת-בעיה עם רשימה $L[i..j]$ וחסם $k$ על סכום האיברים, $(i,j,k)$). נוכיח שאם $L[1]\\le n$, אזי קיים פתרון אופטימלי $S_{1,l,n}$ כך ש-$L[1]\\in S_{1,l,n}$.\nיהי $S'_{1,l,n}$ פתרון אופטימלי עבור תת-הבעיה $(1,l,n)$. יהי $x$ האיבר המינימלי ב-$S'_{1,l,n}$. הרשימה $L[1..n]$ ממוינת בסדר לא יורד. לכן אם נחליף את $x$ ב-$L[1]$, סכום האיברים ב-$S'_{1,l,n}$ לא יגדל, והגודל של $S'_{1,l,n}$ יישאר ללא שינוי. לכן\n$$\\bigl(S'_{1,l,n}-\\{x\\}\\bigr)\\cup L[1]$$\nהוא פתרון אופטימלי עבור הבעיה $(1,l,n)$ שמכיל את $L[1]$.\n**מבנה אופטימלי של תת-בעיה.** נוכיח שלכל $1\\le i\\le n$, קיים פתרון אופטימלי עבור הבעיה $(i,l,n)$:\n$$S_{i,l,n}=L[i]\\cup S_{i+1,l,(n-L[i])}$$\nכפי שהוכחנו לעיל, קיים פתרון אופטימלי $S'_{i,l,n}$ שמכיל את $L[i]$. סכום האיברים ב-$\\bigl(S'_{i,l,n}-\\{L[i]\\}\\bigr)$ קטן או שווה ל-$(n-L[i])$, לכן $\\bigl(S'_{i,l,n}-\\{L[i]\\}\\bigr)$ היא פתרון אופטימלי עבור תת-בעיה $(i,l,n-L[i])$ (אחרת אפשר לשפר את $S'_{i,l,n}$).\nבכל שלב $i$, אם $L[i]\\le sum$, האלגוריתם מדפיס את $L[i]$ וממשיך לחפש פתרון עבור תת-בעיה $(i+1,l,sum-L[i])$.\nלפי התכונה של הבחירה החמדנית והמבנה האופטימלי של הבעיה, האלגוריתם מחזיר פתרון אופטימלי $S_{1,l,n}$ עבור הבעיה $(1,l,n)$.",
+   "solutionSource": "official-pdf",
+   "official": true,
+   "confidence": "high",
+   "part": "ב",
+   "points": 12.5,
+   "contextId": "c3"
+  },
+  {
+   "num": 4,
+   "kind": "algorithm",
+   "topic": "kmp_strings",
+   "question": "כתוב פסודו קוד/אלגוריתם היעיל ביותר לפתרון בעיית הרישא סיפא הארוכה ביותר.",
+   "part": "א",
+   "points": 10,
+   "contextId": "c4a",
+   "hold": "no-key: the solution file gives only a remark (compute the KMP pi array and return its maximum), not an algorithm, and the remark is unsafe (max(pi) != pi[n-1], e.g. abcabcd); the question examples also conflict with its wording; see docs/ASK_ADIR.md"
+  },
+  {
+   "num": 4,
+   "kind": "algorithm",
+   "topic": "suffix_structures",
+   "question": "כתוב פסודו קוד/אלגוריתם היעיל ביותר לפתרון הבעיה.",
+   "solution": "**פתרון רשמי** (25A-A פתרון עמ' 5):\n**הסבר סימוני משתנים ופונקציות לסעיפים ב', ג':**\n$\\Sigma$ - הא\\\"ב. $T$ - המחרוזת שמיוצגת על ידי עץ הסיפות. $w$ - המחרוזת לחיפוש. $ptr\\_w$ - מצביע לתת המחרוזת. $m$ - אורך המחרוזת שנותר להשוות. `suffix_tree` - עץ הסיפות, `suffix_tree->root` - שורש העץ. `node` - מצביע לצומת בעץ או בתת העץ. `node->children` - הבנים של הצומת הנוכחי. `node->letters` - האותיות המקובצות בצומת הנוכחי (או האינדקסים במחרוזת המקורית $T$). `num_let` - אורך ההתחלה המשותפת. `maximum_match` - חיפוש ההתאמה התחילית המשותפת הארוכה ביותר, לכל היותר באורך $m$. `get_suffix_indexes_from_leafs` - סריקה פשוטה בתת העץ של הצומת המתאים (למשל על ידי DFS), לקבלת האינדקסים של הסיפות במחרוזת $T$. `k` - מספר ההתאמות של $w$. `bin_search` - חיפוש בינארי של האות הראשונה.\n```\nfind_all_occurrences_in_suffix_tree(suffix_tree, w):\n   node=suffix_tree->root\n   ptr_w=w\n   m=len(w)\n   while(m>0):\n      node = bin_search(node ->children, ptr_w)   // children sorted lexicographically\n      if node == NULL:                            // no match found\n         return NULL\n      num_let=maximum_match(node->letters, ptr_w, m)\n      if (num_let==m):                            // full match inside the node\n         return get_suffix_indexes_from_leafs(node)   // DFS over the subtree to get the indexes\n      elif (num_let==len(node->letters)):         // the whole group of letters is covered, continue down\n         ptr_w+=num_let                           // advance the pointer by the number of matched letters\n         m-= num_let\n      else:                                       // otherwise the string is not in the suffix tree\n         return NULL\n```",
+   "solutionSource": "official-pdf",
+   "official": true,
+   "confidence": "high",
+   "part": "ב",
+   "points": 10,
+   "contextId": "c4b"
+  },
+  {
+   "num": 4,
+   "kind": "computation",
+   "topic": "suffix_structures",
+   "question": "מהו זמן הריצה של האלגוריתם שהצעתם לבעיה בסעיף (ב)? נמקו קביעתכם.",
+   "solution": "**פתרון רשמי** (25A-A פתרון עמ' 6):\n`bin_search` - פונקציית חיפוש בינארי של האות הראשונה של $w$ (בחלק במחרוזת שטרם בדקנו) בבנים של הקודקוד הנוכחי הממוינים לקסיקוגרפית, לכן סיבוכיות הזמן של הפונקציה היא $O(\\log|\\Sigma|)$ (לעיתים בהרצאה התעלמנו מפקטור זה).\n`maximum_match` - פונקציית ההשוואה בין האותיות המקובצות בצומת, לבין האותיות של $w$ (בחלק במחרוזת שטרם בדקנו). השוואת אות בודדת מתבצעת ב-$O(1)$. לכן, אם כל ההשוואות יבוצעו באותו הצומת (בגלל קיבוץ המסלולים), סיבוכיות הזמן של הפונקציה היא $O(m)$.\n`get_suffix_indexes_from_leafs` - סריקה פשוטה בתת העץ של הצומת המתאים (למשל על ידי DFS), לקבלת האינדקסים של הסיפות במחרוזת $T$. כמות ההתאמות למחרוזת $w=k$ = כמות העלים בתת העץ. כמות הצמתים הפנימים היא $O(k)$, ולכן סיבוכיות הזמן של הסריקה היא $O(k)$.\n**אם המחרוזת $w$ לא נמצאת בעץ הסיפות:** במקרה הגרוע חוסר ההתאמה באות האחרונה, לכן הסיבוכיות היא $O(m)$. ליתר דיוק $O(m\\cdot\\log(|\\Sigma|))$ (מה שיתרחש במידה ואין שום קיבוץ מסלולים עבור התחילית של הסיפות המתחילה ב-$w$).\n**אם המחרוזת $w$ נמצאת בעץ הסיפות:**\nא. מציאת הצומת המתאים (עבור האותיות במסלול מהשורש עד אליו מתאים למחרוזת $w$) - סיבוכיות הזמן היא $O(m)$, או ליתר דיוק $O(m\\cdot\\log(|\\Sigma|))$.\nב. סריקת תת העץ של הקודקוד המתאים - בסיבוכיות זמן של $O(k)$.\nסה\\\"כ סיבוכיות הזמן - $O(m+k)$, או ליתר דיוק $O(m\\cdot\\log(|\\Sigma|)+k)$.",
+   "solutionSource": "official-pdf",
+   "official": true,
+   "confidence": "high",
+   "part": "ג",
+   "points": 5,
+   "contextId": "c4b"
+  },
+  {
+   "num": 5,
+   "kind": "truefalse",
+   "topic": "graphs_search",
+   "question": "ניתן לאפיין את כל שורשי העצים ביער $\\Pi$ בזמן לינארי בכמות שורשי העצים ביער.\nנכון / לא נכון",
+   "part": "א",
+   "points": 5,
+   "contextId": "c5",
+   "hold": "no-key: bonus items have no solution in the solution file"
+  },
+  {
+   "num": 5,
+   "kind": "truefalse",
+   "topic": "graphs_search",
+   "question": "ניתן לאפיין את כל העלים ביער $\\Pi$ בזמן לינארי בכמות הקודקודים ביער.\nנכון / לא נכון",
+   "part": "ב",
+   "points": 5,
+   "contextId": "c5",
+   "hold": "no-key: bonus items have no solution in the solution file"
+  },
+  {
+   "num": 5,
+   "kind": "truefalse",
+   "topic": "graphs_search",
+   "question": "לא ניתן לאפיין בזמן לינארי בגודל הגרף את כל סוגי הצלעות (צלע מהעץ, צלע חוזרת, צלע מקצרת מסלול בעץ, צלע חוצה בין עצים/תתי עצים).\nנכון / לא נכון",
+   "part": "ג",
+   "points": 5,
+   "contextId": "c5",
+   "hold": "no-key: bonus items have no solution in the solution file"
+  }
+ ]
+}

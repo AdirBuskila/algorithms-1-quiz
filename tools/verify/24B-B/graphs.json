@@ -1,0 +1,22 @@
+{
+  "24B-B-Q5": {
+    "directed": true,
+    "note": "Suffix tree of the bonus question. The text T is not printed; the garbled root-to-leaf-0 label reads RATATAT and the leaves 1..7 match the suffixes of RATATAT$. Edge w is the edge label. Leaf ids are the suffix start index.",
+    "text": "RATATAT$",
+    "vertices": ["root", "nA", "nAT", "nT", "nTAT", "0", "1", "2", "3", "4", "5", "6", "7"],
+    "edges": [
+      {"u": "root", "v": "7", "w": "$"},
+      {"u": "root", "v": "nA", "w": "AT"},
+      {"u": "root", "v": "0", "w": "RATATAT$"},
+      {"u": "root", "v": "nT", "w": "T"},
+      {"u": "nA", "v": "5", "w": "$"},
+      {"u": "nA", "v": "nAT", "w": "AT"},
+      {"u": "nAT", "v": "3", "w": "$"},
+      {"u": "nAT", "v": "1", "w": "AT$"},
+      {"u": "nT", "v": "6", "w": "$"},
+      {"u": "nT", "v": "nTAT", "w": "AT"},
+      {"u": "nTAT", "v": "4", "w": "$"},
+      {"u": "nTAT", "v": "2", "w": "AT$"}
+    ]
+  }
+}
