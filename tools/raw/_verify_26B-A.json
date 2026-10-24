@@ -1,0 +1,466 @@
+{
+ "code": "26B-A",
+ "summary": {
+  "items": 17,
+  "agree": 16,
+  "disagree": 1,
+  "unclear": 0,
+  "stepsAgree": 60,
+  "stepsDisagree": 0
+ },
+ "items": {
+  "1-א": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "P(i,c)=max profit over tasks 1..i with total time<=c; answer P(n,T)",
+   "notes": ""
+  },
+  "1-ב": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "findbug",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "standard 0/1 knapsack recurrence; P(3,6)=10",
+   "notes": "step2 (choice) explain cites 'הנוסחה האחרונה' = option d by position; options shuffle, reword to cite the formula itself"
+  },
+  "1-ג": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "O(nT) time, O(nT) space (O(T) for value only)",
+   "notes": ""
+  },
+  "1-ד": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "table brute-forced; max 11 via {1,4}, unique optimum",
+   "notes": ""
+  },
+  "1-ה": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "O(nT) time, O(nT) space",
+   "notes": "note: 'must keep whole table' is overstated (D&C reconstruction gives O(T) space); textbook answer O(nT) fine, optionally soften"
+  },
+  "2-א": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "(1,2),(5,9),T=5: greedy 2 vs opt 9",
+   "notes": "step1 explain ends 'בהתאמה' (4,14,10 map to options b,c,d by position); name the examples instead"
+  },
+  "2-ב": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "top k=floor(T/t) profits",
+   "notes": ""
+  },
+  "2-ג": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "order",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "findbug",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "exchange argument sound",
+   "notes": ""
+  },
+  "3-א": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "order",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "false; pentagon counterexample re-traced, v child of w",
+   "notes": ""
+  },
+  "3-ב": {
+   "solution": "agree (verdict and main proof); disagree on remark",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "disagree: pitfall 1",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "order",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "findbug",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "true (see note)",
+   "notes": "DISAGREE on remark and pitfall 1: '(s on cycle essential: if s is a leaf the trees may be identical)' is false for any connected simple graph containing a cycle. Any non-tree edge xy is ancestor-descendant in DFS tree but joins levels differing by <=1 in BFS tree, so a common tree would make xy a parent-child tree edge: contradiction. Verdict TRUE and main proof valid, but the s-on-cycle hypothesis is unnecessary (brute force: 91 exhaustive + 900 random cases incl. s leaf, zero overlaps)"
+  },
+  "3-ג": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "findbug",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "true, T unique MST, w'(T')>w'(T)",
+   "notes": ""
+  },
+  "4-א": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "e=10",
+   "notes": ""
+  },
+  "4-ב": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "e in {6,7} exactly; brute force over all Huffman tie-breaks and child orders for e=1..39 gives [6,7]",
+   "notes": "missing visible 'הערה:' required by Gate1 ruling that the answer {6,7} relies on arbitrary Huffman ties (e=6 gives node 13=a; e=7 gives e=node 7). Answer itself correct"
+  },
+  "4-ג": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "X=3 (X<=3 in all MSTs; X=4 gives 3 MSTs, DF not in all)",
+   "notes": ""
+  },
+  "4-ד": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "X=3, Prim from C: 4 valid orders, 2 MSTs weight 18, exactly as claimed; choice step has exactly one valid option (b)",
+   "notes": "step2 (choice) explain cites options by ordinal ('בסדר הראשון', 'בשני', 'באחרון'); reword by content. Solution orders/MSTs exactly right"
+  },
+  "4-ה": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "order",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "pi=[0,1,0,1,2,3,4,5,6,7,8,2]",
+   "notes": ""
+  },
+  "4-ו": {
+   "solution": "agree",
+   "rubric": "agree (sums match points)",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "order",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ],
+   "myAnswer": "Select + collect + sort, O(n)",
+   "notes": ""
+  }
+ }
+}
