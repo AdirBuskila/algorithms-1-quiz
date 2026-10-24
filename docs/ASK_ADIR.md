@@ -104,7 +104,7 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 ### 25A-B, 24B-B - no answer source
 - Question: no key for any item of either sitting; all items are held no-key for the solver. The 24B-B cover says "מועד א" (14.8.24), treated as 24B-B per GATE1.
 - Status: hold (no-key)
-- 25A-B (2026-10-24): 11 of 12 items resolved by solver, pending refuter (solutionSource "solved", checks in tools/verify/25A-B/solve_25AB.py). Still held: bonus item b (adjacency list, number of neighbours in O(1)): false for a linked list (O(deg v)), true if the list stores its length; the wording does not decide it. Needed: Adir's reading of the course convention.
+- 25A-B (2026-10-24): all 12 items resolved by solver, pending refuter (solutionSource "solved", checks in tools/verify/25A-B/solve_25AB.py). Bonus item b (adjacency list, number of neighbours in O(1)): ruled by orchestrator, pending refuter: false under the course's (CLRS) linked-list convention, O(deg v); the solution opens with a visible "הערה:" that the claim becomes true if each list also stores its length. Adir may still override the convention.
 - 24B-B: resolved by solver, pending refuter (11 of 12 items solved; Q2b stays held, see above). Assumptions stated in the solutions: Q1b no self-loops (with loops the claim fails), Q2a every coded letter occurs (c=0 would add (0,4)). Bonus: the tree forces T = ?ATATAT with ? not A/T (read R); the answer ATAT does not depend on it.
 
 ### 23A-A - no answer source
