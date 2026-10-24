@@ -378,7 +378,7 @@ check("Q4a recurrence == brute force on 1000 random box sets (widths descending)
 fb = step(4, "א", 3)
 check("Q4a findbug line has min", "\\min" in fb["lines"][fb["bugIndex"]])
 numeric(4, "ב", 0, sum(1 for j in range(1, 7) for i in range(1, 7) if j < i))
-accept(4, "ב", 1, ["O(n^2)", "Θ(n^2)", "O(n²)", "Θ(n²)"])
+accept(4, "ב", 1, ["O(n²)", "Θ(n²)", "O(n^2)", "Θ(n^2)"])
 accept(4, "ב", 2, ["O(n)", "Θ(n)"])
 # reconstruction
 chain, i = [], max(range(1, 5), key=lambda t: T[t])
@@ -387,7 +387,7 @@ while i:
     i = P[i]
 numeric(4, "ג", 1, len(chain))
 check("Q4c reconstructed tower is the unique best (boxes 4,2,1)", chain == [4, 2, 1] and len(argb) == 1 and sorted(argb[0]) == [0, 1, 3])
-accept(4, "ג", 2, ["O(n^2)", "Θ(n^2)", "O(n²)", "Θ(n²)"])
+accept(4, "ג", 2, ["O(n²)", "Θ(n²)", "O(n^2)", "Θ(n^2)"])
 accept(4, "ג", 3, ["O(n)", "Θ(n)"])
 choice(4, "ג", 0, {"לכל $i$ את האינדקס $j$ של התיבה שמתחתיה במגדל הטוב ביותר שבראשו $i$": True,
                    "לכל $i$ את כל המגדל שבראשו $i$": False, "רק את הגובה המקסימלי": False,

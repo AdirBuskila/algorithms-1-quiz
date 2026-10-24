@@ -218,7 +218,7 @@ for s1 in ["abc"]:
             pass
 cells = {(i, j) for i in range(4) for j in range(5)}
 check("Q2c states (i,j,i+j): 20 cells for |S1|=3,|S2|=4", len(cells) == 20 and all(k == i + j for (i, j) in cells for k in [i + j]))
-accept(2, "ג", 0, ["Θ(n^2)", "O(n^2)", "O(n²)", "Θ(n²)"])
+accept(2, "ג", 0, ["Θ(n²)", "O(n²)", "Θ(n^2)", "O(n^2)"])
 check("Q2c quadratic cell count grows as n^2", [(n + 1) ** 2 for n in (3, 7)] == [16, 64])
 choice(2, "ג", 2, {"ריבועית בטבלה מלאה, ואפשר ללינארית אם שומרים שורה אחת בלבד": True,
                    "תמיד קובית כי יש שלושה אינדקסים": False,

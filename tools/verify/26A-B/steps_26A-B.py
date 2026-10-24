@@ -284,11 +284,33 @@ def kmp_fallbacks(P, Tx):
 
 check("Bonus b: P=aab, T=b^10 -> 0 fallbacks", kmp_fallbacks("aab", "b" * 10) == 0)
 V["b5b_zero"] = 0
+
+
+def kmp_fallbacks_clrs(P, Tx):
+    """CLRS KMP: after a full match q is reset to pi[m] immediately (no fallback is counted for it)."""
+    pi = prefix_function(P)
+    q = 0
+    cnt = 0
+    for c in Tx:
+        while q > 0 and P[q] != c:
+            q = pi[q - 1]
+            cnt += 1
+        if P[q] == c:
+            q += 1
+        if q == len(P):
+            q = pi[q - 1]
+    return cnt
+
+
 for n in (60, 300):
-    c = {"a^n": kmp_fallbacks("aab", "a" * n), "(aab)^(n/3)": kmp_fallbacks("aab", "aab" * (n // 3)),
-         "a^(n-1)b": kmp_fallbacks("aab", "a" * (n - 1) + "b"), "b^n": kmp_fallbacks("aab", "b" * n)}
-    check(f"Bonus b n={n}: distractor texts give linearly many fallbacks, b^n none",
-          c["a^n"] >= n // 2 and c["(aab)^(n/3)"] >= n // 4 and c["a^(n-1)b"] >= n // 2 and c["b^n"] == 0, c)
+    texts = {"a^n": "a" * n, "(aaab)^(n/4)": "aaab" * (n // 4), "a^(n-1)b": "a" * (n - 1) + "b", "b^n": "b" * n}
+    for name, fb in (("lazy reset", kmp_fallbacks), ("CLRS reset", kmp_fallbacks_clrs)):
+        c = {k: fb("aab", v) for k, v in texts.items()}
+        check(f"Bonus b n={n} ({name}): the distractor texts give linearly many fallbacks, b^n none",
+              c["a^n"] >= n // 2 and c["(aaab)^(n/4)"] >= n // 5 and c["a^(n-1)b"] >= n // 2 and c["b^n"] == 0, c)
+# the rejected distractor: (aab)^(n/3) has no fallbacks under the CLRS reset, so it would be a second correct option
+check("Bonus b: (aab)^(n/3) gives 0 fallbacks under the CLRS reset (the old distractor was also correct)",
+      kmp_fallbacks_clrs("aab", "aab" * 20) == 0)
 
 
 def naive_worst(n, m):

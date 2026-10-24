@@ -57,7 +57,7 @@
      "points": 2
     }
    ],
-   "rubricSource": "ai-draft",
+   "rubricSource": "ai-verified",
    "pitfalls": [
     "להוסיף $1$ גם כשהתווים שווים, ואז $OPT(1,1)$ של `A` מול `A` יוצא $1$ במקום $0$.",
     "לשכוח את שתי האפשרויות של תו מול '-' ולהסתפק בתו מול תו.",
@@ -127,7 +127,7 @@
      "explain": "כמו ביישור שבשאלה, $d=2$ (נבדק בטבלה ובכוח גס)."
     }
    ],
-   "stepsSource": "ai-draft"
+   "stepsSource": "ai-verified"
   },
   {
    "num": 1,
@@ -155,7 +155,7 @@
      "points": 4
     }
    ],
-   "rubricSource": "ai-draft",
+   "rubricSource": "ai-verified",
    "pitfalls": [
     "לענות $O(n_1+n_2)$ לזמן: יש $n_1n_2$ תאים.",
     "לא להבחין בין חישוב המרחק בלבד (שתי שורות) לבין שחזור היישור (כל הטבלה)."
@@ -192,7 +192,7 @@
      "explain": "מספיקות שתי שורות באורך הסדרה הקצרה (נבדק שהתוצאה זהה לטבלה המלאה)."
     }
    ],
-   "stepsSource": "ai-draft"
+   "stepsSource": "ai-verified"
   },
   {
    "num": 2,
@@ -207,7 +207,7 @@
    "solution": "(מניחים משקלים חיוביים, $Wt[i]>0$.)\n**רעיון חמדני:** לוקחים קודם את הפריטים עם הערך הגבוה ביותר לכל יחידת משקל, $\\frac{Val[i]}{Wt[i]}$.\n```\nFRACTIONAL_KNAPSACK(Val[1..n], Wt[1..n], capacity):\n    sort the items by Val[i]/Wt[i] in decreasing order\n    total <- 0 ; room <- capacity\n    for each item i in that order:\n        if room = 0: break\n        take <- min(Wt[i], room)          // the whole item, or the part that fits\n        total <- total + Val[i] * take / Wt[i]\n        room <- room - take\n    return total\n```\nבדוגמה היחסים הם $6,5,4$: לוקחים את הפריט הראשון והשני במלואם ו-$20$ מתוך $30$ ק\\\"ג של השלישי, $240$.\n**זמן ריצה:** $O(n\\log n)$ למיון ו-$O(n)$ למעבר, סה\\\"כ $O(n\\log n)$.",
    "rubric": [
     {
-     "text": "מיון הפריטים לפי היחס $\\frac{Val}{Wt}$ בסדר יורד",
+     "text": "מיון הפריטים לפי היחס $\\frac{Val}{Wt}$ בסדר יורד (הניקוד אינו מודפס במבחן; 15 הנקודות לסעיף הן הסקה מהניקוד של שאר השאלות, והחלוקה בין השורות משוערת)",
      "points": 4
     },
     {
@@ -227,7 +227,7 @@
      "points": 2
     }
    ],
-   "rubricSource": "ai-draft",
+   "rubricSource": "ai-verified",
    "pitfalls": [
     "למיין לפי הערך או לפי המשקל בלבד: בשני המקרים יש קלט שבו התוצאה נמוכה מהאופטימום.",
     "לקחת פריט שלם בלבד, וכך לפספס את החלק היחסי של הפריט האחרון.",
@@ -283,7 +283,7 @@
      "explain": "המיון $O(n\\log n)$ והמעבר $O(n)$."
     }
    ],
-   "stepsSource": "ai-draft"
+   "stepsSource": "ai-verified"
   },
   {
    "num": 2,
@@ -315,7 +315,7 @@
      "points": 2
     }
    ],
-   "rubricSource": "ai-draft",
+   "rubricSource": "ai-verified",
    "pitfalls": [
     "להוכיח רק על הדוגמה ולא באופן כללי.",
     "להחליף משקל בלי להראות שהמשקל הכולל נשמר ושהערך לא יורד.",
@@ -324,7 +324,7 @@
    "steps": [
     {
      "type": "choice",
-     "prompt": "איזו שיטת הוכחה משמש הפתרון הרשמי?",
+     "prompt": "איזו שיטת הוכחה משמשת בפתרון?",
      "options": [
       {
        "id": "a",
@@ -377,7 +377,7 @@
      "explain": "המשקל מועבר מ-$j$ (היחס הנמוך) אל $i$ (היחס הגבוה), לא להפך. בכיוון ההפוך הערך יורד."
     }
    ],
-   "stepsSource": "ai-draft"
+   "stepsSource": "ai-verified"
   },
   {
    "num": 3,
@@ -409,7 +409,7 @@
      "points": 3
     }
    ],
-   "rubricSource": "ai-draft",
+   "rubricSource": "ai-verified",
    "pitfalls": [
     "לבצע חיפוש בינארי רגיל בלי לזהות איזה חצי ממוין.",
     "לבדוק אם החצי השמאלי ממוין לפי $nums[mid]<nums[hi]$ או $nums[lo]<nums[hi]$: שני התנאים שגויים על סיבובים מסוימים.",
@@ -505,7 +505,7 @@
      "explain": "הבדיקה צריכה להיות $nums[lo]\\le t<nums[mid]$, טווח החצי הממוין. הגרסה שבה $t\\le nums[hi]$ מפנה לחצי שגוי (נבדק בהרצות אקראיות)."
     }
    ],
-   "stepsSource": "ai-draft"
+   "stepsSource": "ai-verified"
   },
   {
    "num": 3,
@@ -533,7 +533,7 @@
      "points": 2
     }
    ],
-   "rubricSource": "ai-draft",
+   "rubricSource": "ai-verified",
    "pitfalls": [
     "לכתוב $2T(\\frac n2)$ כאילו שני החצאים נסרקים: נסרק חצי אחד בלבד.",
     "לשכוח את ההנחה שהערכים שונים."
@@ -581,7 +581,7 @@
      "explain": "נבדק בהרצה על $1000$ סיבובים. הערך $11\\le\\lfloor\\log_2 1000\\rfloor+2=11$."
     }
    ],
-   "stepsSource": "ai-draft"
+   "stepsSource": "ai-verified"
   },
   {
    "num": 4,
@@ -613,7 +613,7 @@
      "points": 3
     }
    ],
-   "rubricSource": "ai-draft",
+   "rubricSource": "ai-verified",
    "pitfalls": [
     "לחפש את $P$ עצמה ב-$T$ (בדוגמה `abc` לא נמצאת ב-`dfzcbau`).",
     "לחפש את ההפוכה כתת-סדרה ולא כתת-מחרוזת רציפה.",
@@ -659,7 +659,7 @@
      "explain": "האותיות `d,f,z` אחריהן `cba`, כלומר התחלה באינדקס $4$ (KMP מחזיר את אותו מקום)."
     }
    ],
-   "stepsSource": "ai-draft"
+   "stepsSource": "ai-verified"
   },
   {
    "num": 4,
@@ -691,7 +691,7 @@
      "points": 2
     }
    ],
-   "rubricSource": "ai-draft",
+   "rubricSource": "ai-verified",
    "pitfalls": [
     "לטעון $O(nm)$ כי לולאת הנסיגה פנימית: מספר הנסיגות הכולל חסום ב-$n$.",
     "לשכוח את מקום ה-$\\pi$ ולענות $O(1)$."
@@ -741,7 +741,7 @@
      "explain": "המחרוזת ההפוכה ומערך $\\pi$ בגודל $m$."
     }
    ],
-   "stepsSource": "ai-draft"
+   "stepsSource": "ai-verified"
   }
  ]
 }

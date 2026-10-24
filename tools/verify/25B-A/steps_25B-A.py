@@ -362,7 +362,7 @@ choice(4, "א", 0, {"גודל תת-הקבוצה הסגורה בחלוקה הגד
 n = 9
 cnt = sum(1 for i in range(n) for j in range(i))
 numeric(4, "ג", 0, cnt)
-textstep(4, "ג", 1, ["O(n^2)"])
+textstep(4, "ג", 1, ["O(n²)", "O(n^2)"])
 textstep(4, "ג", 2, ["O(n)"])
 check("Q4c checks grow quadratically", [sum(1 for i in range(m) for j in range(i)) for m in (10, 20, 40)] == [45, 190, 780])
 
@@ -385,6 +385,7 @@ numeric(4, "ה", 1, len(sub))
 check("Q4e reconstructed subset is {1,2,4,8}, closed under division, and optimal",
       sub == [1, 2, 4, 8] and all(y % x == 0 for x, y in itertools.combinations(sub, 2)))
 textstep(4, "ה", 2, ["O(n)"])
+textstep(4, "ה", 3, ["O(n²)", "O(n^2)", "Θ(n^2)"])
 
 print("ALL OK" if ok else "SOME CHECKS FAILED")
 sys.exit(0 if ok else 1)

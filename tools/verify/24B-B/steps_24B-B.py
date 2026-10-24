@@ -328,7 +328,7 @@ if RAW.exists():
     for q in raw["questions"]:
         texts[str(q["num"]) + q.get("part", "")] = [(s["accept"], s.get("normalize")) for s in q.get("steps", []) if s["type"] == "text"]
     check("raw JSON complexity answers are O(n) for 3b and 3c", all(a == [["O(n)"]] or True for a in [1]) and
-          texts["3ב"] == [(["O(n)"], "complexity")] * 2 and texts["3ג"] == [(["O(n)"], "complexity")] * 2)
+          texts["3ב"] == [(["O(n)", "Θ(n)"], "complexity"), (["O(n)"], "complexity")] and texts["3ג"] == [(["O(n)"], "complexity")] * 2)
     check("raw JSON Q5 text answer ATAT", texts["5"] == [(["ATAT"], "lower")])
 
 print("ALL OK" if ok else "SOME CHECK FAILED")

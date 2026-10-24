@@ -311,7 +311,7 @@ while pq:
         if u not in seen:
             heapq.heappush(pq, (w2, u))
 s = step(3, "א", 1)
-check("Q3a Prim order", s["accept"] == [", ".join(order)], ", ".join(order))
+check("Q3a Prim order", s["accept"][0] == ", ".join(order) and ", ".join(order) in s["accept"], ", ".join(order))
 numeric(3, "א", 2, tw)
 
 
@@ -407,7 +407,7 @@ fb = step(4, "א", 3)
 check("Q4a findbug bug line has '<k'", "|<k$" in fb["lines"][fb["bugIndex"]].replace(" ", "") or "<k$" in fb["lines"][fb["bugIndex"]].replace(" ", "") and fb["bugIndex"] == 0)
 check("Q4a '<' bug fails on A={1,5},k=4", C_rec([1, 5], 4, "lt") == 1 and C_rec([1, 5], 4) == 0)
 numeric(4, "ב", 0, sum(1 for i in range(5) for j in range(i, 5)))
-accept(4, "ב", 1, ["O(n^2)", "Θ(n^2)", "O(n²)", "Θ(n²)"])
+accept(4, "ב", 1, ["O(n²)", "Θ(n²)", "O(n^2)", "Θ(n^2)"])
 # step counts grow quadratically
 check("Q4b cell count n(n+1)/2 ~ n^2", all(sum(1 for i in range(n) for j in range(i, n)) == n * (n + 1) // 2 for n in (5, 10, 20)))
 

@@ -245,7 +245,7 @@ if RAW.exists():
     for k, v in want.items():
         check(f"raw JSON numeric answers for {k}", got.get(k) == v, str(got.get(k)))
     check("raw JSON complexity answers: 1ב O(n^2) twice, 1ג O(n^2) then O(n), 2ב ADA then O(n)",
-          texts["1ב"] == [("O(n^2)",), ("O(n^2)",)] and texts["1ג"] == [("O(n^2)",), ("O(n)",)] and texts["2ב"] == [("ADA", "AEA"), ("O(n)",)])
+          texts["1ב"] == [("O(n²)", "O(n^2)"), ("O(n²)", "O(n^2)")] and texts["1ג"] == [("O(n²)", "O(n^2)"), ("O(n)",)] and texts["2ב"] == [("ADA", "AEA"), ("O(n)",)])
 
 print("ALL OK" if ok else "SOME CHECK FAILED")
 sys.exit(0 if ok else 1)

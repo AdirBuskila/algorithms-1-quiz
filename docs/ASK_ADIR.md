@@ -49,9 +49,9 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 
 ### 25B-A Q1a - official total weight is 13, the printed weights give 11
 - Page: solution p.2
-- Question: the counterexample (DFS from c) lists tree edges cb and ab with total 13; with w(ab)=7 and w(cb)=4 the total is 11. Verdict (false, MST = 9) is unaffected. Official text kept, flagged inside the solution.
-- Needed: nothing blocking; the step-author should use 11 (or avoid the number).
-- Status: note only (not held)
+- Question: the counterexample (DFS from c) lists tree edges cb and ab with total 13; with w(ab)=7 and w(cb)=4 the total is 11. Verdict (false, MST = 9) is unaffected. Intermediate slip: corrected silently to 11 in the solution (fix pass 2026-10-25), no student-facing label.
+- Needed: nothing.
+- Status: note only (not held); fixed and logged
 
 ### 25B-A Q3a(ii) - d = 5 or 6 also give an optimal-cost code
 - Page: solution p.8
@@ -171,5 +171,13 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Question: no solution source exists for this sitting; all 8 items are held with reason no-key. Q1 and Q3 print one point total per question (30 each), not per part.
 - Needed: route to the solver.
 - Status: resolved by solver, pending refuter (2026-10-24; all 8 items solved, checks in tools/verify/23B-C/solve_23BC.py). Q4 assumes c and d occur in S (frequency >= 1); with frequency 0 allowed, (0,7) would be one extra pair, noted in the solution.
+
+### Silent fixes of slips in official text (fix pass 2026-10-25)
+- 25A-A Q1a: the official Mid pseudocode had the "/2" missing in the two return rows, the second half of B printed as B[((k+l)-1/2)..l] instead of B[(k+l+1)/2..l] (like the A rows), unbalanced brackets, "l1", and the base case i=j listed after rows that already read A[(i+j-1)/2]. Corrected silently in the transcription; the corrected code equals the true median on 15000 random inputs (tools/verify/25A-A/q1a_fixed_check.py).
+- 22B-A Q4a: the official explanation matched P[1..i-1] to T[1..j-1]; the indices are swapped (it must be P[1..j-1] to T[1..i-1]). The recurrence is right. Corrected silently.
+- SAMP-1 Q3b/Q3d: the official text says the algorithm errs with probability "less than 1/2"; the worst case is exactly 1/2 (the proof gives "at most 1/2"). Text corrected to "at most 1/2".
+- 25B-A Q1a: official total 13 corrected to 11 (see above).
+- 25B-A Q4e (labelled correction, not silent): the question asks for the complexity of the whole DP algorithm that finds the subset; the official O(n) is only the reconstruction after C is built, so the shipped answer is O(n^2) time, O(n) space, solutionSource solved, official false.
+- 24A-A Q4b: the official line on the sheet (O(n^2), one-dimensional array) sits in the variant part about the algorithm that returns the boxes, i.e. the printed Q4c. Q4b is now a solver item; the official line is cited in a note on Q4c.
 
 ## Resolved

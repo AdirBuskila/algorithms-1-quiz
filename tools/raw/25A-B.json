@@ -91,8 +91,8 @@
      "explain": "$T(i,j)=0$ בדיוק כאשר $M[i][j]=1$, כלומר מספר התאים הללו שווה למספר האחדים ב-$M$."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 1,
@@ -173,8 +173,8 @@
      "explain": "בשורה של המקרה הכללי כתוב מקסימום במקום מינימום. למשל במטריצה $\\begin{pmatrix}0&0\\\\1&0\\end{pmatrix}$ מתקבל $T(1,1)=2$ ואילו הערך האמיתי הוא $1$."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 1,
@@ -239,8 +239,8 @@
      "explain": "הטבלה כולה נשמרת, כלומר $n\\cdot m$ תאים. (שמירה של שתי שורות בלבד מורידה את המקום, אבל הסעיף שואל על הטבלה.)"
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 2,
@@ -326,8 +326,8 @@
      "explain": "כל בלוק תלוי בקודמו: הערימה נבנית מהשכיחויות, הלולאה מרוקנת ממנה את המחיקות, והסריקה האחרונה משתמשת במונים r שהלולאה חישבה."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 2,
@@ -409,8 +409,8 @@
      "explain": "הכיוון הפוך: מחיקת $k$ איברים מוחקת לכל היותר $D_k$, ולכן ערך הפתרון הוא **לפחות** $\\text{value}(S)-D_k$ (חסם תחתון). בדיקה: לכל הפתרונות בקלטים אקראיים הערך לפחות החסם, ויש פתרונות שערכם גדול ממנו."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 3,
@@ -478,7 +478,7 @@
       }
      ],
      "correctId": "a",
-     "explain": "כל האיברים $L[i..|L|]$ גדולים מ-$R[j]$ והוא מופיע לפניו במערך המקורי, וזה בדיוק $|L|-i+1$ היפוכים. כל חלופה אחרת נכשלת על מערך קטן (נבדקו 800 מערכים עם כפילויות); האחרונה סופרת גם זוגות שווים, שאינם היפוך."
+     "explain": "כל האיברים $L[i..|L|]$ גדולים מ-$R[j]$ והוא מופיע לפניו במערך המקורי, וזה בדיוק $|L|-i+1$ היפוכים. כל חלופה אחרת נכשלת על מערך קטן (נבדקו 800 מערכים עם כפילויות); החלופה שמוציאה את $R[j]$ ראשון גם כשהאיברים שווים סופרת גם זוגות שווים, שאינם היפוך."
     },
     {
      "type": "numeric",
@@ -495,8 +495,8 @@
      "explain": "הזוגות: $(5,2)$, $(5,1)$, $(5,3)$, $(2,1)$, $(8,1)$, $(8,3)$, $(9,3)$, סה\\\"כ $7$. (נבדק גם באלגוריתם המיזוג.)"
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 3,
@@ -573,15 +573,15 @@
      "explain": "פתרון הנסיגה הוא $n\\log_2 n$ בדיוק לכל $n$ שהוא חזקת $2$ (נבדק), כלומר $\\Theta(n\\log n)$."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 4,
    "kind": "algorithm",
    "topic": "kmp_strings",
    "question": "הציעו אלגוריתם לינארי לפתרון הבעיה ללא שימוש בעצי סיפות או מערכי סיפות.",
-   "solution": "**פתרון** (אין פתרון רשמי לבחינה זו; הפתרון נכתב ונבדק במחשב):\n**רעיון:** חלון $T[i..i+m-1]$ \"כמעט תואם\" ל-$P$ אם ורק אם: נסמן $a$ = אורך הרישא המשותפת הארוכה ביותר של $P$ ושל $T[i..]$. אם $a\\ge m$ יש התאמה מלאה. אחרת $a$ הוא מיקום אי-ההתאמה הראשון, ונדרש שכל השאר יתאים: $P[a+1..m-1]=T[i+a+1..i+m-1]$, כלומר שהסיפא המשותפת של $P$ ושל $T[..i+m-1]$ תהיה באורך לפחות $m-1-a$.\nלכן מספיק לחשב לכל מקום בטקסט שני מספרים:\n- $pre[i]$ = אורך הרישא המשותפת הארוכה ביותר של $P$ ושל $T[i..n-1]$.\n- $suf[e]$ = אורך הסיפא המשותפת הארוכה ביותר של $P$ ושל $T[0..e]$.\n\nאת שניהם מחשבים בזמן לינארי עם **פונקציית Z** (אינה עץ סיפות או מערך סיפות): עבור מחרוזת $s$, $Z[k]$ הוא אורך הרישא המשותפת הארוכה ביותר של $s$ ושל $s[k..]$.\n```\nZ-Function(s, L):                    // indices 0..L-1\n  Z[0] <- L;  l <- 0;  r <- 0        // [l, r) = the matching window that reaches furthest right\n  for k <- 1 to L - 1:\n      if k < r:  Z[k] <- min(r - k, Z[k - l])\n      else:      Z[k] <- 0\n      while k + Z[k] < L and s[Z[k]] = s[k + Z[k]]:\n          Z[k] <- Z[k] + 1\n      if k + Z[k] > r:  l <- k;  r <- k + Z[k]\n  return Z\n\nAlmostMatch(T, n, P, m):             // # is a character that is not in T or in P\n  Z1 <- Z-Function(P + '#' + T)\n  Z2 <- Z-Function(reverse(P) + '#' + reverse(T))\n  for i <- 0 to n - 1:\n      pre[i] <- Z1[m + 1 + i]\n      suf[i] <- Z2[m + 1 + (n - 1 - i)]\n  for i <- 0 to n - m:\n      if pre[i] >= m  or  pre[i] + suf[i + m - 1] >= m - 1:\n          output i + 1               // positions are 1-based in the question\n```\n**למה זה נכון:** בגלל התו `#` ההתאמה לא יכולה \"לעבור\" אותו, ולכן $Z1[m+1+i]$ הוא בדיוק $pre[i]$ (לכל היותר $m$). היפוך שתי המחרוזות הופך סיפא משותפת לרישא משותפת: $T[0..e]$ הפוך מתחיל במקום $n-1-e$ של $T$ ההפוך, ולכן $Z2[m+1+(n-1-e)]=suf[e]$. התנאי בלולאה האחרונה הוא בדיוק התנאי שבתחילת הפתרון.\nבתוך $Z$-Function: אם $k<r$ אז $s[k..r-1]=s[k-l..r-l-1]$, ולכן לפחות $\\min(r-k,Z[k-l])$ תווים תואמים כבר ידועים, ולולאת ה-while רק ממשיכה מהם.\n**דוגמה:** $P=$`aababa`, $T=$`aaaaba`: $pre[0]=2$ (אי-התאמה במקום $2$), $suf[5]=3$ (`aba`), ו-$2+3\\ge 5$, ולכן מיקום $1$ מדווח.",
+   "solution": "**פתרון** (אין פתרון רשמי לבחינה זו; הפתרון נכתב ונבדק במחשב):\n**רעיון:** חלון $T[i..i+m-1]$ \"כמעט תואם\" ל-$P$ אם ורק אם: נסמן $a$ = אורך הרישא המשותפת הארוכה ביותר של $P$ ושל $T[i..]$. אם $a\\ge m$ יש התאמה מלאה. אחרת $a$ הוא מיקום אי-ההתאמה הראשון, ונדרש שכל השאר יתאים: $P[a+1..m-1]=T[i+a+1..i+m-1]$, כלומר שהסיפא המשותפת של $P$ ושל $T[..i+m-1]$ תהיה באורך לפחות $m-1-a$.\nלכן מספיק לחשב לכל מקום בטקסט שני מספרים:\n- $pre[i]$ = אורך הרישא המשותפת הארוכה ביותר של $P$ ושל $T[i..n-1]$.\n- $suf[e]$ = אורך הסיפא המשותפת הארוכה ביותר של $P$ ושל $T[0..e]$.\n\nאת שניהם מחשבים בזמן לינארי עם **פונקציית Z** (אינה עץ סיפות או מערך סיפות): עבור מחרוזת $s$, $Z[k]$ הוא אורך הרישא המשותפת הארוכה ביותר של $s$ ושל $s[k..]$.\n```\nZ-Function(s, L):                    // indices 0..L-1\n  Z[0] <- L;  l <- 0;  r <- 0        // [l, r) = the matching window that reaches furthest right\n  for k <- 1 to L - 1:\n      if k < r:  Z[k] <- min(r - k, Z[k - l])\n      else:      Z[k] <- 0\n      while k + Z[k] < L and s[Z[k]] = s[k + Z[k]]:\n          Z[k] <- Z[k] + 1\n      if k + Z[k] > r:  l <- k;  r <- k + Z[k]\n  return Z\n\nAlmostMatch(T, n, P, m):             // # is a character that is not in T or in P\n  Z1 <- Z-Function(P + '#' + T)\n  Z2 <- Z-Function(reverse(P) + '#' + reverse(T))\n  for i <- 0 to n - 1:\n      pre[i] <- Z1[m + 1 + i]\n      suf[i] <- Z2[m + 1 + (n - 1 - i)]\n  for i <- 0 to n - m:\n      if pre[i] >= m  or  pre[i] + suf[i + m - 1] >= m - 1:\n          output i + 1               // positions are 1-based in the question\n```\n**למה זה נכון:** בגלל התו `#` ההתאמה לא יכולה \"לעבור\" אותו, ולכן $Z1[m+1+i]$ הוא בדיוק $pre[i]$ (לכל היותר $m$). היפוך שתי המחרוזות הופך סיפא משותפת לרישא משותפת: $T[0..e]$ הפוך מתחיל במקום $n-1-e$ של $T$ ההפוך, ולכן $Z2[m+1+(n-1-e)]=suf[e]$. התנאי בלולאה האחרונה הוא בדיוק התנאי שבתחילת הפתרון.\nבתוך $Z$-Function: אם $k<r$ אז $s[k..r-1]=s[k-l..r-l-1]$, ולכן לפחות $\\min(r-k,Z[k-l])$ תווים תואמים כבר ידועים, ולולאת ה-while רק ממשיכה מהם.\n**דוגמה:** $P=$`aababa`, $T=$`aaaaba`: $pre[0]=2$ (אי-התאמה במקום $2$), $suf[5]=3$ (`aba`), ו-$2+3\\ge 5$, ולכן מיקום $1$ מדווח.\n\n**דרך נוספת בכלים של הקורס (פונקציית הרישא $\\pi$ של KMP):** את $Z1$ ואת $Z2$ אפשר לקבל גם מפונקציית הרישא $\\pi$ של $P\\#T$ ושל ההפוכות שלהן, שמחשבים בדיוק כמו ב-KMP, בעזרת המרה לינארית מ-$\\pi$ ל-$Z$:\n```\nZ-From-Pi(pi, L):                    // indices 0..L-1\n  for k <- 0 to L - 1:  Z[k] <- 0\n  for k <- 1 to L - 1:\n      if pi[k] > 0:  Z[k - pi[k] + 1] <- pi[k]\n  Z[0] <- L;  i <- 1\n  while i < L:\n      t <- i\n      if Z[i] > 0:\n          for j <- 1 to Z[i] - 1:\n              if Z[i + j] > Z[j]:  break\n              Z[i + j] <- min(Z[j], Z[i] - j)\n              t <- i + j\n      i <- t + 1\n  return Z\n```\nשאר האלגוריתם (חישוב $pre$ ו-$suf$ והתנאי בלולאה האחרונה) זהה. ההמרה והאלגוריתם השלם נבדקו בכוח גס על מחרוזות אקראיות (tools/verify/25A-B/pi_variant_q4.py).",
    "solutionSource": "solved",
    "official": false,
    "confidence": "high",
@@ -659,8 +659,8 @@
      "explain": "חסר החסם `min(r - k, ...)`: הערך שמועתק מ-$Z[k-l]$ יכול לעבור את $r$, הקצה הידוע של ההתאמה. הגרסה הזו נותנת פלט שגוי על מחרוזות קצרות מעל שתי אותיות (נבדק)."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 4,
@@ -741,8 +741,8 @@
      "explain": "שתי המחרוזות המשורשרות, שני מערכי $Z$ ושני המערכים $pre,suf$ הם כולם בגודל $O(n+m)=O(n)$ (כי $m<n$)."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 5,
@@ -816,8 +816,8 @@
      "explain": "הצביעה מתבססת על המרחקים שה-BFS מחשב, והבדיקה מתבססת על הצביעה."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 5,
@@ -904,8 +904,8 @@
      "explain": "עם מונה שמור קוראים את האורך מבלי לעבור על הרשימה. מיון או BFS אינם מקצרים את הספירה, ומעבר לעץ אינו מתאים לגרף כללי."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   },
   {
    "num": 5,
@@ -975,8 +975,8 @@
      "explain": "התור מתרוקן בכל ריצה, גם בגרף לא קשיר (למעלה: 3 מתוך 7 קודקודים). רק ביקור בכולם מעיד על קשירות."
     }
    ],
-   "rubricSource": "ai-draft",
-   "stepsSource": "ai-draft"
+   "rubricSource": "ai-verified",
+   "stepsSource": "ai-verified"
   }
  ]
 }
