@@ -1,0 +1,309 @@
+{
+ "examCode": "26A-B",
+ "refuter": "blind re-solve + scripts tools/verify/26A-B/refute_*",
+ "items": [
+  {
+   "item": "1א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "1ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree-with-note",
+     "note": "Prompt says 'הפתרון הרשמי' but the solution is solver-written (official:false)."
+    },
+    {
+     "step": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 3,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "1ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "2א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "findbug",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "2ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "3א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "order",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "3ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "findbug",
+     "verdict": "agree"
+    }
+   ],
+   "notes": [
+    "Solution cites 'מסעיף א'' by position; make self-contained."
+   ]
+  },
+  {
+   "item": "3ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree-with-note",
+     "note": "Prompt says 'הפתרון הרשמי' but the solution is solver-written."
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 3,
+     "type": "order",
+     "verdict": "agree"
+    }
+   ],
+   "notes": [
+    "Solution cites '(סעיף א')' by position; make self-contained."
+   ]
+  },
+  {
+   "item": "4",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 3,
+     "type": "findbug",
+     "verdict": "agree"
+    },
+    {
+     "step": 4,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ],
+   "notes": [
+    "pivot-shrink: correct (random+adversarial tests, all k, duplicates) and O(n) (work/n max 2.35); |L|,|R|<=3N/4+1 holds; terminates since p is excluded from L and R. k<n/2 not needed."
+   ]
+  },
+  {
+   "item": "5א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "5ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "choice",
+     "verdict": "disagree",
+     "note": "DISAGREE: distractor c, (aab)^{n/3}, also gives 0 backtrack-loop runs under the standard CLRS KMP (q reset to pi[m] after a match), so two options are correct. Explanation 'the other texts are linear' is false for c. Only the lazy variant gives 9."
+    }
+   ]
+  },
+  {
+   "item": "5ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ]
+  }
+ ]
+}

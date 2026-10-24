@@ -1,0 +1,220 @@
+{
+ "examCode": "25A-C",
+ "refuter": "blind re-solve + scripts tools/verify/25A-C/refute_*",
+ "items": [
+  {
+   "item": "1א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 3,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "1ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "2א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 3,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ],
+   "notes": [
+    "Exam page prints no points for Q2a; Q1,Q3,Q4 = 25 each and Q2b = 10, so 15 (total 25) is an inference, not printed (the item has no points key; rubric sums to 15). Pages 1-4 only, no cover with a total."
+   ]
+  },
+  {
+   "item": "2ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree-with-note",
+     "note": "Prompt says 'הפתרון הרשמי' but the solution is solver-written."
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "order",
+     "verdict": "agree"
+    },
+    {
+     "step": 3,
+     "type": "findbug",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "3א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "fillblank",
+     "verdict": "agree"
+    },
+    {
+     "step": 3,
+     "type": "findbug",
+     "verdict": "agree"
+    }
+   ],
+   "notes": [
+    "Solution states distinct values assumption (first line). Verified: algorithm correct on 2000 random rotations x all targets; fillblank option c is the only correct one; bug variant fails; max calls n=1000 is 11."
+   ]
+  },
+  {
+   "item": "3ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": [
+    "Solution notes distinctness is needed; ok."
+   ]
+  },
+  {
+   "item": "4א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "4ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "step": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "step": 1,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "step": 2,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ]
+  }
+ ]
+}
