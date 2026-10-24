@@ -1,0 +1,54 @@
+{
+ "examCode": "23A-A",
+ "refuter": "blind re-derivation; script tools/verify/23A-A/refute_all.py",
+ "items": {
+  "1a": {
+   "verdict": "agree",
+   "note": "M recurrence incl. boundaries matches brute force on 300 random arrays; example 15, M(3,2)=14",
+   "steps": "agree"
+  },
+  "1b": {
+   "verdict": "agree",
+   "note": "Theta(n^2) time, Theta(n^2) space (path reconstruction)"
+  },
+  "1c": {
+   "verdict": "agree",
+   "note": "Theta(n^2) time, Theta(n) extra space (two rows); 55 cells for n=10"
+  },
+  "2a": {
+   "verdict": "agree",
+   "note": "single suffix tree of S1$S2* then cut leaf edges after $; marking by union; findbug bugIndex 2 (union vs intersection) correct"
+  },
+  "2b": {
+   "verdict": "disagree",
+   "first_divergence": "Solution text never names the answers for the example S1=BADAEAT,S2=CAEADAS. Brute force: longest common substrings have length 3 and are exactly {ADA, AEA}.",
+   "correction": "Add to the solution a worked example line: 'בדוגמה אורך המשותפת הארוכה ביותר הוא 3, ויש שתי תשובות נכונות: ADA ו-AEA (שני צמתים מסומנים \"שתיהן\" בעומק 3); האלגוריתם מחזיר אחת מהן, לפי סדר הסריקה.' The step already accepts both ADA and AEA and says 'יש יותר מאחת', so only the solution text needs the fix. Algorithm itself is correct.",
+   "steps": "agree (length 3; accept ADA/AEA; order; O(n))"
+  },
+  "3a": {
+   "verdict": "agree",
+   "note": "definitions correct"
+  },
+  "3b": {
+   "verdict": "agree",
+   "note": "(1-p)p, p(1-p), p^2, (1-p)^2; p=1/4 values 0.1875, 0.5625 correct"
+  },
+  "3c": {
+   "verdict": "agree",
+   "note": "pair-toss Las Vegas; simulation p=0.3: outputs 99969/100031, mean rounds 2.383 vs 1/(2p(1-p))=2.381; p=1/4 -> 3/8 and 16/3 tosses correct"
+  },
+  "4a": {
+   "verdict": "agree",
+   "note": "greedy largest-first matches min-coin DP for K<=5, W<400; example W=35 -> 3 items; W=137,P=(125,25,5,1) -> 5"
+  },
+  "4b": {
+   "verdict": "agree",
+   "note": "lemma (<=4 of each lighter type), 4*(P_{j+1}+..+P_K)=P_j-1 (124 for P_j=125), greedy choice and substructure valid; findbug bugIndex 0 correct"
+  },
+  "5": {
+   "verdict": "agree",
+   "note": "bonus. Greedy set cover H(n) proof valid; step example gives 3 sets (opt 2); empirical worst ratio 1.5 <= H(n) on 300 random instances"
+  }
+ },
+ "option_text_positional_check": "clean: occurrences of 'שורה' are table rows or 'one line changed', not positional citations."
+}
