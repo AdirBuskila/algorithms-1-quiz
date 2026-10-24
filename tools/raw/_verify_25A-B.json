@@ -1,0 +1,132 @@
+{
+ "examCode": "25A-B",
+ "method": "blind solve + brute force (verify/25A-B/refute_25AB.py, refute_zbug.py)",
+ "items": {
+  "1a": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "T matrix matches brute force; 11 zeros confirmed"
+  },
+  "1b": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "recurrence + both-direction proof correct; all 3 distractor counterexamples valid"
+  },
+  "1c": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ]
+  },
+  "2a": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "greedy = brute force on 2000 strings; abracadabra k=3 -> 14. Heap-op bound 'O(log k)' is loose (heap <=26) but fine"
+  },
+  "2b": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "W-multiset lower-bound proof is valid; findbug line 2 correct"
+  },
+  "3a": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "flag": "step 1 explain says 'האחרונה סופרת גם זוגות שווים', citing option e by position; reword"
+  },
+  "3b": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ]
+  },
+  "4a": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "Z-function pseudocode and pre/suf condition (pre>=m or pre+suf>=m-1) match brute force on 20000 random pairs; example aababa/aaaaba ok; findbug buggy variant (no min) differs from truth on ~30% of random strings. Z is not taught: consider offering the prefix-function (KMP) version instead or marking it as extra"
+  },
+  "4b": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "linear-time proof sound (7 successful compares on a^8 confirmed; successes<=L on random). Minor: r is only updated after the while loop, so 'each success raises r by 1' is really a potential argument on k+Z[k]; acceptable"
+  },
+  "5a": {
+   "solution": "agree",
+   "verdict": "false agree",
+   "rubric": "agree",
+   "steps": [
+    "agree",
+    "agree"
+   ]
+  },
+  "5b": {
+   "solution": "agree",
+   "verdict": "false (CLRS) agree, but debatable",
+   "rubric": "agree",
+   "steps": [
+    "agree",
+    "agree"
+   ],
+   "note": "Under CLRS linked-list Adj[u] counting is Theta(deg). Answer would be true if the list stores length or a degree array exists; the הערה says so and is visible. Flag as ambiguous but consistent with the ruling"
+  },
+  "5c": {
+   "solution": "agree",
+   "verdict": "true agree",
+   "rubric": "agree",
+   "steps": [
+    "agree",
+    "agree"
+   ]
+  }
+ },
+ "option_text": "one positional citation (Q3a step 1 explain, 'האחרונה'); otherwise none"
+}

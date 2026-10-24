@@ -1,0 +1,95 @@
+{
+ "examCode": "23B-C",
+ "method": "blind solve + brute force (verify/23B-C/refute_23BC.py)",
+ "items": {
+  "1a": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "no P over alphabet 5 gives 0,1,2,3,1 (brute force)"
+  },
+  "1b": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "SA=[7,1,5,3,8,2,6,4]; tree 5 root edges al/go/l/o/$, 9 leaves, 4 internal non-root; LCP=[0,2,0,2,0,1,0,1]"
+  },
+  "2a": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "max(Kadane, total+Kadane(-A)) with all-negative guard; 20000 random arrays vs brute force. Pitfall 3 wording 'כמעט לינארית' is odd (cosmetic)"
+  },
+  "2b": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ]
+  },
+  "3a": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ]
+  },
+  "3b": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "table R 14,13,21 / B 2,25,10 / G 11,7,32; min 10; unique optimum B,G,B"
+  },
+  "3c": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree"
+   ]
+  },
+  "4": {
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "note": "exhaustive Huffman over every tie-break order: exactly the 13 stored pairs (1,6),(1,7),(2,5),(2,6),(2,7),(3,4),(3,5),(3,6),(3,7),(4,4),(4,5),(4,6),(5,5); with freq 0 allowed adds only (0,7). Conditions c<=d, 7<=c+d<=10, d<=7 confirmed.",
+   "flag": "solution has NO visible 'הערה:' that a fixed tie-break rule changes the count, as required by Rulings 2026-10-24"
+  }
+ },
+ "rubric_splits": "Exam: Q1=30 (2 parts, no split), Q2=40 (25+15 explicit), Q3=30 (3 parts, no split), Q4=10. Author's Q1 10+20 and Q3 15+10+5 are invented but reasonable (suffix tree+array and formula+justification are the heavy parts); label them as estimates.",
+ "option_text": "no option cites a sibling option by position"
+}
