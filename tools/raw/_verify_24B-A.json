@@ -1,0 +1,69 @@
+{
+ "examCode": "24B-A",
+ "refuter": "blind re-derivation; script tools/verify/24B-A/refute_a.py",
+ "items": {
+  "1a": {
+   "verdict": "agree",
+   "note": "False; two triangles; exhaustive search over simple graphs n<=7 finds counterexamples",
+   "steps": "agree"
+  },
+  "1b": {
+   "verdict": "agree",
+   "note": "False; exhaustive search finds 5v/5e graph (K4 minus an edge plus isolated vertex): BFS from 0 gives 3 edges = DFS forest 3; steps d[3]=2, 3, 3 verified",
+   "steps": "agree"
+  },
+  "1c": {
+   "verdict": "agree",
+   "note": "True; exhaustive search n<=7 finds no counterexample; official proof valid (min component, |E| nonzero); bugIndex 2 correct; sizes 4,3 -> 5",
+   "steps": "agree"
+  },
+  "2a": {
+   "verdict": "agree",
+   "note": "Not unique; [4,9,16] valid; min is 3 stations (2 impossible, brute force); 189 integer 3-station solutions; step choice a unique correct",
+   "steps": "agree"
+  },
+  "2b": {
+   "verdict": "agree",
+   "note": "Greedy x1+D, open when xi-D>C[J]; optimal vs brute force on 500 random cases; run gives [4,12,19]; fillblank index 2, option a unique right",
+   "steps": "agree"
+  },
+  "2c": {
+   "verdict": "agree",
+   "note": "Exchange proof correct in structure. Small gap: it assumes b_{i+1} covers x_{m+1}; true because otherwise b_{i+1} covers nothing new and OPT would not be minimal. Steps and bugIndex 1 agree.",
+   "steps": "agree"
+  },
+  "3a": {
+   "verdict": "agree (solution); pitfall 2 disagree",
+   "note": "Yes; 1,1,2,2,2 gives the code under a tie-break; cost 18; sum 2^-len = 1; option a ('00,01,10,110') is the only non-full code.",
+   "steps": "agree",
+   "first_divergence": "Pitfall 2 says equal frequencies yield another tree; but 1,1,1,1,1 itself produces exactly lengths 2,2,2,3,3 (brute force, shape forced)."
+  },
+  "3b": {
+   "verdict": "agree",
+   "note": "False; bridge heavier edge forced into MST; Kruskal weight 14; 3 MSTs",
+   "steps": "agree"
+  },
+  "4a": {
+   "verdict": "agree",
+   "note": "C(i)=min(C(i-1),C(i/2),C(i/3))+1, inf when non-integer, C(1)=0; matches BFS to K=200; C(10)=3; C(7/2)=inf. Option b is the second solution's definition but the prompt scopes to the first: ok",
+   "steps": "agree"
+  },
+  "4b": {
+   "verdict": "agree",
+   "note": "O(K) time and space, pseudo-polynomial; 1023 needs 10 bits",
+   "steps": "agree"
+  },
+  "4c": {
+   "verdict": "agree",
+   "note": "Table 0,1,1,2,3,2,3 (C(1..7)); C(7) depends on C(6) only",
+   "steps": "agree"
+  },
+  "5": {
+   "verdict": "agree",
+   "note": "BONUS false confirmed. Page 13 prints 6 8 2 4 7 1 9 5 3; true suffix array of BANANABAN is 6 8 4 2 7 1 9 5 3 (ANABAN < ANANABAN); third element 4",
+   "steps": "agree"
+  }
+ },
+ "option_position_check": "No option text cites an option by position. Positional: Q4a step 1 'the first official solution'.",
+ "summary": "12 items, 0 verdict disagreements; 1 pitfall disagreement (3a pitfall 2); note on 2c gap."
+}

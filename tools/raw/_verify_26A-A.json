@@ -1,0 +1,73 @@
+{
+ "examCode": "26A-A",
+ "refuter": "blind re-derivation; scripts tools/verify/26A-A/refute_a.py refute_b.py refute_q4.c refute_positional.py",
+ "items": {
+  "1a": {
+   "verdict": "agree",
+   "note": "[10] -> 0 (brute force)",
+   "steps": "agree"
+  },
+  "1b": {
+   "verdict": "agree",
+   "note": "T(i)=A[i]+min(T(i-1),T(i-2)), T(i<0)=0, answer min(T(n-1),T(n-2)); brute force on 2000 random arrays; both examples 12 and 22",
+   "steps": "agree"
+  },
+  "1c": {
+   "verdict": "agree",
+   "note": "Theta(n) time; Theta(1) value-only, Theta(n) with reconstruction",
+   "steps": "agree"
+  },
+  "2a": {
+   "verdict": "agree",
+   "note": "False confirmed (random complete graphs with Kruskal; K4 AB=1,CD=2,BC=3,AC=4,BD=5,AD=6; MST weight 6, 2 special edges). NOTE: the question asks for a counterexample with arbitrarily many vertices; the official gives only n=4 and the item has no general family. A family exists: even n>=4, matching edges lightest, all others heavier; the lightest non-matching MST edge is not special (checked n=4..20). Suggest one added sentence.",
+   "steps": "agree"
+  },
+  "2b": {
+   "verdict": "agree",
+   "note": "True confirmed: special edge always in the unique MST (5000 random complete graphs); both official proofs sound; bugIndex 2 correct",
+   "steps": "agree"
+  },
+  "3a": {
+   "verdict": "agree",
+   "note": "All tie-breaks enumerated: cost always 219; exactly 2 length vectors (b length 2 or 3, g 4 or 3, c/e 5 or 4). Official code is one of them (prefix-free, cost 219). No step requires one specific code: steps check merge weights 7 and 15, cost 219 and f length 3 (f=3, a=d=2 in every optimal code, brute force over all Kraft-complete length vectors). Both 15/15 merges legal. Optional: the solution shows one code with no visible 'הערה:' about tie-breaks.",
+   "steps": "agree"
+  },
+  "3b": {
+   "verdict": "agree",
+   "note": "Frequencies 2^(h-d) realise every full tree up to n=7 (196 trees) as a Huffman tree under some tie-break. Gap in solution and rubric: 'Huffman folds layer by layer and merges only siblings' holds only for a suitable tie-break (equal-weight non-sibling nodes exist); the statement 'one of the Huffman trees' makes it fine, a qualifier would be better.",
+   "steps": "agree"
+  },
+  "4a": {
+   "verdict": "agree",
+   "note": "[3,5,9,10,11,12], k=2 -> 2",
+   "steps": "agree"
+  },
+  "4b": {
+   "verdict": "agree",
+   "note": "Binary search on A[i]-(i+1)>=k, return low+k; 3000 random cases; official C compiled with clang: k=3 prints 4, example gives 9, 0 mismatches vs naive. fillblank blank index 12 has unique right option; findbug '<=' at index 6 gives 7 instead of 6 on [2,3,4,7,11], k=3",
+   "steps": "agree"
+  },
+  "4c": {
+   "verdict": "agree",
+   "note": "O(log n); max 11 iterations for n=1024 (simulated)",
+   "steps": "agree"
+  },
+  "5a": {
+   "verdict": "agree",
+   "note": "False; ABB pi=0,0,0; AAB and ABA nonzero; ABC has no repeat",
+   "steps": "agree"
+  },
+  "5b": {
+   "verdict": "agree",
+   "note": "True; one failure on a^6 vs aaaaab descends 5 times",
+   "steps": "agree"
+  },
+  "5c": {
+   "verdict": "agree",
+   "note": "False; 140 comparisons (T length 26, P length 7: 20 shifts x 7)",
+   "steps": "agree"
+  }
+ },
+ "option_position_check": "No option text cites an option by position. Sub-part or solution-version positional citations (low severity): Q2b step 4 prompt cites the sub-part 'א' and its explain cites 'ב'; Q1b step 1 cites 'the first official solution'; Q2b/Q3b steps cite 'proof 1'.",
+ "summary": "13 items, 0 verdict disagreements; notes: 2a arbitrary-n gap, 3b tie qualifier, positional cites."
+}

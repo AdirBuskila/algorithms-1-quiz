@@ -1,0 +1,80 @@
+{
+ "examCode": "25B-A",
+ "refuter": "blind re-derivation; scripts tools/verify/25B-A/refute_a.py refute_b.py",
+ "items": {
+  "1a": {
+   "verdict": "agree",
+   "note": "False confirmed (triangle counterexample; random graphs 1371/2000 not MST). RULING 11, not 13: page 2 of the official PDF (rendered) shows ab=7, ac=5, bc=4 and the official text itself prints 13; 4+7=11; MST 4+5=9. So 13 is an official arithmetic error, not a transcription slip: the item label 'הערת תמלול' is slightly misleading. Step (11), pitfall and kruskal 9 agree; start vertex c is the only failing start.",
+   "steps": "agree"
+  },
+  "1b": {
+   "verdict": "agree",
+   "note": "True (random graph brute force); proof sound; bugIndex 3 correct",
+   "steps": "agree"
+  },
+  "2a": {
+   "verdict": "agree",
+   "note": "Not unique; all four optimal sets enumerated; step choice a unique correct",
+   "steps": "agree"
+  },
+  "2b": {
+   "verdict": "agree",
+   "note": "Sort ascending, take while sum<=K, O(n log n); verified on 3000 random cases; fillblank option a unique",
+   "steps": "agree"
+  },
+  "2c": {
+   "verdict": "agree",
+   "note": "Both versions valid; bugIndex 1 correct",
+   "steps": "agree"
+  },
+  "3a": {
+   "verdict": "agree",
+   "note": "e=11; sum of 2^-len = 0.75",
+   "steps": "agree"
+  },
+  "3b": {
+   "verdict": "agree",
+   "note": "d=7 confirmed. Enumerating ALL tie-break orders: exact code obtainable for d=7 only (within d<=7) and not for d=1..6. d=5 and d=6 give an optimal-cost code of that shape (cost 55, 57 = Huffman cost) but no tie-break of Huffman builds it (c and d are the two smallest after b+a merge). With left<=right, d<=7, so d=7 is the only value, consistent with the tie ruling. Without the convention d=8..12 would also be buildable.",
+   "steps": "agree"
+  },
+  "3c": {
+   "verdict": "agree",
+   "note": "pi = 0 0 1 2 0 1 1 1 2 3 4 3 (brute force and prefix function)",
+   "steps": "agree"
+  },
+  "3d": {
+   "verdict": "agree",
+   "note": "4 comparisons against P positions 12,5,3,1 (simulated)",
+   "steps": "agree"
+  },
+  "4a": {
+   "verdict": "agree",
+   "note": "C(i) = largest division-closed subset with A[i] as maximum; C(6)=3",
+   "steps": "agree"
+  },
+  "4b": {
+   "verdict": "agree",
+   "note": "Formula verified by brute force; second option (minimum) also correct; max_i C(i)",
+   "steps": "agree"
+  },
+  "4c": {
+   "verdict": "agree",
+   "note": "O(n^2) time, O(n) space; 36 checks for n=9",
+   "steps": "agree"
+  },
+  "4d": {
+   "verdict": "agree",
+   "note": "C = 1 2 2 3 2 3 4 3 2, max 4 ({1,2,4,8}, unique)",
+   "steps": "agree"
+  },
+  "4e": {
+   "verdict": "disagree",
+   "note": "Space O(n) agrees. Time: the question asks the complexity of the DP algorithm that finds the subset; total is O(n^2) (building C) with O(n) only for the reconstruction increment. Solution, rubric and steps state only O(n) after building C and pitfall 1 treats O(n^2) as wrong.",
+   "steps": "reconstruction-after-C O(n) step agrees; steps never ask for the total",
+   "first_divergence": "Solution gives O(n) for the algorithm; correct total is O(n^2)",
+   "correction": "State total Theta(n^2) with O(n) reconstruction as an additional term; fix pitfall 1."
+  }
+ },
+ "option_position_check": "No option text cites an option or sub-part by position (only the exam's own labels in question stems).",
+ "summary": "14 items, 13 agree, 1 disagree (4e total time)."
+}
