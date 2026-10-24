@@ -62,10 +62,11 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 ### 25A-C Q2a - points not printed
 - Page: 2
 - Question: Q2a has no printed points (Q2b prints 10) and the Q2 header has no total. Omitted, not inferred.
-- Status: note only; the whole sitting is held no-key
+- Status: note only; the sitting (all 8 items) is resolved by solver, pending refuter
 
 ### 26A-B, 26B-A, 25A-C - no answer source
 - Question: all items held "no-key" for the solver. 26B-A is the new choose-2-of-3 form (Q3 and Q4 parts, items per part). Reference facts (not an official key) are printed by tools/verify/26B-A/checks.py.
+- 26A-B (12 items) and 25A-C (8 items): resolved by solver, pending refuter (2026-10-24). Checks: tools/verify/26A-B/solve_all.py, tools/verify/25A-C/solve_all.py. 25A-C transcription re-verified against the page renders (Q1a answer skeleton has four cases, not three; fixed). 25A-C Q3 assumes distinct values (as in the example).
 - Status: hold (no-key)
 
 ### 25A-A Q1c - official answer returns the average, not the r-th smallest

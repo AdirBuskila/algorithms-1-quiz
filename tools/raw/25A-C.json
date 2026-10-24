@@ -31,80 +31,104 @@
    "num": 1,
    "kind": "algorithm",
    "topic": "dp_sequences",
-   "question": "(15 נקודות) בהינתן שתי סדרות $S_1$ ו-$S_2$ באורך $i$ ו-$j$ בהתאמה, הציגו נוסחה רקורסיבית לחישוב של המרחק של היישור האופטימלי בין $S_1$ ו-$S_2$.\n$$OPT(i,j)=\\begin{cases}\\ldots\\\\ \\ldots\\\\ \\ldots\\end{cases}$$",
-   "hold": "no-key",
+   "question": "(15 נקודות) בהינתן שתי סדרות $S_1$ ו-$S_2$ באורך $i$ ו-$j$ בהתאמה, הציגו נוסחה רקורסיבית לחישוב של המרחק של היישור האופטימלי בין $S_1$ ו-$S_2$.\n$$OPT(i,j)=\\begin{cases}\\ldots\\\\ \\ldots\\\\ \\ldots\\\\ \\ldots\\end{cases}$$",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "points": 15,
    "part": "א",
-   "contextId": "c1"
+   "contextId": "c1",
+   "solution": "נגדיר $OPT(i,j)$ = המרחק של היישור האופטימלי בין הרישא $S_1[1..i]$ לרישא $S_2[1..j]$. כל עמודה ביישור היא אחת משלוש: תו מול תו, תו של $S_1$ מול '-', או '-' מול תו של $S_2$. תו מול '-' תמיד שונה, ולכן עולה 1 (כמו בדוגמה, עמודה 6).\n$$OPT(i,j)=\\begin{cases}j & i=0\\\\ i & j=0\\\\ OPT(i-1,j-1) & i,j>0,\\ S_1[i]=S_2[j]\\\\ 1+\\min\\bigl\\{OPT(i-1,j-1),\\ OPT(i-1,j),\\ OPT(i,j-1)\\bigr\\} & i,j>0,\\ S_1[i]\\neq S_2[j]\\end{cases}$$\n**משמעות:** מסתכלים על העמודה האחרונה של יישור אופטימלי.\n- אם רישא אחת ריקה, כל התווים של השנייה עומדים מול '-', ולכן המרחק הוא אורכה ($j$ או $i$).\n- $S_1[i]$ מול $S_2[j]$: עלות $0$ אם הם שווים ו-$1$ אחרת, ועוד $OPT(i-1,j-1)$.\n- $S_1[i]$ מול '-': עלות $1$ ועוד $OPT(i-1,j)$.\n- '-' מול $S_2[j]$: עלות $1$ ועוד $OPT(i,j-1)$.\nכשהתווים שווים אין צורך להשוות לשתי האפשרויות האחרות: $OPT(i-1,j-1)\\le OPT(i-1,j)+1$ ו-$OPT(i-1,j-1)\\le OPT(i,j-1)+1$ (מחיקת תו אחד מקלט משנה את המרחק לכל היותר ב-1), ולכן ההתאמה החינמית היא הטובה ביותר.\nהתשובה היא $OPT(n_1,n_2)$. עבור הדוגמה מתקבל $OPT(8,8)=2$, כמו ביישור המודפס.\n(עמודה של '-' מול '-' אינה משתלמת: היא לא משנה את המרחק, ולכן אפשר להניח שאין כזו.)"
   },
   {
    "num": 1,
    "kind": "computation",
    "topic": "dp_sequences",
    "question": "(10 נקודות) מהי סיבוכיות זמן הריצה של אלגוריתם תכנון דינמי המבוסס על הנוסחה שכתבתם בסעיף א', ומהי סיבוכיות המקום שלו לחישוב המרחק של היישור האופטימלי בין $S_1$ ו-$S_2$?\nאין צורך לפרט את האלגוריתם עצמו.",
-   "hold": "no-key",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "points": 10,
    "part": "ב",
-   "contextId": "c1"
+   "contextId": "c1",
+   "solution": "**זמן:** הטבלה בגודל $(n_1+1)\\times(n_2+1)$, וכל תא מחושב בזמן $O(1)$ משלושה תאים שכבר חושבו (מילוי שורה אחרי שורה). סה\\\"כ $O(n_1n_2)$.\n**מקום:** $O(n_1n_2)$ אם שומרים את כל הטבלה (נדרש כדי לשחזר את היישור עצמו). לחישוב המרחק בלבד מספיקות שתי שורות, כי שורה $i$ תלויה רק בשורה $i-1$ ובתא הקודם בשורה הנוכחית, ולכן מקום $O(\\min\\{n_1,n_2\\})$ (נבחר את הסדרה הקצרה כממד השורה)."
   },
   {
    "num": 2,
    "kind": "algorithm",
    "topic": "greedy",
    "question": "כתבו אלגוריתם חמדני לפתרון הבעיה.",
-   "hold": "no-key",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "part": "א",
-   "contextId": "c2"
+   "contextId": "c2",
+   "solution": "(מניחים משקלים חיוביים, $Wt[i]>0$.)\n**רעיון חמדני:** לוקחים קודם את הפריטים עם הערך הגבוה ביותר לכל יחידת משקל, $\\frac{Val[i]}{Wt[i]}$.\n```\nFRACTIONAL_KNAPSACK(Val[1..n], Wt[1..n], capacity):\n    sort the items by Val[i]/Wt[i] in decreasing order\n    total <- 0 ; room <- capacity\n    for each item i in that order:\n        if room = 0: break\n        take <- min(Wt[i], room)          // the whole item, or the part that fits\n        total <- total + Val[i] * take / Wt[i]\n        room <- room - take\n    return total\n```\nבדוגמה היחסים הם $6,5,4$: לוקחים את הפריט הראשון והשני במלואם ו-$20$ מתוך $30$ ק\\\"ג של השלישי, $240$.\n**זמן ריצה:** $O(n\\log n)$ למיון ו-$O(n)$ למעבר, סה\\\"כ $O(n\\log n)$."
   },
   {
    "num": 2,
    "kind": "proof",
    "topic": "greedy",
    "question": "(10 נקודות) הוכחו את נכונות הפתרון שהצגת בסעיף א'.",
-   "hold": "no-key",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "points": 10,
    "part": "ב",
-   "contextId": "c2"
+   "contextId": "c2",
+   "solution": "נסדר את הפריטים כך ש-$\\frac{Val[1]}{Wt[1]}\\ge\\frac{Val[2]}{Wt[2]}\\ge\\cdots\\ge\\frac{Val[n]}{Wt[n]}$, ונסמן ב-$x_i\\in[0,1]$ את החלק שנלקח מפריט $i$. הפתרון החמדני $G$ הוא: $x_1=\\cdots=x_{r-1}=1$, $x_r$ חלקי (אם צריך), ו-$x_i=0$ אחריו; אם סך המשקל קטן מ-$capacity$ הוא לוקח את כל הפריטים, וזה ודאי אופטימלי.\n**טיעון החלפה:** יהי $O$ פתרון אופטימלי שמסכים עם $G$ על מספר מרבי של פריטים ראשונים, ונניח $O\\neq G$. יהי $i$ האינדקס הראשון שבו $y_i\\neq x_i$ ($y$ הם החלקים ב-$O$). מאחר שהחמדן לוקח מכל פריט כמה שאפשר, $y_i<x_i$. כיוון ש-$O$ אופטימלי הוא ממלא את התרמיל (אחרת אפשר להוסיף עוד מפריט $i$ ולהגדיל את הערך), ולכן יש $j>i$ עם $y_j>0$.\nנעביר משקל $\\varepsilon=\\min\\{(x_i-y_i)Wt[i],\\ y_jWt[j]\\}>0$ מפריט $j$ לפריט $i$. המשקל הכולל לא משתנה, והערך משתנה ב-\n$$\\varepsilon\\Bigl(\\frac{Val[i]}{Wt[i]}-\\frac{Val[j]}{Wt[j]}\\Bigr)\\ge 0$$\nכי $i<j$. לכן הפתרון החדש עדיין אופטימלי, ובו או ש-$y_i=x_i$ או ש-$y_j=0$. חזרה על הצעד (מספר סופי של פעמים, כל פעם מתאפס פריט אחרי $i$ או ש-$i$ מתיישר) מביאה לפתרון אופטימלי שמסכים עם $G$ גם במקום $i$, בסתירה לבחירת $O$. לכן $G=O$ והחמדן אופטימלי."
   },
   {
    "num": 3,
    "kind": "algorithm",
    "topic": "divide_conquer",
    "question": "(15 נקודות) הציעו אלגוריתם הפרד ומשול יעיל ככל הניתן לפתרון הבעיה.",
-   "hold": "no-key",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "points": 15,
    "part": "א",
-   "contextId": "c3"
+   "contextId": "c3",
+   "solution": "(מניחים שהערכים שונים זה מזה, כמו בדוגמה.)\n**רעיון:** חיפוש בינארי. אחרי סיבוב, בכל קטע $nums[lo..hi]$ ובאמצעו $mid$, לפחות אחד החצאים $nums[lo..mid]$ או $nums[mid..hi]$ ממוין: נקודת הסיבוב (המעבר מהגדול לקטן) נמצאת לכל היותר באחד מהם. בודקים אם $t$ בטווח של החצי הממוין; אם כן ממשיכים רק בו, ואחרת רק בחצי השני.\n```\nSEARCH(nums, t, lo, hi):\n    if lo > hi: return -1\n    mid <- floor((lo + hi) / 2)\n    if nums[mid] = t: return mid\n    if nums[lo] <= nums[mid]:                 // the left half is sorted\n        if nums[lo] <= t < nums[mid]: return SEARCH(nums, t, lo, mid - 1)\n        else:                         return SEARCH(nums, t, mid + 1, hi)\n    else:                                     // the right half is sorted\n        if nums[mid] < t <= nums[hi]: return SEARCH(nums, t, mid + 1, hi)\n        else:                         return SEARCH(nums, t, lo, mid - 1)\n\nanswer: SEARCH(nums, t, 0, n - 1)\n```\n**נכונות:** אם $nums[lo]\\le nums[mid]$ אין נקודת סיבוב בתוך $nums[lo..mid]$, ולכן הוא ממוין, ו-$t$ נמצא בו אם ורק אם $nums[lo]\\le t<nums[mid]$ (את $mid$ כבר בדקנו); אחרת $t$ יכול להיות רק בחצי הימני. אחרת נקודת הסיבוב בחצי השמאלי, ולכן $nums[mid..hi]$ ממוין, והבדיקה סימטרית. כל קטע שנשאר הוא שוב סיבוב של מערך ממוין, ולכן אפשר להמשיך ברקורסיה.\nבדוגמה: $mid=3$, $nums[3]=7$, החצי השמאלי $[4,5,6,7]$ ממוין ו-$0$ לא בטווח, ממשיכים ב-$[0,1,2]$ ומוצאים את $0$ באינדקס $4$."
   },
   {
    "num": 3,
    "kind": "computation",
    "topic": "divide_conquer",
    "question": "(10 נקודות) מה סיבוכיות זמן הריצה של האלגוריתם שהצעתם? נמקו תשובתכם.",
-   "hold": "no-key",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "points": 10,
    "part": "ב",
-   "contextId": "c3"
+   "contextId": "c3",
+   "solution": "בכל קריאה עושים $O(1)$ עבודה (כמה השוואות) וממשיכים בקריאה רקורסיבית אחת על לכל היותר חצי מהקטע:\n$$T(n)=T\\bigl(\\tfrac n2\\bigr)+O(1)$$\nלפי משפט האב ($a=1$, $b=2$, $f(n)=\\Theta(1)=\\Theta(n^{\\log_2 1})$, המקרה השני) $T(n)=O(\\log n)$.\nהערה: ההנחה שהערכים שונים נחוצה. עם ערכים חוזרים (למשל $[1,1,1,0,1]$ מול $[1,0,1,1,1]$) אי אפשר לדעת איזה חצי ממוין, ובמקרה הגרוע נדרש $\\Theta(n)$."
   },
   {
    "num": 4,
    "kind": "algorithm",
    "topic": "kmp_strings",
    "question": "(15 נקודות) הציעו אלגוריתם לינארי לפתרון הבעיה ללא שימוש בעצי סיפות או מערכי סיפות.",
-   "hold": "no-key",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "points": 15,
    "part": "א",
-   "contextId": "c4"
+   "contextId": "c4",
+   "solution": "$P$ מסתתרת ב-$T$ אם ורק אם $P^R$ (ההפוכה של $P$) מופיעה ב-$T$ כתת-מחרוזת. לכן:\n```\nHIDDEN(T[1..n], P[1..m]):\n    R <- P reversed            // R[i] = P[m + 1 - i], O(m)\n    return KMP(T, R)           // true if R occurs in T\n```\nKMP מחשב את פונקציית הרישא $\\pi$ של $R$ ואז סורק את $T$ פעם אחת; אפשר לעצור ולהחזיר אמת במופע הראשון, ואם הסריקה הסתיימה בלי מופע מחזירים שקר.\nבדוגמה: $P=abc$, $R=cba$, ו-$cba$ מופיעה ב-$dfzcbau$, ולכן אמת."
   },
   {
    "num": 4,
    "kind": "computation",
    "topic": "kmp_strings",
    "question": "(10 נקודות) הסבירו מדוע זמן הריצה לינארי בגודל הקלט? מה סיבוכיות המקום של האלגוריתם שהצעתם?",
-   "hold": "no-key",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "points": 10,
    "part": "ב",
-   "contextId": "c4"
+   "contextId": "c4",
+   "solution": "**זמן:** היפוך $P$ עולה $O(m)$. חישוב $\\pi$ עולה $O(m)$ ושלב החיפוש של KMP עולה $O(n)$: בניתוח לשיעורין, המשתנה $q$ (אורך ההתאמה הנוכחית) גדל לכל היותר ב-1 לכל תו של הטקסט, וכל ביצוע של לולאת הנסיגה מקטין אותו לפחות ב-1, ולכן מספר הנסיגות הכולל לכל היותר $n$. סה\\\"כ $O(n+m)=O(n)$ (כי $m<n$), לינארי בגודל הקלט.\n**מקום:** $O(m)$: המחרוזת ההפוכה ומערך $\\pi$ בגודל $m$ (הטקסט נקרא במקום)."
   }
  ]
 }
