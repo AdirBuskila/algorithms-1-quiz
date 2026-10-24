@@ -105,4 +105,28 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Status: hold
 -->
 
+### 24A-A Q1a, Q1b, Q4c, Q5 - no key in the partial solution file
+- Page: solution p.1 (Q1 "solution in Moodle"), p.4 (Q4c time only, bonus "see homework")
+- Question: Q1a/b (walk / shortest path through z) and the bonus have no answer in the file; Q4c states only the time O(n^2), not the space. Held as no-key for the solver. Q4 in the solution file is a variant (example table, width sorted descending, different parts b/c); Q4a is kept with confidence med, Q4b (space O(n) from "one-dimensional array") with med.
+- Needed: route to the solver; optionally the Moodle model solution for Q1.
+- Status: hold
+
+### 24A-B Q3c, Q4c - weak key in the student paper
+- Page: 18 (Q3c), 24 (Q4c)
+- Question: Q3c handwriting is partly unreadable (idea kept: independent repeated runs) and its printed hypothesis reads "at least 1/4"; Q4c (listing the combinations) was graded full for time and space O(m*n), although the output itself can be exponentially large.
+- Needed: refuter decision; confidence is low on both.
+- Status: note only (not held)
+
+### 24A-B Q4a/Q4b - grader deductions
+- Page: 20 (Q4a: -3 for missing edge cases), 22 (Q4b: space O(m*n) got half credit)
+- Question: Q4a is shipped with the full base cases, Q4b with O(n*m) time and O(m) space (two rows) as "solved".
+- Needed: nothing blocking.
+- Status: note only (not held)
+
+### 23B-C Q1-Q4 - blank booklet, no key
+- Page: 3-20
+- Question: no solution source exists for this sitting; all 8 items are held with reason no-key. Q1 and Q3 print one point total per question (30 each), not per part.
+- Needed: route to the solver.
+- Status: hold
+
 ## Resolved

@@ -1,0 +1,93 @@
+{
+ "examCode": "23B-C",
+ "examLabel": "אלגוריתמים 1 (60172), סמסטר ב' תשפ\"ג, מועד מיוחד (24.08.2023)",
+ "year": 2023,
+ "examDate": "24.08.2023",
+ "sourceFile": "23B-C exam booklet pp.1-31",
+ "solutionFile": "none",
+ "contexts": {
+  "cbb": {
+   "kind": "text",
+   "title": "אלגוריתמים שמותר להשתמש בהם כקופסה שחורה",
+   "text": "אלגוריתמים (ביחד עם סיבוכיותם) שניתן להיעזר בהן כקופסא שחורה:\n- $\\mathrm{Select}(S,n,k)$ - $O(n)$\n- $\\mathrm{Majority}(S,n)$ - $O(n)$\n- $\\mathrm{Kadane}(S,n)$ - $O(n)$\n- $\\mathrm{KMP}(T,n,P,m)$ - $O(n+m)$\n- $\\mathrm{Kruskal}(G,w)$ - $O(|E|\\cdot\\log|V|)$\n- $\\mathrm{Prim}(G,w)$ - $O(|V|^2)$ (או $O(|E|\\cdot\\log|V|)$)\n- $\\mathrm{Huffman}(C,f,n)$ - $O(n\\log n)$\n- $\\mathrm{Greedy\\text{-}Coloring}(G)$ - $O(|V|+|E|)$"
+  },
+  "c3": {
+   "kind": "text",
+   "title": "שאלה 3: צביעת בתים",
+   "text": "אנו מעוניינים לחשב **עלות מינימלית** לצביעה של $n$ בתים הנצבים בשורה. כל בית יכול להיות צבוע באחד משלושת הצבעים: אדום $R$, כחול $B$ או ירוק $G$, אך, **בשונה** מצבע הבית הסמוך לו. עלות הצביעה תלויה בבית ובצבע.\nהעלות של צביעה כל בית עם צבע מסוים מיוצגת על ידי מטריצת עלויות $\\mathrm{cost}$ בגודל $3\\times n$. שורות המטריצה מייצגות את הבתים, ועמודות המטריצה מייצגות את הצבעים: עמודה $1$ עבור צבע האדום, עמודה $2$ עבור צבע הכחול, ועמודה $3$ עבור הירוק. לדוגמא, $\\mathrm{cost}[1][1]$ היא העלות של צביעת בית $1$ בצבע אדום; $\\mathrm{cost}[2][3]$ היא עלות הצביעה של בית $2$ בצבע ירוק.\nמצא את הצביעה האופטימלית (עלות מינימלית) של כל הבתים."
+  }
+ },
+ "questions": [
+  {
+   "num": 1,
+   "kind": "computation",
+   "topic": "kmp_strings",
+   "question": "האם קיימת מחרוזת $P$ באורך $5$ כך שפונקציה $\\pi$ עבורה היא $0,1,2,3,1$ ?\nאם לא - נמקו מדוע, אם כן - תנו דוגמא למחרוזת $P$.",
+   "hold": "no-key: blank booklet, no solution source for this sitting",
+   "part": "א"
+  },
+  {
+   "num": 1,
+   "kind": "computation",
+   "topic": "suffix_structures",
+   "question": "בנו Suffix tree ו-Suffix array עבור המחרוזת `algogoal`",
+   "hold": "no-key: blank booklet, no solution source for this sitting",
+   "part": "ב"
+  },
+  {
+   "num": 2,
+   "kind": "algorithm",
+   "topic": "dp_optimization",
+   "question": "(25 נקודות) נתון מערך עם מספרים שלמים. נתייחס למערך כאילו הוא מעגלי, ז\\\"א אחרי איבר האחרון בא איבר הראשון.\nמצאו רצף מספרים במערך מעגלי, אשר נותן סכום מקסימלי.\nלדוגמה: עבור מערך: $4,-6,5,-6,10,-5,3$ עליכם להחזיר: $12=10-5+3+4$\nרמז: אפשר להיעזר באלגוריתם Kadane שמחזיר רצף עם סכום מקסימלי במערך (לא מעגלי).\nנמקו נכונות האלגוריתם שכתבתם. מהי הסיבוכיות של האלגוריתם? נמקו את תשובתכם.",
+   "hold": "no-key: blank booklet, no solution source for this sitting",
+   "part": "א",
+   "points": 25,
+   "contextId": "cbb"
+  },
+  {
+   "num": 2,
+   "kind": "algorithm",
+   "topic": "divide_conquer",
+   "question": "(15 נקודות) נתון מערך $A$ עם מספרים שלמים ואנדקס $K$.\nיש למיין את המערך המקורי $A$, מלבד האיבר במקום ה-$K$ שאינו משנה את מיקומו.\nלדוגמה: עבור מערך $A$: $4,10,-6,3,15,-8,7$ ו-$K=5$ האלגוריתם מחזיר $-8,-6,3,4,15,7,10$\nבנו אלגוריתם יעיל ונתחו את הסיבוכיות שלו.",
+   "hold": "no-key: blank booklet, no solution source for this sitting",
+   "part": "ב",
+   "points": 15,
+   "contextId": "cbb"
+  },
+  {
+   "num": 3,
+   "kind": "algorithm",
+   "topic": "dp_optimization",
+   "question": "בעיית תכנון הצביעה ניתנת לפתרון בעזרת **תכנון דינמי**.\nהציגו נוסחה רקורסיבית המחשבת את **העלות** המינימלית.\nיש **להגדיר** את הפונקציה הרקורסיבית **ולנמק** נכונות של הנוסחה.\nרמז: תגדירו $3$ פונקציות רקורסיביות בהתאם לשלוש אופציות לצביעה של הבית האחרון.",
+   "hold": "no-key: blank booklet, no solution source for this sitting",
+   "part": "א",
+   "contextId": "c3"
+  },
+  {
+   "num": 3,
+   "kind": "computation",
+   "topic": "dp_optimization",
+   "question": "תנו דוגמא לעבודת האלגוריתם שפותר את הבעיה בשיטה תכנון דינאמי על בסיס נוסחה רקורסיבית מסעיף הקודם עבור מטריצה $\\mathrm{cost}$ הבאה ($n=3$):\nבית $1$: אדום $14$, כחול $2$, ירוק $11$\nבית $2$: אדום $11$, כחול $14$, ירוק $5$\nבית $3$: אדום $14$, כחול $3$, ירוק $19$\n(בתשובה יש למלא טבלה עם עמודות הבתים $1,2,3$ ושורות הצבעים $R,B,G$.)",
+   "hold": "no-key: blank booklet, no solution source for this sitting",
+   "part": "ב",
+   "contextId": "c3"
+  },
+  {
+   "num": 3,
+   "kind": "computation",
+   "topic": "complexity_recurrence",
+   "question": "מה סיבוכיות האלגוריתם שפותר את הבעיה בשיטה תכנון דינמי על בסיס נוסחה רקורסיבית מסעיף א? נמקו בקצרה.",
+   "hold": "no-key: blank booklet, no solution source for this sitting",
+   "part": "ג",
+   "contextId": "c3"
+  },
+  {
+   "num": 4,
+   "kind": "computation",
+   "topic": "huffman",
+   "question": "עבור מחרוזת $S$ מעל א\\\"ב $\\Sigma=\\{a,b,c,d,e\\}$ נתון כי:\n- האות $a$ מופיעה $10$ פעמים, האות $b$ מופיעה $7$ פעמים והאות $e$ מופיעה $10$ פעמים.\n- קוד הופמן של האותיות הוא: $a-10,\\ b-00,\\ c-010,\\ d-011,\\ e-11$\n- מספר ההופעות של \\\"אח\\\" השמאלי הוא **לא** יותר גדול ממספר הופעות של \\\"אח\\\" הימני.\nהניחו שסיבית הקוד לצומת הימני היא $1$ ולשמאלי $0$.\nרשמו את **כל** האופציות האפשריות לשכיחויות של אותיות $c$ ו-$d$ במחרוזת $S$. נמקו את תשובתכם.",
+   "hold": "no-key: blank booklet, no solution source for this sitting",
+   "points": 10
+  }
+ ]
+}
