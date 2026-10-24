@@ -12,6 +12,17 @@ Transcription notes
   (sub-points 10+15, 4+8+13, 15+10 = 25 each). Transcribed as printed; nothing is missing from the page images.
 - Q3b is a table whose probability column is left blank for the student; transcribed as four labelled rows.
 - Q5 prints the approximation ratio as theta(log n); kept as printed.
+
+Solver (2026-10): all 11 items solved (solutionSource "solved", official false, confidence high), pending the refuter.
+- Q1b/Q1c: path reconstruction keeps the full table (Theta(n^2) space); the value alone needs one row (Theta(n)).
+- Q2a/Q2b: generalized suffix tree = linear-time suffix tree of S1$S2* with leaf edges cut after $, string depths and
+  S1/S2/both marks by one DFS; the answer is the deepest node marked both.
+- Q3c: von Neumann pairs; Q4: heaviest-first greedy (weights 5^(K-i)), proof via "at most 4 of each lighter type";
+  Q5: greedy set cover with the H(n) <= ln n + 1 bound.
+Checks: tools/verify/23A-A/solve_all.py (Q1 DP vs brute force on 2000 random triangles, both space variants;
+Q2 naive generalized suffix tree + marks vs brute-force longest common substring on 1500 random pairs over 5 letters;
+Q3 exact probabilities and a simulation; Q4 greedy vs coin-count DP for K<=5, W<=3200; Q5 greedy <= H(n)*OPT on
+1500 random instances and the log-n tight family).
 """
 import json, pathlib
 
@@ -19,8 +30,12 @@ OUT = pathlib.Path(__file__).resolve().parents[1] / "raw" / "23A-A.json"
 
 
 def H(num, part, kind, topic, question, points, **kw):
-    """Held item: question text only, no answer source."""
-    q = {"num": num, "kind": kind, "topic": topic, "question": question, "points": points, "hold": "no-key"}
+    """Item with no answer source: the solver's solution from SOLS (solved, not official), else held no-key."""
+    q = {"num": num, "kind": kind, "topic": topic, "question": question, "points": points}
+    if (num, part) in SOLS:
+        q.update({"solution": SOLS[(num, part)], "solutionSource": "solved", "official": False, "confidence": "high"})
+    else:
+        q["hold"] = "no-key"
     if part:
         q["part"] = part
     q.update(kw)
@@ -55,6 +70,134 @@ C5 = (r"להלן תיאור בעיית כיסוי קבוצות:" "\n"
       r"קלט: אוסף של $m$ קבוצות $\mathcal{S}=\{A_1,A_2,\cdots,A_m\}$ והקבוצה האוניברסלית: "
       r"$\mathbb{U}=\bigcup_{A\in\mathcal{S}}A$" "\n"
       r"פלט: תת קבוצה $\mathcal{T}\subseteq\mathcal{S}$ בגודל מינימלי המקיימת $\bigcup_{A\in\mathcal{T}}A=\mathbb{U}$")
+
+# ---------------------------------------------------------------- solutions (solver, no answer source)
+D = r"\text{\textdollar}"
+
+SOL_1A = r"""נגדיר, לכל $1\le j\le i\le n$: $M(i,j)$ - הערך המקסימלי של מסלול שמתחיל ב-$[1,1]$ ומסתיים במשבצת $[i,j]$.
+- הפרמטר $i$ הוא השורה ו-$j$ הוא העמודה.
+- מ-$[1,1]$ כל צעד מגדיל את השורה ב-1 ואת העמודה ב-0 או ב-1, ולכן אפשר להגיע רק למשבצות עם $j\le i$, כלומר המשולש העליון (האפסים) אינו בשימוש.
+
+$$M(i,j)=\begin{cases}A[1,1] & ;\ i=j=1\\ A[i,1]+M(i-1,1) & ;\ j=1<i\\ A[i,i]+M(i-1,i-1) & ;\ j=i>1\\ A[i,j]+\max\bigl(M(i-1,j-1),\,M(i-1,j)\bigr) & ;\ 1<j<i\end{cases}$$
+**הפלט:** $\max_{1\le j\le n}M(n,j)$, כי המסלול מסתיים באחת המשבצות בשורה התחתונה.
+**נכונות:** הצעד האחרון אל $[i,j]$ מגיע מ-$[i-1,j]$ (צעד ישר) או מ-$[i-1,j-1]$ (צעד אלכסוני), ובשוליים קיימת רק אחת משתי האפשרויות. הערך של מסלול הוא $A[i,j]$ ועוד ערך המסלול עד המשבצת הקודמת. כדי שהסכום יהיה מקסימלי, גם החלק הזה צריך להיות מקסימלי (אחרת מחליפים אותו בטוב יותר). לכן לוקחים את המקסימום מבין שתי המשבצות הקודמות.
+**בדוגמה:**
+- $M(2,1)=4$, $M(2,2)=3$.
+- $M(3,1)=8$, $M(3,2)=10+4=14$, $M(3,3)=12+3=15$.
+- הפלט הוא $15$, המסלול $1\to2\to12$."""
+
+SOL_1B = r"""**זמן $\Theta(n^2)$, מקום $\Theta(n^2)$.**
+- **זמן:** יש $\frac{n(n+1)}{2}=\Theta(n^2)$ תאים $M(i,j)$, וכל תא מחושב ב-$O(1)$ (מקסימום של שני ערכים שכבר חושבו). אחר כך מוצאים מקסימום בשורה האחרונה ב-$O(n)$ ומשחזרים את המסלול מלמטה למעלה ב-$O(n)$: בכל שורה עוברים לשכן הקודם שנתן את המקסימום.
+- **מקום:** כדי לשחזר את המסלול צריך לשמור את כל הטבלה (או טבלת הכרעות באותו גודל), כלומר $\Theta(n^2)$."""
+
+SOL_1C = r"""**זמן $\Theta(n^2)$, מקום $\Theta(n)$** (נוסף על הקלט).
+- **זמן:** כמו בסעיף ב, $\Theta(n^2)$ תאים, כל אחד ב-$O(1)$.
+- **מקום:** שורה $i$ של $M$ תלויה רק בשורה $i-1$. מספיק לשמור שתי שורות באורך $n$, או מערך אחד שמעדכנים מימין לשמאל. הערך המבוקש הוא המקסימום של השורה האחרונה, ולכן המקום הנוסף הוא $\Theta(n)$."""
+
+SOL_2A = (r"""**הבנייה:** נבנה עץ סיפות רגיל למחרוזת $S=S_1""" + D + r"""S_2{*}$ שאורכה $2n+2$. כאן ה-א"ב קבוע (5 אותיות ועוד שני תווי הסיום), ולכן לפי בניית עץ סיפות בזמן לינארי שנלמדה, הבנייה לוקחת $O(n)$.
+- התו $""" + D + r"""$ מופיע ב-$S$ פעם אחת בלבד. לכן כל תת-מחרוזת שמכילה אותו מופיעה פעם אחת, והוא נמצא רק על קשתות של עלים.
+- בכל קשת עלה של סיפה שמתחילה בתוך $S_1""" + D + r"""$ חותכים את התווית מיד אחרי $""" + D + r"""$. התווית שמורה כזוג אינדקסים, ולכן זה $O(1)$ לכל עלה.
+- אחרי החיתוך מתקבל בדיוק עץ הסיפות המשותף של $S_1""" + D + r"""$ ושל $S_2{*}$: יש בו $O(n)$ צמתים, וכל מחרוזת של מסלול לצומת פנימי היא תת-מחרוזת של $S_1$ או של $S_2$, בלי תווי סיום.
+- שני תווי הסיום שונים זה מזה ואינם ב-$\Sigma$. לכן אף סיפה אינה רישא של סיפה אחרת, ולכל סיפה יש עלה משלה.
+
+**תכונה 1 - אורך המחרוזת עד כל צומת:** סריקת DFS מהשורש עם $depth(root)=0$ ו-$depth(v)=depth(parent(v))+|label(parent(v),v)|$. אורך התווית מחושב ב-$O(1)$ מזוג האינדקסים, ולכן הסריקה לוקחת $O(n)$.
+
+**תכונה 2 - סימון $S_1$ / $S_2$ / שתיהן:** עלה של סיפה שמתחילה באינדקס $i\le n+1$ (בתוך $S_1""" + D + r"""$) מסומן $S_1$, וכל עלה אחר מסומן $S_2$. אחר כך עוברים בסדר postorder: הסימון של צומת פנימי הוא איחוד הסימונים של ילדיו. כל צומת מטופל פעם אחת וכל ילד נקרא פעם אחת, ולכן גם זה $O(n)$.
+
+סך הכול: $O(n)$.""")
+
+SOL_2B = (r"""**אלגוריתם:**
+1. בונים את עץ הסיפות המשותף של $S_1""" + D + r"""$ ו-$S_2{*}$ עם עומקי המחרוזות והסימונים, כמו בסעיף א, בזמן $O(n)$.
+2. ב-DFS מוצאים את הצומת $v$ שמסומן "שתיהן" ועומק המחרוזת שלו מקסימלי, בזמן $O(n)$.
+3. מחזירים את מחרוזת המסלול מהשורש ל-$v$: לוקחים עלה כלשהו מתחת ל-$v$, שהוא סיפה שמתחילה באינדקס $i$, ומחזירים $depth(v)$ תווים מ-$i$. אם הצומת היחיד כזה הוא השורש, אין תת-מחרוזת משותפת לא ריקה.
+
+**נכונות:**
+- מחרוזת $\alpha$ היא תת-מחרוזת משותפת אם ורק אם היא רישא של סיפה של $S_1$ וגם של סיפה של $S_2$. כלומר, המסלול של $\alpha$ מהשורש מוביל לנקודה שמתחתיה יש עלים משני הסוגים.
+- אם הנקודה הזו באמצע קשת, לצומת שבסוף הקשת יש אותם עלים ומחרוזת ארוכה יותר. לכן המחרוזת המשותפת הארוכה ביותר מסתיימת בצומת פנימי שמסומן "שתיהן".
+- מחרוזת של צומת פנימי אינה מכילה תו סיום (סעיף א).
+
+**זמן:** $O(n)$ בסך הכול.""")
+
+SOL_3A = r"""- **מונטה קרלו:** אלגוריתם הסתברותי שזמן הריצה שלו חסום תמיד (אינו תלוי בהגרלות), אבל הפלט עלול להיות שגוי בהסתברות חסומה. אפשר להקטין את הסתברות הטעות על ידי הרצות חוזרות.
+- **לאס וגאס:** אלגוריתם הסתברותי שהפלט שלו תמיד נכון, אבל זמן הריצה שלו הוא משתנה מקרי. מה שחוסמים הוא זמן הריצה **הצפוי**."""
+
+SOL_3B = r"""נסמן ב-$p$ את ההסתברות לעץ, וב-$1-p$ את ההסתברות לפלי. ההטלות בלתי תלויות, ולכן:
+- הטלה ראשונה פלי ושנייה עץ: $(1-p)\,p$.
+- הטלה ראשונה עץ ושנייה פלי: $p\,(1-p)$.
+- בשתי ההטלות עץ: $p^2$.
+- בשתי ההטלות פלי: $(1-p)^2$.
+
+סכום ארבע ההסתברויות הוא $(p+(1-p))^2=1$. שתי השורות הראשונות שוות זו לזו, $p(1-p)$, גם בלי לדעת את $p$."""
+
+SOL_3C = r"""**רעיון:** לפי סעיף ב, לשני הזוגות "עץ ואז פלי" ו"פלי ואז עץ" יש אותה הסתברות $p(1-p)$. לכן מטילים זוגות עד שמתקבלות שתי תוצאות שונות, ומחליטים לפי הזוג הזה.
+```
+FairBit():
+    repeat
+        x = Toss()          // first toss of the pair
+        y = Toss()          // second toss of the pair
+    until x != y            // equal pair (HH or TT): throw it away, try again
+    if x == HEADS: return 0 // heads-tails, probability p(1-p)
+    else: return 1          // tails-heads, probability (1-p)p
+```
+(`HEADS` = עץ.)
+**נכונות:**
+- בכל סבב, הסבב מסתיים בהסתברות $q=2p(1-p)>0$, כי $0<p<1$.
+- בהינתן שהסבב הסתיים, כל אחת משתי התוצאות מתקבלת בהסתברות $\frac{p(1-p)}{2p(1-p)}=\frac12$.
+- הסבבים בלתי תלויים, ולכן ההסתברות לפלט 0 היא $\sum_{t\ge0}(1-q)^t\,p(1-p)=\frac{p(1-p)}{q}=\frac12$.
+
+**סוג האלגוריתם:** כשהאלגוריתם עוצר, הפלט תמיד נכון (הגרלה $\frac12:\frac12$ בדיוק). מספר הסבבים הוא משתנה גאומטרי עם תוחלת $\frac{1}{2p(1-p)}$, סופית אבל לא חסומה. לכן זהו אלגוריתם לאס וגאס."""
+
+SOL_4A = r"""המשקלים הם $P_K=1,\ P_{K-1}=5,\ \ldots,\ P_i=5^{K-i}$, כך ש-$P_1>P_2>\cdots>P_K$.
+**אלגוריתם חמדני:** עוברים על הסוגים מהכבד לקל, ובכל סוג לוקחים כמה שיותר פריטים שעדיין נכנסים בשק.
+```
+FillBag(W, P[1..K]):        // P[1] > P[2] > ... > P[K] = 1
+    R = W                   // remaining capacity
+    for i = 1 to K:
+        c[i] = floor(R / P[i])   // as many items of type i as still fit
+        R = R - c[i] * P[i]
+    return c                // R == 0 at the end, since P[K] = 1
+```
+**סיום ותקינות:** בסוף $R=0$, כי $P_K=1$. השק מלא בדיוק, ומספר הפריטים הוא $\sum c_i$. הזמן הוא $O(K)$.
+**דוגמה:** עבור $W=35$ ו-$P=(25,5,1)$: פריט אחד של 25 ושני פריטים של 5, כלומר 3 פריטים."""
+
+SOL_4B = r"""האלגוריתם שקול לחזרה על הצעד: לקחת פריט כבד ככל האפשר שעדיין נכנס, כלומר מהסוג $j$ שבו $P_j$ הוא המשקל הגדול ביותר המקיים $P_j\le W$.
+**למה:** בפתרון אופטימלי לכל $W$, מכל סוג $i$ קל מ-$P_j$ יש לכל היותר 4 פריטים.
+אם היו 5 פריטים מסוג $i$, אז $i\ge2$ (כי $P_1$ אינו קל מ-$P_j$). אפשר להחליף אותם בפריט אחד מסוג $i-1$, כי $5P_i=P_{i-1}$. המשקל נשמר ויש 4 פריטים פחות, בסתירה לאופטימליות.
+
+**תכונת הבחירה החמדנית:** כל פתרון אופטימלי למילוי $W\ge1$ מכיל פריט מסוג $j$.
+- סוגים כבדים מ-$P_j$ אינם נכנסים, כי משקלם גדול מ-$W$.
+- אם אין בפתרון פריט מסוג $j$, כל הפריטים קלים מ-$P_j$, ולפי הלמה המשקל הכולל לכל היותר
+$$4\,(P_{j+1}+\cdots+P_K)=4\,(5^{K-j-1}+\cdots+5+1)=5^{K-j}-1=P_j-1<P_j\le W,$$
+בסתירה לכך שהשק מלא.
+- לכן הבחירה החמדנית (פריט מסוג $j$) מופיעה בפתרון אופטימלי.
+
+**תת-מבנה אופטימלי:** יהי $O$ פתרון אופטימלי ל-$W$ שמכיל פריט מסוג $j$. אז $O$ בלי הפריט הזה הוא פתרון אופטימלי ל-$W-P_j$. אילו היה ל-$W-P_j$ פתרון עם פחות פריטים, הוספת פריט מסוג $j$ הייתה נותנת ל-$W$ פתרון טוב מ-$O$, וזו סתירה.
+
+**מסקנה:** באינדוקציה על $W$, האלגוריתם עושה בחירה חמדנית ואז פותר אופטימלית את תת-הבעיה $W-P_j$. לכן מספר הפריטים שהוא מחזיר מינימלי. עבור $W=0$ אין פריטים."""
+
+SOL_5 = r"""**אלגוריתם חמדני:** בכל צעד בוחרים את הקבוצה שמכסה הכי הרבה איברים שעדיין לא כוסו.
+```
+GreedySetCover(U, S = {A1, ..., Am}):
+    C = U                        // elements not covered yet
+    T = {}                       // the sets chosen so far
+    while C is not empty:
+        pick A in S that maximizes |A ∩ C|   // covers the most uncovered elements
+        T = T ∪ {A}
+        C = C \ A                // the elements of A are now covered
+    return T
+```
+**חוקיות ויעילות:** האיחוד של $\mathcal{S}$ הוא $\mathbb{U}$, ולכן כל עוד $C\neq\emptyset$ יש קבוצה עם $|A\cap C|\ge1$. כל איטרציה מקטינה את $C$, ולכן יש לכל היותר $\min(m,n)$ איטרציות, כל אחת בזמן פולינומי, כאשר $n=|\mathbb{U}|$.
+
+**יחס הקירוב:** נסמן ב-$k$ את גודל הכיסוי האופטימלי.
+- כשבוחרים קבוצה $A$, מחלקים לכל איבר שכוסה עכשיו "מחיר" $\frac{1}{|A\cap C|}$. כך המחיר הכולל שווה ל-$|\mathcal{T}|$.
+- כשנשארו $r$ איברים לא מכוסים, $k$ הקבוצות של הפתרון האופטימלי מכסות אותם. לכן יש קבוצה שמכסה לפחות $\frac{r}{k}$ מהם, והחמדן בוחר קבוצה טובה לפחות כמוה. מכאן שכל איבר שמכוסה בשלב הזה משלם לכל היותר $\frac{k}{r}$.
+- נסדר את האיברים לפי זמן הכיסוי. כשהאיבר ה-$t$ מכוסה, נשארו לפחות $n-t+1$ איברים לא מכוסים, ולכן הוא משלם לכל היותר $\frac{k}{n-t+1}$.
+
+$$|\mathcal{T}|\le k\sum_{t=1}^{n}\frac{1}{n-t+1}=k\,H(n)\le k\,(\ln n+1).$$
+זהו קירוב $O(\log n)$. החסם הדוק עד כדי קבוע: יש קלטים שבהם $k=2$ והחמדן בוחר $\Theta(\log n)$ קבוצות, ולכן היחס הוא $\Theta(\log n)$."""
+
+SOLS = {(1, "א"): SOL_1A, (1, "ב"): SOL_1B, (1, "ג"): SOL_1C, (2, "א"): SOL_2A, (2, "ב"): SOL_2B,
+        (3, "א"): SOL_3A, (3, "ב"): SOL_3B, (3, "ג"): SOL_3C, (4, "א"): SOL_4A, (4, "ב"): SOL_4B, (5, ""): SOL_5}
 
 questions = [
     H(1, "א", "algorithm", "dp_optimization",
@@ -118,7 +261,7 @@ exam = {
     "year": 2023,
     "examDate": "25.1.2023",
     "sourceFile": "23A-A exam pp.1-15",
-    "solutionFile": "none (no answer source)",
+    "solutionFile": "none (no answer source; solutions written by the solver)",
     "contexts": {
         "c1": {"kind": "text", "title": "שאלה 1: מסלול יקר במערך משולש", "text": C1},
         "c2": {"kind": "text", "title": "שאלה 2: תת המחרוזת המשותפת הארוכה ביותר", "text": C2},
@@ -131,4 +274,4 @@ exam = {
 
 OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text(json.dumps(exam, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-print(f"wrote {OUT.name}: {len(questions)} questions (all held: no-key)")
+print(f"wrote {OUT.name}: {len(questions)} questions (solved by the solver, not official)")

@@ -95,6 +95,11 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 ### 25A-B, 24B-B - no answer source
 - Question: no key for any item of either sitting; all items are held no-key for the solver. The 24B-B cover says "מועד א" (14.8.24), treated as 24B-B per GATE1.
 - Status: hold (no-key)
+- 24B-B: resolved by solver, pending refuter (11 of 12 items solved; Q2b stays held, see above). Assumptions stated in the solutions: Q1b no self-loops (with loops the claim fails), Q2a every coded letter occurs (c=0 would add (0,4)). Bonus: the tree forces T = ?ATATAT with ? not A/T (read R); the answer ATAT does not depend on it.
+
+### 23A-A - no answer source
+- Question: no key for any item; all 11 items were held no-key.
+- Status: resolved by solver, pending refuter (all 11 solved; checks in tools/verify/23A-A/solve_all.py).
 
 ### 22B-A Q2 - official code wrong for even n
 - Page: solution p.4
