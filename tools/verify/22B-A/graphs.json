@@ -1,0 +1,34 @@
+{
+  "22B-A-Q3a-graph": {
+    "directed": false,
+    "note": "Official example graph (triangle): weights TL=2, TR=1, LR=2",
+    "vertices": ["T", "L", "R"],
+    "edges": [
+      {"u": "T", "v": "L", "w": 2},
+      {"u": "T", "v": "R", "w": 1},
+      {"u": "L", "v": "R", "w": 2}
+    ],
+    "mst": [["T", "R"], ["L", "R"]]
+  },
+  "22B-A-Q3a-mbst": {
+    "directed": false,
+    "note": "Same triangle; the official MBST is {TL, LR} (bottleneck 2, weight 4) which is not an MST",
+    "vertices": ["T", "L", "R"],
+    "edges": [
+      {"u": "T", "v": "L", "w": 2},
+      {"u": "T", "v": "R", "w": 1},
+      {"u": "L", "v": "R", "w": 2}
+    ],
+    "mst": [["T", "L"], ["L", "R"]]
+  },
+  "22B-A-Q1c-tree": {
+    "directed": true,
+    "note": "Official Huffman tree of Q1c; edge w is the code bit (a=0, b=100, c=101, d=11); vertex ids end in the letter",
+    "vertices": ["root", "a_y", "n1", "n2", "d_5", "b_2", "c_x"],
+    "edges": [
+      {"u": "root", "v": "a_y", "w": 0}, {"u": "root", "v": "n1", "w": 1},
+      {"u": "n1", "v": "n2", "w": 0}, {"u": "n1", "v": "d_5", "w": 1},
+      {"u": "n2", "v": "b_2", "w": 0}, {"u": "n2", "v": "c_x", "w": 1}
+    ]
+  }
+}

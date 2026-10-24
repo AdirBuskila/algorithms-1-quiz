@@ -96,6 +96,34 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Question: no key for any item of either sitting; all items are held no-key for the solver. The 24B-B cover says "מועד א" (14.8.24), treated as 24B-B per GATE1.
 - Status: hold (no-key)
 
+### 22B-A Q2 - official code wrong for even n
+- Page: solution p.4
+- Question: the official pseudo-code tests CountL+CountM > n/2 but the task needs >= ceil(n/2). For even n it misses pairs whose total is exactly n/2 (A=[1,2,3,4]: true answer True, code False). Brute force over all arrays n<=8 confirms the idea is right with >= ceil(n/2).
+- Needed: decide whether to ship the official text with the note, or let the solver write a corrected version.
+- Status: hold
+
+### 22B-B Q2a, Q2b - official split algorithm wrong when k > n-k
+- Page: 6, 8
+- Question: the official code always splits into the k smallest vs the n-k largest, optimal only when k <= n-k (A=[13,5,7], k=2: best 15, code 1); in the else branch the sizes of B and C are also swapped. Q2b analyses that code, so it is held with it.
+- Needed: the solver may write the correct algorithm (the bigger group takes the large values).
+- Status: hold
+
+### 22B-B Q4c - two wrong cells in the official table
+- Page: 13
+- Question: row 2 / column 6 is printed 2 (recurrence gives 1) and row 6 / column 8 is printed 1 (recurrence gives 0). Final answer 3 is right.
+- Needed: confirm shipping with the corrected cells.
+- Status: hold
+
+### 22B-B Q1a, Q1c, Q1d - weak official solutions (notes only)
+- Page: 2, 4, 5
+- Question: Q1a counterexample has the same tree shape (mirror only); Q1c suffix tree lacks the leaf of the suffix "$"; Q1d never states the answer ABABA. Shipped with a visible transcription note.
+- Status: note only (not held)
+
+### 23A-B Q4a, Q4b - official side errors (notes only)
+- Page: solution Q4.1, Q4.2
+- Question: Q4a option 1 uses f=(13,0,0,0) although f>0 is required (option 2 is valid); Q4b says the drawn graph has 6 spanning trees, it has 8 (still >= 5). Shipped with visible notes. Q4 has only two parts, so no Q4.3 exists (the triage note was a misreading).
+- Status: note only (not held)
+
 <!-- Entry format:
 ### <exam code> Q<number> - <short title>
 - Path: <absolute file path>

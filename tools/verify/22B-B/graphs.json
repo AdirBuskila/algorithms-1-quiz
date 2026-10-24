@@ -1,0 +1,56 @@
+{
+  "22B-B-Q3": {
+    "directed": false,
+    "note": "Graph of Q3 (all weights distinct, so the MST is unique, weight 50); Prim from A inserts A-J, J-G, G-E, E-C, C-D, E-F, G-H, J-B",
+    "vertices": ["A", "B", "C", "D", "E", "F", "G", "H", "J"],
+    "edges": [
+      {"u": "B", "v": "C", "w": 12}, {"u": "C", "v": "D", "w": 1}, {"u": "B", "v": "J", "w": 10},
+      {"u": "J", "v": "C", "w": 11}, {"u": "C", "v": "A", "w": 16}, {"u": "C", "v": "E", "w": 2},
+      {"u": "D", "v": "E", "w": 3}, {"u": "J", "v": "A", "w": 13}, {"u": "A", "v": "E", "w": 15},
+      {"u": "J", "v": "H", "w": 9}, {"u": "J", "v": "G", "w": 8}, {"u": "A", "v": "G", "w": 14},
+      {"u": "E", "v": "G", "w": 5}, {"u": "E", "v": "F", "w": 4}, {"u": "H", "v": "G", "w": 7},
+      {"u": "G", "v": "F", "w": 6}
+    ],
+    "mst": [["A", "J"], ["J", "G"], ["G", "E"], ["E", "C"], ["C", "D"], ["E", "F"], ["G", "H"], ["J", "B"]]
+  },
+  "22B-B-Q1a-k1": {
+    "directed": true,
+    "note": "Official Huffman tree for frequencies 2,2,5 (k=1); vertex ids end in the weight",
+    "vertices": ["9", "5", "4", "2a", "2b"],
+    "edges": [
+      {"u": "9", "v": "4", "w": 0}, {"u": "9", "v": "5", "w": 1},
+      {"u": "4", "v": "2a", "w": 0}, {"u": "4", "v": "2b", "w": 1}
+    ]
+  },
+  "22B-B-Q1a-k3": {
+    "directed": true,
+    "note": "Official Huffman tree for frequencies 4,4,7 (k=3); vertex ids end in the weight",
+    "vertices": ["15", "7", "8", "4a", "4b"],
+    "edges": [
+      {"u": "15", "v": "7", "w": 0}, {"u": "15", "v": "8", "w": 1},
+      {"u": "8", "v": "4a", "w": 0}, {"u": "8", "v": "4b", "w": 1}
+    ]
+  },
+  "22B-B-Q1b": {
+    "directed": true,
+    "note": "Official tree of Q1b (a=1, b=00, c=01); x + y + 2 = 10, solutions (x,y) = (6,2) and (5,3)",
+    "vertices": ["root", "a_x", "n", "b_2", "c_y"],
+    "edges": [
+      {"u": "root", "v": "n", "w": 0}, {"u": "root", "v": "a_x", "w": 1},
+      {"u": "n", "v": "b_2", "w": 0}, {"u": "n", "v": "c_y", "w": 1}
+    ]
+  },
+  "22B-B-Q1c": {
+    "directed": true,
+    "note": "Official suffix tree of ABABABA as drawn (7 leaves; the leaf of the suffix '$' is missing). Edge label = string on the edge, vertex ids = path from the root, leaves = start index",
+    "vertices": ["", "BA", "BABA", "A", "ABA", "ABABA", "leaf5", "leaf3", "leaf1", "leaf6", "leaf4", "leaf2", "leaf0"],
+    "edges": [
+      {"u": "", "v": "BA", "w": 0, "label": "BA"}, {"u": "", "v": "A", "w": 0, "label": "A"},
+      {"u": "BA", "v": "leaf5", "w": 0, "label": "$"}, {"u": "BA", "v": "BABA", "w": 0, "label": "BA"},
+      {"u": "BABA", "v": "leaf3", "w": 0, "label": "$"}, {"u": "BABA", "v": "leaf1", "w": 0, "label": "BA$"},
+      {"u": "A", "v": "leaf6", "w": 0, "label": "$"}, {"u": "A", "v": "ABA", "w": 0, "label": "BA"},
+      {"u": "ABA", "v": "leaf4", "w": 0, "label": "$"}, {"u": "ABA", "v": "ABABA", "w": 0, "label": "BA"},
+      {"u": "ABABA", "v": "leaf2", "w": 0, "label": "$"}, {"u": "ABABA", "v": "leaf0", "w": 0, "label": "BA$"}
+    ]
+  }
+}
