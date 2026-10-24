@@ -67,7 +67,14 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 ### 26A-B, 26B-A, 25A-C - no answer source
 - Question: all items held "no-key" for the solver. 26B-A is the new choose-2-of-3 form (Q3 and Q4 parts, items per part). Reference facts (not an official key) are printed by tools/verify/26B-A/checks.py.
 - 26A-B (12 items) and 25A-C (8 items): resolved by solver, pending refuter (2026-10-24). Checks: tools/verify/26A-B/solve_all.py, tools/verify/25A-C/solve_all.py. 25A-C transcription re-verified against the page renders (Q1a answer skeleton has four cases, not three; fixed). 25A-C Q3 assumes distinct values (as in the example).
-- Status: hold (no-key)
+- 26B-A (16 of 17 items): resolved by solver, pending refuter (2026-10-24). Transcription re-verified against renders of all 20 pages (texts, tables, BFS example, the 14 edges of the Q4b graph): no changes needed. Checks: tools/verify/26B-A/solve_q1_q2.py, solve_q3.py, solve_q4.py. Q4a(ii) asks for "the" frequency of e, but both 6 and 7 fit the given code and sibling rule; the solution gives both.
+- Status: 26A-B, 25A-C and 26B-A resolved by solver, pending refuter, except 26B-A Q4b(ii) (item Q4d), below.
+
+### 26B-A Q4b(ii) (item Q4d) - Prim order is not unique
+- Page: p.15
+- Question: with X=3 (the answer of Q4b(i)), Prim from C meets two ties: C-B and D-F weigh 3, and D-E and F-H weigh 4. Four edge orders and two different MSTs (weight 18) are valid; the exam states no tie-breaking rule. A solved draft listing the branches is in the generator.
+- Needed: accept every valid order, or name a tie-breaking rule.
+- Status: hold (two-answer)
 
 ### 25A-A Q1c - official answer returns the average, not the r-th smallest
 - Page: solution p.1
