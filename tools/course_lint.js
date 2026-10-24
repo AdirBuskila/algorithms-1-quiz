@@ -33,11 +33,33 @@ const isInt = x => Number.isInteger(x);
 const SOURCES = new Set(["ai-draft", "ai-verified"]);
 const OPT_IDS = ["a", "b", "c", "d", "e", "f", "g", "h"], OPT_TYPES = new Set(["text", "math", "image"]);
 const LEVEL_KEYS = new Set(["id", "order", "icon", "title", "goal", "boss", "source", "lesson", "questions"]);
-const OWN_KEYS = new Set(["id", "question", "options", "correctId", "acceptedIds", "explanation", "recap", "image"]);
+const OWN_KEYS = new Set(["id", "question", "options", "correctId", "acceptedIds", "explanation", "recap", "image", "graph"]);
 const BANK_KEYS = new Set(["bankId", "recap"]);
-const STEP_Q_KEYS = new Set(["id", "step", "recap"]);
+const STEP_Q_KEYS = new Set(["id", "step", "recap", "graph"]);
 const STEP_TYPES = new Set(["choice", "numeric", "text", "order", "findbug", "fillblank"]);
-const STEP_KEYS = new Set(["type", "prompt", "explain", "code", "options", "correctId", "answer", "tol", "accept", "normalize", "lines", "bugIndex", "blankIndex"]);
+const STEP_KEYS = new Set(["type", "prompt", "explain", "code", "options", "correctId", "answer", "tol", "accept", "normalize", "lines", "bugIndex", "blankIndex", "graph", "key"]);
+// algorithms-1 extra: every `graph` (own question, step, lesson data-graph) and step `key` runs through graph.js
+const { checkJob } = require("./graph_check.js");
+function lintGraphs(w, label, q) {
+  const list = g => g == null ? [] : Array.isArray(g) ? g : [g];
+  for (const g of list(q.graph)) for (const p of checkJob({ spec: g })) ERR(w, `question ${label} graph: ${p}`);
+  const s = q.step && typeof q.step === "object" ? q.step : null;
+  if (!s) return;
+  for (const g of list(s.graph)) for (const p of checkJob({ spec: g })) ERR(w, `question ${label} step graph: ${p}`);
+  if (s.key != null) {
+    const spec = s.graph && !Array.isArray(s.graph) ? s.graph : (q.graph && !Array.isArray(q.graph) ? q.graph : null);
+    for (const p of checkJob({ spec, key: s.key, step: s })) ERR(w, `question ${label} step key ${s.key}: ${p}`);
+  }
+}
+function lintLessonGraphs(w, html) {
+  const re = /data-graph=(['"])([\s\S]*?)\1/g;
+  for (let m; (m = re.exec(html));) {
+    let spec;
+    try { spec = JSON.parse(m[2].replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&")); }
+    catch (e) { ERR(w, `lesson: data-graph is not valid JSON (${e.message})`); continue; }
+    for (const p of checkJob({ spec })) ERR(w, `lesson graph: ${p}`);
+  }
+}
 
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "course.config.json"), "utf8"));
 const needHelp = cfg.needHelp || [];
@@ -189,6 +211,7 @@ function lintQuestion(w, q, i, ctx) {
     if (q.recap != null && !nonblank(q.recap)) ERR(qw, `question ${label}: recap must be non-blank text`);
     return;
   }
+  lintGraphs(qw, label, q);
   if ("step" in q) return lintStepQuestion(qw, q, label, ctx);
   for (const k of Object.keys(q)) {
     if (/Html$/.test(k)) ERR(qw, `question ${label}: derived field '${k}' must not be authored (the build derives it)`);
@@ -247,6 +270,7 @@ function lintLevel(courseId, L, file, seen, isLast) {
   else {
     for (const k of Object.keys(les)) if (!["html", "figs"].includes(k)) ERR(w, `unknown lesson key '${k}'`);
     mathChecks(w, "lesson.html", les.html);
+    lintLessonGraphs(w, les.html);
     if (les.figs != null) {
       if (!Array.isArray(les.figs)) ERR(w, "lesson.figs must be a list of {src, alt?, caption?}");
       else les.figs.forEach((f, i) => { if (!f || !nonblank(f.src) || !fs.existsSync(path.join(ROOT, f.src))) ERR(w, `lesson.figs[${i}]: image file missing ${f && f.src}`); });

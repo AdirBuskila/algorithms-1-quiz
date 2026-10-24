@@ -32,6 +32,7 @@ step, rubric-item and option level) are errors, so a misspelt key such as `stepS
     "stepsSource": "ai-verified",      // official | ai-draft | ai-verified (required with steps)
     // kind "mcq" only:   options, correctId, acceptedIds, lockOrder, explanation  (as the mcq engine)
     // kind "truefalse":  verdict: true|false
+    "graph": { /* step-through graph visualizer, see "Graphs" (algorithms-1 app only) */ }
   }]
 }
 ```
@@ -96,6 +97,67 @@ Every app has a learn mode: one Hebrew brief per topic, built to `learn.js` (nev
   console errors) and the learn section of `node tools/verify_dom.js` (skipped with a message when `learn.js` is absent).
 - Deep link: `index.html?learn=<chapter_id>`. Files named `*demo*` under `docs/briefs/` are template demos; `new_app.py`
   does not copy them.
+
+## Graphs (`graph`, algorithms-1 extra; `graph.js`)
+A question or a step may carry `graph`: one object, or a list of them. It is drawn from this data, never hand-drawn,
+and with an `algo` it becomes a step-through: prev / play / next, a step counter, Hebrew narration of every step,
+the current vertex ringed and the current edge highlighted, plus the algorithm's panels.
+```jsonc
+"graph": {
+  "nodes": ["A", "B", {"id": "C", "x": 2, "y": 0}],   // ids: strings or numbers (max 16). x/y for all nodes or none
+                                                       // (any units, y grows downward); none -> auto layout
+  "edges": [{"u": "A", "v": "B", "w": 3}],            // w optional; required by dijkstra / prim / kruskal
+  "directed": true,                                   // required
+  "algo": "bfs",                                      // bfs | dfs | topo | scc | dijkstra | prim | kruskal; omitted = plain drawing
+  "source": "A",                                      // optional: bfs / dijkstra / prim start, dfs / topo / scc first root
+                                                      // (default: the first vertex in order)
+  "order": "alpha",                                   // alpha (default) | given
+  "layout": "circle",                                 // circle (default) | layers (BFS depth from source, top-down)
+  "caption": "text",                                  // optional heading (plain text)
+  "expect": { ... }                                   // optional stored answers, CHECKED against graph.js (below)
+}
+```
+- **Conventions (CLRS, as taught):** with `order: "alpha"` the DFS main loop and every adjacency list run in natural
+  alphabetical order (`"2"` before `"10"`); `"given"` uses the node list for the main loop and the edge list for
+  neighbours. Extract-min ties go to the earlier vertex. Kruskal sorts by weight, then by endpoint names
+  (`given`: by edge order). Topological sort = decreasing DFS finish time. SCC = Kosaraju (DFS on G, then DFS on Gᵀ
+  in decreasing f). An undirected DFS classifies each edge once, on first examination (tree or back only).
+  Dijkstra relaxes only edges into open vertices and stops when the open vertices are all at ∞. Kruskal stops at
+  |V| − 1 edges.
+- **Panels:** BFS: queue, discovery order, d/π table. DFS / topo: recursion stack, d/f/π table, edge classes
+  (tree / back / forward / cross), the topological list. SCC: pass-1 DFS, then Gᵀ with the decreasing-f order and the
+  components coloured. Dijkstra / Prim: priority queue, closed set S, d (key)/π table, Prim's tree edges and weight.
+  Kruskal: the sorted edges (taken / skipped), the disjoint sets, the tree edges and weight.
+- **Preconditions** (errors): topo needs a DAG and `directed: true`; scc needs `directed: true`; dijkstra needs
+  weights ≥ 0; prim / kruskal need weights and `directed: false`; no duplicate edges; self-loops only when directed.
+- **`expect`** (any subset; keys must be outputs of the algo): `order` (discovery order for bfs/dfs/topo/scc,
+  extraction order for dijkstra/prim) `[ids]`, `d` / `disc` / `fin` `{id: n}` (`null` = ∞), `pi` `{id: id|null}`,
+  `classes` `{"u-v": "tree"|"back"|"forward"|"cross"}`, `topo` `[ids]`, `scc` `[[ids], ...]` (order free), `mst`
+  `[[u, v], ...]` (order free), `weight` n.
+- **Step `key`**: a numeric / text / choice / fillblank step may name the graph output its answer is, and the answer is
+  then checked against graph.js: `order`, `topo`, `weight`, `sccCount`, `d.X`, `pi.X`, `disc.X`, `fin.X`, `key.X`,
+  `class.U-V`. The graph is the step's own `graph`, else the question's (a single object). Text answers compare as
+  id sequences (`A, B, C` = `A B C` = `A→B→C`); `class.*` also accepts the Hebrew names (`קשת אחורה` ...); `pi.X` = NIL
+  accepts `–`, `NIL`, `null`.
+- **Where it shows:** a question's graph is drawn plain under the question when the question has no `image`, and as
+  the step-through at the top of its solution panel. A step's graph is drawn plain (locked) under the prompt and
+  turns into the step-through once the step is answered. Guided courses: an own question's `graph` (locked until
+  answered), a step question's `step.graph`, a bank question's graph in its solution; in `lesson.html` write
+  `<div class="graph-fig" data-graph='{"nodes": ..., "edges": ..., "directed": true, "algo": "dfs"}'></div>`
+  (`build_courses.py` and `course_lint.js` check it). **Learn mode:** a fenced block with the language `graph` and the
+  JSON object as its body (`build_learn.py` checks it):
+  ````
+  ```graph
+  {"directed": false, "algo": "bfs", "source": "A", "nodes": ["A", "B", "C"], "edges": [{"u": "A", "v": "B"}, {"u": "B", "v": "C"}]}
+  ```
+  ````
+- **Checks:** `validate.py` checks the shape and runs every graph, its `expect` and every step `key` through graph.js
+  in Node (`tools/graph_check.js`); the build does the same and fails on a mismatch. `node tools/test_graph.js`
+  checks graph.js against `tools/graph_ref.py` (an independent Python implementation with the same conventions,
+  plus networkx cross-checks) on random graphs: identical event sequences and final outputs. Needs `networkx`.
+- **Demo** (never shipped): `tools/gen/gen_DEMO-G.py` writes `tools/raw/DEMO-G.json` (one question per algorithm, a
+  step graph, `expect` and `key`s). `build_questions.py` skips `DEMO-*` unless run with `--demo`:
+  `py tools/build_questions.py --demo && node tools/verify_dom.js`, then rebuild without the flag.
 
 ## Derived at build (do NOT put in raw)
 `id`, `partKey`, `examCode`, `examLabel`, `year`, `source`, `topicLabel`, `pointsTotal` (sum of rubric

@@ -126,7 +126,7 @@ console.log("1. boot");
   const A = boot();
   const B = A.window.OPEN_BANK;
   assert(B && Array.isArray(B.questions) && B.questions.length > 0, "OPEN_BANK loaded with questions: " + QS.length);
-  const SCRIPTS = ["questions.js", "learn.js", "courses.js", "normalize.js", "steps.js", "aiprompt.js", "app.js", "feedback.js", "course-ui.js"];
+  const SCRIPTS = ["questions.js", "learn.js", "courses.js", "normalize.js", "graph.js", "steps.js", "aiprompt.js", "app.js", "feedback.js", "course-ui.js"];
   assert(A.scripts.join() === SCRIPTS.join(), "scripts: " + A.scripts.join(", "));
   assert(A.doc.documentElement.getAttribute("dir") === "rtl", "page is dir=rtl");
   assert(B.meta.course.storePrefix === CFG.storePrefix, `bank meta storePrefix == course.config.json (${CFG.storePrefix})`);
@@ -666,5 +666,95 @@ console.log("10. feedback links");
   assert(badPre.length === 0, `${pres.length} .code-block <pre> in the bank, all dir=ltr`);
 }
 
-console.log(fail ? `\n${fail} FAILED` : "\nall ok");
-process.exit(fail ? 1 : 0);
+/* 10. algorithms-1 extra: the graph visualizer (graph.js). Uses the bank questions with a `graph` / step graph
+   (the DEMO-G exam when built with --demo: one question per algorithm). */
+async function graphs() {
+  console.log("11. graph visualizer");
+  const gQs = QS.filter(q => q.graph), stepGQ = QS.find(q => (q.steps || []).some(s => s.graph));
+  if (!gQs.length && !stepGQ) { console.log("no graph in the bank (skipped; build with --demo for the DEMO-G checks)"); return; }
+  const seenAlgo = new Set();
+  for (const q of gQs) {
+    const spec = Array.isArray(q.graph) ? q.graph[0] : q.graph;
+    if (seenAlgo.has(spec.algo)) continue;
+    seenAlgo.add(spec.algo);
+    const A = boot();
+    openQ(A, q);
+    const G = A.window.Graph, out = G.compute(spec), n = out.frames.length;
+    if (!q.image) {
+      const plain = A.$("#qExtras .graph-fig.gv-plain svg.gv-svg");
+      assert(!!plain && !A.$("#qExtras .gv-ctrl"), `${q.id}: plain drawing under the question, no controls`);
+    }
+    const fig = A.$("#qBody .sol-panel .graph-fig[data-gv]");
+    assert(!!fig && !!fig.querySelector("svg.gv-svg"), `${q.id} (${spec.algo}): the solution panel holds the step-through`);
+    if (!fig) continue;
+    assert(fig.querySelector(".gv-plot").getAttribute("dir") === "ltr" && fig.querySelector("svg").getAttribute("direction") === "ltr", `${q.id}: the drawing is an LTR island`);
+    assert(fig.querySelectorAll("g.gv-n").length === spec.nodes.length && fig.querySelectorAll("path.gv-e").length === spec.edges.length, `${q.id}: one node per node, one path per edge`);
+    const count = () => fig.querySelector(".gv-count").textContent.replace(/\s+/g, " ");
+    assert(count() === `צעד 1 / ${n}`, `${q.id}: step counter starts at 1 / ${n} (${count()})`);
+    assert(fig.querySelector(".gv-prev").disabled && fig.querySelector(".gv-first").disabled, `${q.id}: prev disabled on the first step`);
+    assert(/[א-ת]/.test(fig.querySelector(".gv-t").textContent) && fig.querySelectorAll(".gv-box .gv-bt").length >= 2, `${q.id}: Hebrew narration and panel labels`);
+    A.click(fig.querySelector(".gv-next"));
+    assert(count() === `צעד 2 / ${n}` && fig.dataset.step === "1", `${q.id}: next advances (${count()})`);
+    A.click(fig.querySelector(".gv-prev"));
+    assert(fig.dataset.step === "0", `${q.id}: prev goes back`);
+    // keyboard: RTL, the left arrow is forward
+    fig.dispatchEvent(new A.window.KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true }));
+    assert(fig.dataset.step === "1", `${q.id}: ArrowLeft moves forward`);
+    fig.dispatchEvent(new A.window.KeyboardEvent("keydown", { key: "End", bubbles: true }));
+    assert(fig.dataset.step === String(n - 1) && fig.querySelector(".gv-next").disabled, `${q.id}: End jumps to the last step`);
+    const r = out.result, txt = fig.querySelector(".gv-panels").textContent;
+    if (spec.algo === "bfs" || spec.algo === "dijkstra") {
+      const cells = [...fig.querySelectorAll(".gv-table tbody tr")][0].querySelectorAll("td");
+      const shown = [...cells].map(c => c.textContent).join(","), want = out.G.ids.map(v => r.d[v] === Infinity ? "∞" : String(r.d[v])).join(",");
+      assert(shown === want, `${q.id}: the last step's d row is graph.js's final d (${shown})`);
+    }
+    if (spec.algo === "bfs") assert(!!fig.querySelector(".gv-box") && /תור/.test(fig.textContent), `${q.id}: the BFS queue panel is shown`);
+    if (["dfs", "topo"].includes(spec.algo)) {
+      const rows = [...fig.querySelectorAll(".gv-table tbody tr")];
+      assert(rows[1] && [...rows[1].querySelectorAll("td")].map(c => c.textContent).join(",") === out.G.ids.map(v => r.fin[v]).join(","), `${q.id}: the f row is graph.js's finish times`);
+      assert(fig.querySelectorAll(".gv-cl").length === Object.keys(r.classes).length && /מחסנית/.test(fig.textContent), `${q.id}: every edge classified + the recursion stack panel`);
+    }
+    if (spec.algo === "topo") assert(txt.includes(r.topo.join("")) || txt.replace(/[\s→]/g, "").includes(r.topo.join("")), `${q.id}: the topological list is shown`);
+    if (spec.algo === "scc") assert(fig.querySelectorAll(".gv-comp").length === r.scc.length && fig.querySelectorAll("g.gv-n[class*=' cc']").length === spec.nodes.length, `${q.id}: SCC colours on every node + one chip per component`);
+    if (spec.algo === "prim" || spec.algo === "kruskal") assert(fig.querySelectorAll("path.gv-e.k-mst").length === r.mst.length && txt.includes(String(r.weight)), `${q.id}: MST edges highlighted and the weight shown`);
+    assert(!/undefined|NaN|\[object/.test(fig.textContent), `${q.id}: no undefined/NaN in the widget`);
+    // play: advances on its own, then stop
+    A.click(fig.querySelector(".gv-first"));
+    A.click(fig.querySelector(".gv-play"));
+    assert(/עצירה/.test(fig.querySelector(".gv-play").textContent), `${q.id}: play toggles to pause`);
+    await new Promise(res => setTimeout(res, 1000));
+    assert(+fig.dataset.step >= 1, `${q.id}: play advanced to step ${+fig.dataset.step + 1}`);
+    A.click(fig.querySelector(".gv-play"));
+    assert(/הפעלה/.test(fig.querySelector(".gv-play").textContent), `${q.id}: pause stops`);
+    assert(A.errors.length === 0, "no errors: " + A.errors.join(" | "));
+  }
+  if (stepGQ) {
+    const A = boot(); openQ(A, stepGQ);
+    const i = stepGQ.steps.findIndex(s => s.graph), card = A.$$("#qBody .step-card")[i];
+    const fig = card && card.querySelector(".s-graph .graph-fig");
+    assert(!!fig && fig.hasAttribute("data-locked") && !!fig.querySelector("svg.gv-svg") && !fig.querySelector(".gv-ctrl") && !!fig.querySelector(".gv-hint"),
+      `${stepGQ.id}: a step graph is drawn plain and locked before answering`);
+    solve(card, stepGQ.steps[i], false);
+    assert(fig && !fig.hasAttribute("data-locked") && !!fig.querySelector(".gv-ctrl .gv-next"), `${stepGQ.id}: answering the step unlocks the step-through`);
+    assert(A.errors.length === 0, "no errors: " + A.errors.join(" | "));
+  }
+  // learn / lesson path: a data-graph host added later is mounted by the MutationObserver
+  {
+    const A = boot(), spec = (gQs[0] && gQs[0].graph) || stepGQ.steps.find(s => s.graph).graph;
+    const d = A.doc.createElement("div");
+    d.innerHTML = A.window.Graph.figure(spec);
+    A.doc.body.appendChild(d);
+    await new Promise(res => setTimeout(res, 0));
+    assert(!!d.querySelector(".graph-fig[data-gv] svg.gv-svg"), "a .graph-fig[data-graph] added later is mounted (learn fences, lesson data-graph)");
+    const bad = A.doc.createElement("div");
+    bad.innerHTML = `<div class="graph-fig" data-graph="{not json"></div>`;
+    A.doc.body.appendChild(bad);
+    await new Promise(res => setTimeout(res, 0));
+    assert(!!bad.querySelector(".gv-error"), "bad data-graph JSON shows a Hebrew error, not a crash");
+  }
+}
+
+graphs().then(() => {
+  console.log(fail ? `\n${fail} FAILED` : "\nall ok");
+  process.exit(fail ? 1 : 0);
+}, e => { console.log("FAIL  graphs crashed: " + e.stack); process.exit(1); });

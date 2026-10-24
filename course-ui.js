@@ -136,12 +136,13 @@
     if(it.answered) return;
     it.answered = true;
     if(!(it.key in S.run)) S.run[it.key] = !!ok;
+    if(window.Graph) window.Graph.unlock($("#crsQExtras"));   // algorithms-1 extra: an own question's graph becomes the step-through
     const nb = $("#crsNextBtn");
     nb.classList.remove("hidden");
     nb.focus({ preventScroll: true });
   }
   const solutionPanel = (q, open) => (q.solutionHtml || q.solution)
-    ? `<details class="panel crs-sol"${open ? " open" : ""}><summary><span class="sum-t">פתרון מלא</span></summary><div class="panel-body"><div class="solution-text">${isolate(q.solutionHtml || esc(q.solution))}</div>${srcNote(q)}</div></details>` : "";
+    ? `<details class="panel crs-sol"${open ? " open" : ""}><summary><span class="sum-t">פתרון מלא</span></summary><div class="panel-body">${q.graph && window.Graph ? window.Graph.figure(q.graph) : ""}<div class="solution-text">${isolate(q.solutionHtml || esc(q.solution))}</div>${srcNote(q)}</div></details>` : "";
 
   function renderQuestion(){
     const it = S.items[S.i], q = it.q, n = S.items.length;
@@ -153,7 +154,9 @@
     qt.innerHTML = it.type === "step" ? "" : (it.bank ? APP.questionHtml(q) : html(q.questionHtml || esc(q.question || "")));
     qt.dataset.key = it.key; qt.dataset.type = it.type;
     if(it.bank) qt.dataset.bank = q.id; else delete qt.dataset.bank;
-    $("#crsQExtras").innerHTML = it.type === "step" ? "" : APP.extrasHtml(q);
+    $("#crsQExtras").innerHTML = it.type === "step" ? "" :
+      (!it.bank && q.graph && window.Graph ? window.Graph.figure(q.graph, { locked: true }) : APP.extrasHtml(q));
+    if(window.Graph) window.Graph.hydrate($("#crsQExtras"));
     if(window.Feedback) window.Feedback.slot($("#crsQExtras"), "crs", {
       id: `${C.id}-L${S.L.order}-Q${S.i + 1}`,
       exam: `${C.meta.titleHe} · ${levelName(S.L)}` + (it.bank ? ` · ${APP.examLabelOf(q)} (${q.id})` : ""),

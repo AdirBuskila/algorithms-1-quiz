@@ -1,0 +1,640 @@
+{
+ "examCode": "DEMO-G",
+ "examLabel": "הדגמה: מציג הגרפים",
+ "year": 2026,
+ "examDate": "",
+ "sourceFile": "",
+ "solutionFile": "",
+ "questions": [
+  {
+   "kind": "computation",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "stepsSource": "ai-verified",
+   "num": 1,
+   "topic": "graphs_search",
+   "question": "הריצו BFS מהקודקוד A על הגרף הלא מכוון. השכנים נסרקים לפי סדר אלפביתי.",
+   "solution": "סדר הגילוי הוא A, B, C, D, E, F. המרחקים: $d[B] = d[C] = 1$, $d[D] = d[E] = 2$ ו-$d[F] = 3$.",
+   "steps": [
+    {
+     "type": "numeric",
+     "prompt": "מהו $d[F]$ בסוף הריצה?",
+     "answer": 3,
+     "key": "d.F",
+     "explain": "המסלול A, B, D, F."
+    },
+    {
+     "type": "text",
+     "prompt": "כתבו את סדר הגילוי, מופרד בפסיקים.",
+     "accept": [
+      "A, B, C, D, E, F"
+     ],
+     "key": "order",
+     "explain": "BFS מגלה שכבה אחרי שכבה."
+    },
+    {
+     "type": "choice",
+     "prompt": "מיהו $\\pi[E]$?",
+     "options": [
+      {
+       "id": "a",
+       "value": "C"
+      },
+      {
+       "id": "b",
+       "value": "D"
+      },
+      {
+       "id": "c",
+       "value": "A"
+      }
+     ],
+     "correctId": "a",
+     "key": "pi.E",
+     "explain": "E מתגלה כשמוציאים את C מהתור."
+    }
+   ],
+   "graph": {
+    "directed": false,
+    "algo": "bfs",
+    "source": "A",
+    "nodes": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F"
+    ],
+    "edges": [
+     {
+      "u": "A",
+      "v": "B"
+     },
+     {
+      "u": "A",
+      "v": "C"
+     },
+     {
+      "u": "B",
+      "v": "D"
+     },
+     {
+      "u": "C",
+      "v": "D"
+     },
+     {
+      "u": "C",
+      "v": "E"
+     },
+     {
+      "u": "D",
+      "v": "F"
+     }
+    ],
+    "expect": {
+     "order": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+     ],
+     "d": {
+      "D": 2,
+      "F": 3
+     },
+     "pi": {
+      "E": "C"
+     }
+    }
+   }
+  },
+  {
+   "kind": "computation",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "stepsSource": "ai-verified",
+   "num": 2,
+   "topic": "graphs_search",
+   "question": "הריצו DFS על הגרף המכוון (הלולאה הראשית והשכנים בסדר אלפביתי) ורשמו זמני גילוי וסיום.",
+   "solution": "זמני הגילוי והסיום: `u 1/8`, `v 2/7`, `y 3/6`, `x 4/5`, `w 9/12`, `z 10/11`. הקשת $x \\to v$ היא קשת אחורה, הקשת $u \\to x$ היא קשת קדימה והקשת $w \\to y$ היא קשת חוצה.",
+   "steps": [
+    {
+     "type": "numeric",
+     "prompt": "מהו $f[u]$?",
+     "answer": 8,
+     "key": "fin.u",
+     "explain": "u נסגר אחרי v, y ו-x."
+    },
+    {
+     "type": "choice",
+     "prompt": "מה הסוג של הקשת $x \\to v$?",
+     "options": [
+      {
+       "id": "a",
+       "value": "קשת אחורה"
+      },
+      {
+       "id": "b",
+       "value": "קשת קדימה"
+      },
+      {
+       "id": "c",
+       "value": "קשת חוצה"
+      },
+      {
+       "id": "d",
+       "value": "קשת עץ"
+      }
+     ],
+     "correctId": "a",
+     "key": "class.x-v",
+     "explain": "כשבודקים את הקשת $x \\to v$, הקודקוד v עדיין אפור."
+    }
+   ],
+   "graph": {
+    "directed": true,
+    "algo": "dfs",
+    "caption": "הגרף מאיור 22.4 בספר CLRS",
+    "nodes": [
+     {
+      "id": "u",
+      "x": 0,
+      "y": 0
+     },
+     {
+      "id": "v",
+      "x": 1,
+      "y": 0
+     },
+     {
+      "id": "w",
+      "x": 2,
+      "y": 0
+     },
+     {
+      "id": "x",
+      "x": 0,
+      "y": 1
+     },
+     {
+      "id": "y",
+      "x": 1,
+      "y": 1
+     },
+     {
+      "id": "z",
+      "x": 2,
+      "y": 1
+     }
+    ],
+    "edges": [
+     {
+      "u": "u",
+      "v": "v"
+     },
+     {
+      "u": "u",
+      "v": "x"
+     },
+     {
+      "u": "v",
+      "v": "y"
+     },
+     {
+      "u": "w",
+      "v": "y"
+     },
+     {
+      "u": "w",
+      "v": "z"
+     },
+     {
+      "u": "x",
+      "v": "v"
+     },
+     {
+      "u": "y",
+      "v": "x"
+     },
+     {
+      "u": "z",
+      "v": "z"
+     }
+    ],
+    "expect": {
+     "disc": {
+      "u": 1,
+      "v": 2,
+      "y": 3,
+      "x": 4,
+      "w": 9,
+      "z": 10
+     },
+     "fin": {
+      "x": 5,
+      "y": 6,
+      "v": 7,
+      "u": 8,
+      "z": 11,
+      "w": 12
+     },
+     "classes": {
+      "x-v": "back",
+      "u-x": "forward",
+      "w-y": "cross",
+      "z-z": "back"
+     }
+    }
+   }
+  },
+  {
+   "kind": "computation",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "stepsSource": "ai-verified",
+   "num": 3,
+   "topic": "graphs_search",
+   "question": "מצאו מיון טופולוגי של הגרף בעזרת DFS (סדר אלפביתי).",
+   "solution": "לפי זמני סיום יורדים: A, C, B, D, E.",
+   "steps": [
+    {
+     "type": "text",
+     "prompt": "כתבו את המיון הטופולוגי.",
+     "accept": [
+      "A, C, B, D, E"
+     ],
+     "key": "topo",
+     "explain": "כל קודקוד שמסתיים נכנס לראש הרשימה."
+    }
+   ],
+   "graph": {
+    "directed": true,
+    "algo": "topo",
+    "layout": "layers",
+    "nodes": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E"
+    ],
+    "edges": [
+     {
+      "u": "A",
+      "v": "B"
+     },
+     {
+      "u": "A",
+      "v": "C"
+     },
+     {
+      "u": "B",
+      "v": "D"
+     },
+     {
+      "u": "C",
+      "v": "D"
+     },
+     {
+      "u": "D",
+      "v": "E"
+     }
+    ],
+    "expect": {
+     "topo": [
+      "A",
+      "C",
+      "B",
+      "D",
+      "E"
+     ],
+     "fin": {
+      "A": 10
+     }
+    }
+   }
+  },
+  {
+   "kind": "computation",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "stepsSource": "ai-verified",
+   "num": 4,
+   "topic": "graphs_search",
+   "question": "מצאו את הרכיבים הקשירים היטב בעזרת אלגוריתם קוסרג'ו.",
+   "solution": "שלושה רכיבים: {A, B, C}, {D, E}, {F}.",
+   "steps": [
+    {
+     "type": "numeric",
+     "prompt": "כמה רכיבים קשירים היטב יש בגרף?",
+     "answer": 3,
+     "key": "sccCount",
+     "explain": "כל שורש של ה-DFS השני פותח רכיב."
+    }
+   ],
+   "graph": {
+    "directed": true,
+    "algo": "scc",
+    "nodes": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F"
+    ],
+    "edges": [
+     {
+      "u": "A",
+      "v": "B"
+     },
+     {
+      "u": "B",
+      "v": "C"
+     },
+     {
+      "u": "C",
+      "v": "A"
+     },
+     {
+      "u": "B",
+      "v": "D"
+     },
+     {
+      "u": "D",
+      "v": "E"
+     },
+     {
+      "u": "E",
+      "v": "D"
+     },
+     {
+      "u": "E",
+      "v": "F"
+     }
+    ],
+    "expect": {
+     "scc": [
+      [
+       "A",
+       "B",
+       "C"
+      ],
+      [
+       "D",
+       "E"
+      ],
+      [
+       "F"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "kind": "computation",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "stepsSource": "ai-verified",
+   "num": 5,
+   "topic": "graphs_search",
+   "question": "הריצו את אלגוריתם דייקסטרה מהקודקוד A.",
+   "solution": "המרחקים הסופיים: $d[A] = 0$, $d[C] = 1$, $d[B] = 3$, $d[D] = 4$ ו-$d[E] = 7$.",
+   "steps": [
+    {
+     "type": "numeric",
+     "prompt": "מהו $d[E]$ בסוף הריצה?",
+     "answer": 7,
+     "key": "d.E",
+     "explain": "המסלול הקצר עובר דרך C, B ו-D."
+    }
+   ],
+   "graph": {
+    "directed": true,
+    "algo": "dijkstra",
+    "source": "A",
+    "nodes": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E"
+    ],
+    "edges": [
+     {
+      "u": "A",
+      "v": "B",
+      "w": 4
+     },
+     {
+      "u": "A",
+      "v": "C",
+      "w": 1
+     },
+     {
+      "u": "C",
+      "v": "B",
+      "w": 2
+     },
+     {
+      "u": "B",
+      "v": "D",
+      "w": 1
+     },
+     {
+      "u": "C",
+      "v": "D",
+      "w": 5
+     },
+     {
+      "u": "D",
+      "v": "E",
+      "w": 3
+     }
+    ],
+    "expect": {
+     "d": {
+      "A": 0,
+      "B": 3,
+      "C": 1,
+      "D": 4,
+      "E": 7
+     },
+     "pi": {
+      "B": "C",
+      "D": "B"
+     }
+    }
+   }
+  },
+  {
+   "kind": "computation",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "stepsSource": "ai-verified",
+   "num": 6,
+   "topic": "mst",
+   "question": "הריצו את אלגוריתם פרים מהקודקוד A.",
+   "solution": "העץ: A–B, B–C, B–D, C–E, ומשקלו 13.",
+   "steps": [
+    {
+     "type": "numeric",
+     "prompt": "מהו משקל העץ הפורש המינימלי?",
+     "answer": 13,
+     "key": "weight",
+     "explain": "2 + 1 + 4 + 6 = 13."
+    }
+   ],
+   "graph": {
+    "directed": false,
+    "algo": "prim",
+    "source": "A",
+    "nodes": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E"
+    ],
+    "edges": [
+     {
+      "u": "A",
+      "v": "B",
+      "w": 2
+     },
+     {
+      "u": "A",
+      "v": "C",
+      "w": 3
+     },
+     {
+      "u": "B",
+      "v": "C",
+      "w": 1
+     },
+     {
+      "u": "B",
+      "v": "D",
+      "w": 4
+     },
+     {
+      "u": "C",
+      "v": "D",
+      "w": 5
+     },
+     {
+      "u": "C",
+      "v": "E",
+      "w": 6
+     },
+     {
+      "u": "D",
+      "v": "E",
+      "w": 7
+     }
+    ],
+    "expect": {
+     "weight": 13,
+     "mst": [
+      [
+       "A",
+       "B"
+      ],
+      [
+       "B",
+       "C"
+      ],
+      [
+       "B",
+       "D"
+      ],
+      [
+       "C",
+       "E"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "kind": "computation",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "stepsSource": "ai-verified",
+   "num": 7,
+   "topic": "mst",
+   "question": "הריצו את אלגוריתם קרוסקל על הגרף שבצעד.",
+   "solution": "קרוסקל לוקח את B–C, A–B, B–D ו-C–E ומדלג על A–C ו-C–D. המשקל 13.",
+   "steps": [
+    {
+     "type": "numeric",
+     "prompt": "מהו משקל העץ שקרוסקל בונה?",
+     "answer": 13,
+     "key": "weight",
+     "graph": {
+      "directed": false,
+      "algo": "kruskal",
+      "nodes": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E"
+      ],
+      "edges": [
+       {
+        "u": "A",
+        "v": "B",
+        "w": 2
+       },
+       {
+        "u": "A",
+        "v": "C",
+        "w": 3
+       },
+       {
+        "u": "B",
+        "v": "C",
+        "w": 1
+       },
+       {
+        "u": "B",
+        "v": "D",
+        "w": 4
+       },
+       {
+        "u": "C",
+        "v": "D",
+        "w": 5
+       },
+       {
+        "u": "C",
+        "v": "E",
+        "w": 6
+       },
+       {
+        "u": "D",
+        "v": "E",
+        "w": 7
+       }
+      ],
+      "expect": {
+       "weight": 13
+      }
+     },
+     "explain": "אותו עץ כמו בפרים, כי המשקלים שונים זה מזה."
+    }
+   ]
+  }
+ ]
+}

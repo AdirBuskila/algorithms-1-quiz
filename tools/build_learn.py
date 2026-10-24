@@ -12,6 +12,9 @@ Static + offline, same contract as build_questions.py (open engine):
     <mrow class="ovl"> by richtext.fix_overlines(). Hebrew inside math, or a KaTeX error, fails.
   - ``` fenced code -> <pre class="code-block" dir="ltr"> (same markup as the question rich text);
     inline `code` -> <code class="tok" dir="ltr">.
+  - ```graph fence (JSON, the RAW_SCHEMA "Graphs" format) -> <div class="graph-fig" data-graph>, the step-through
+    visualizer mounted by graph.js at run time; shape checked with validate.check_graph, then run through graph.js
+    (tools/graph_check.js: preconditions + expect).
   - tools/redact.txt (validate.load_redact): a listed author name in a brief fails the build.
   - `24B-A-Q3` / `24B-A-Q3b` (backticked question id) -> <button class="qref"> that peeks at the
     question. An id that is not in questions.json fails the build (it would open an empty panel).
@@ -166,6 +169,25 @@ def code_markup(h):
     parts = re.split(r"(<pre .*?</pre>)", h, flags=re.S)
     return "".join(p if p.startswith("<pre ") else p.replace("<code>", '<code class="tok" dir="ltr">')
                    for p in parts)
+
+
+GRAPH_PRE = re.compile(r'<pre class="code-block" dir="ltr" data-lang="graph"><code>(.*?)</code></pre>', re.S)
+
+
+def graph_figures(h, where):
+    """A ```graph fence (JSON body, the RAW_SCHEMA graph format) -> <div class="graph-fig" data-graph="...">,
+    mounted at run time by graph.js. Bad JSON, a bad shape or a graph.js check problem fails the build."""
+    def sub(m):
+        try:
+            obj = json.loads(htmlmod.unescape(m.group(1)))
+        except ValueError as e:
+            fail(f"{where}: graph fence is not valid JSON ({e})")
+            return ""
+        validate.check_graph(where, obj, fail)
+        for p in validate.run_graph_jobs([{"where": f"{where} graph", "spec": obj}]):
+            fail(p)
+        return f'<div class="graph-fig" data-graph="{htmlmod.escape(json.dumps(obj, ensure_ascii=False), quote=True)}"></div>'
+    return GRAPH_PRE.sub(sub, h)
 
 
 def redact_check(where, text):
@@ -333,6 +355,7 @@ def main():
         h = tag_callouts(h)
         h = linkify_qids(h, known, cid)
         h = code_markup(h)
+        h = graph_figures(h, cid)
         cited |= set(re.findall(r'data-q="([^"]+)"', h))
         h = inject_math(h, rendered)
         h = isolate_rel(h)

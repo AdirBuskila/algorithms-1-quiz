@@ -36,9 +36,9 @@ CONTEXT_KEYS = {"kind", "title", "text", "image", "caption", "code"}
 QUESTION_KEYS = {"num", "part", "kind", "topic", "points", "question", "contextId", "image", "solution",
                  "solutionSource", "official", "confidence", "hold", "rubric", "rubricSource", "pitfalls",
                  "steps", "stepsSource", "options", "correctId", "acceptedIds", "lockOrder", "explanation",
-                 "verdict"}
+                 "verdict", "graph"}
 STEP_KEYS = {"type", "prompt", "explain", "code", "options", "correctId", "answer", "tol", "accept",
-             "normalize", "lines", "bugIndex", "blankIndex"}
+             "normalize", "lines", "bugIndex", "blankIndex", "graph", "key"}
 RUBRIC_KEYS = {"text", "points"}
 OPTION_KEYS = {"id", "type", "value"}
 CODE_RE = re.compile(r"^(\d{2}[ABS]-[A-H]|SAMP-\d+|DEMO-[A-Z])$")
@@ -273,6 +273,10 @@ def check_step(w, s, P, root):
     if s.get("explain"):
         for x in rich_problems(s["explain"], w + " explain"):
             P(x)
+    if "graph" in s:
+        check_graph(w, s["graph"], P)
+    if "key" in s and not nonblank(s["key"]):
+        P(f"{w}: key must name a graph output (order, d.X, fin.X ...)")
     if "code" in s and not isinstance(s["code"], bool):
         P(f"{w}: code must be true/false")
     code = s.get("code") is True
@@ -325,6 +329,102 @@ def check_step(w, s, P, root):
         ids = check_options(w, s.get("options"), P, root, rich=not code)
         if s.get("correctId") not in ids:
             P(f"{w}: correctId {s.get('correctId')} not among option ids")
+
+
+# ---------------------------------------------------------------- graph (algorithms-1 extra, graph.js)
+GRAPH_KEYS = {"nodes", "edges", "directed", "algo", "source", "order", "layout", "caption", "expect"}
+GRAPH_ALGOS = {"bfs", "dfs", "topo", "scc", "dijkstra", "prim", "kruskal"}
+
+
+def check_graph(w, g, P):
+    """Shape of a `graph` (an object or a non-empty list of them). Algorithm preconditions (a DAG for topo,
+    weights ...), `expect` and step `key` answers are checked by running graph.js in Node (tools/graph_check.js),
+    which validate.py main calls."""
+    if isinstance(g, list):
+        if not g:
+            P(f"{w}: graph list is empty")
+        for i, x in enumerate(g):
+            check_graph(f"{w}[{i}]", x, P)
+        return
+    if not isinstance(g, dict):
+        P(f"{w}: graph must be an object (or a list of them)")
+        return
+    unknown_keys(w + " graph", g, GRAPH_KEYS, P)
+    if not isinstance(g.get("directed"), bool):
+        P(f"{w} graph: directed must be true or false")
+    nodes = g.get("nodes")
+    ids = set()
+    if not isinstance(nodes, list) or not nodes:
+        P(f"{w} graph: nodes must be a non-empty list")
+    else:
+        for n in nodes:
+            nid = n.get("id") if isinstance(n, dict) else n
+            if not (nonblank(nid) or is_num(nid)):
+                P(f"{w} graph: node id must be a non-blank string or a number")
+                continue
+            if str(nid) in ids:
+                P(f"{w} graph: duplicate node {nid}")
+            ids.add(str(nid))
+            if isinstance(n, dict) and set(n) - {"id", "x", "y"}:
+                P(f"{w} graph: node {nid}: unknown key(s) {sorted(set(n) - {'id', 'x', 'y'})}")
+    edges = g.get("edges")
+    if not isinstance(edges, list):
+        P(f"{w} graph: edges must be a list")
+    else:
+        for i, e in enumerate(edges):
+            if not isinstance(e, dict) or set(e) - {"u", "v", "w"} or "u" not in e or "v" not in e:
+                P(f"{w} graph: edges[{i}] must be {{u, v, w?}}")
+            elif ids and (str(e["u"]) not in ids or str(e["v"]) not in ids):
+                P(f"{w} graph: edges[{i}] {e['u']}-{e['v']}: endpoint is not a node")
+            elif "w" in e and not is_num(e["w"]):
+                P(f"{w} graph: edges[{i}]: w must be a number")
+    if "algo" in g and g["algo"] not in GRAPH_ALGOS:
+        P(f"{w} graph: algo {g['algo']!r} not in {sorted(GRAPH_ALGOS)}")
+    if "order" in g and g["order"] not in ("alpha", "given"):
+        P(f'{w} graph: order must be "alpha" or "given"')
+    if "layout" in g and g["layout"] not in ("circle", "layers"):
+        P(f'{w} graph: layout must be "circle" or "layers"')
+    if "caption" in g and not isinstance(g["caption"], str):
+        P(f"{w} graph: caption must be a string")
+    if "source" in g and ids and str(g["source"]) not in ids:
+        P(f"{w} graph: source {g['source']} is not a node")
+    if "expect" in g and not isinstance(g["expect"], dict):
+        P(f"{w} graph: expect must be an object")
+
+
+def graph_jobs(code, data):
+    """Every graph (question / step) of one raw file, plus each step `key` with the step's own answer, for
+    tools/graph_check.js. A step's key reads the step's graph, else the question's (a single graph)."""
+    jobs = []
+    for q in data.get("questions") or []:
+        if not isinstance(q, dict) or q.get("hold"):
+            continue
+        qid = question_id(code, q)
+        qg = q.get("graph")
+        for i, g in enumerate(qg if isinstance(qg, list) else ([qg] if qg else [])):
+            jobs.append({"where": f"{qid} graph" + (f"[{i}]" if isinstance(qg, list) else ""), "spec": g})
+        for j, s in enumerate(q.get("steps") or []):
+            if not isinstance(s, dict):
+                continue
+            sg = s.get("graph")
+            for i, g in enumerate(sg if isinstance(sg, list) else ([sg] if sg else [])):
+                jobs.append({"where": f"{qid} step[{j}] graph", "spec": g})
+            if s.get("key"):
+                spec = sg if isinstance(sg, dict) else (qg if isinstance(qg, dict) else None)
+                jobs.append({"where": f"{qid} step[{j}] key {s['key']}", "spec": spec, "key": s["key"], "step": s})
+    return jobs
+
+
+def run_graph_jobs(jobs):
+    """-> list of problems from tools/graph_check.js (graph.js in Node)."""
+    import subprocess
+    if not jobs:
+        return []
+    proc = subprocess.run(["node", str(TOOLS / "graph_check.js")], input=json.dumps(jobs), capture_output=True,
+                          text=True, encoding="utf-8", cwd=str(TOOLS))
+    if proc.returncode not in (0, 1) or not proc.stdout.strip():
+        return ["graph-check: node graph_check.js failed: " + (proc.stderr or "")[:400]]
+    return [f"{r['where']}: {p}" for r in json.loads(proc.stdout) for p in r["problems"]]
 
 
 def check_question(code, q, ctxs, P, W, root):
@@ -455,6 +555,8 @@ def check_question(code, q, ctxs, P, W, root):
             P(f"{qid}: stepsSource {q.get('stepsSource')!r} not in {sorted(STEPS_SOURCES)}")
     elif kind != "mcq" and not hold:
         W(f"{qid}: no steps yet")
+    if "graph" in q:
+        check_graph(qid, q["graph"], P)
     if q.get("confidence") == "low":
         W(f"{qid}: confidence low")
 
@@ -574,6 +676,17 @@ def main():
                           capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT))
     if lint.returncode:
         all_p += ["escape-lint: " + l for l in lint.stdout.splitlines() if not l.startswith("escape problems")]
+    # every graph is run through graph.js in Node: preconditions, `expect` and each step `key` vs the step's answer
+    jobs = []
+    for fp in files:
+        try:
+            data = json.loads(fp.read_text(encoding="utf-8"))
+            jobs += graph_jobs(data.get("examCode") or fp.stem, data)
+        except Exception:
+            pass   # parse errors are reported by check_file
+    gp = run_graph_jobs(jobs)
+    print(f"graph-check: {len(jobs)} graph job(s), {len(gp)} problem(s)")
+    all_p += gp
     print(f"\nPROBLEMS ({len(all_p)}):")
     for x in all_p:
         print("  -", x.encode("ascii", "backslashreplace").decode())

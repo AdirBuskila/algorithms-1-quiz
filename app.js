@@ -116,7 +116,10 @@ function contextHtml(ctx){
   return h;
 }
 function extrasHtml(q){
-  return q.image ? `<figure class="q-fig"><img class="q-img" src="${escapeHtml(q.image)}" alt="" loading="lazy"></figure>` : "";
+  /* algorithms-1 extra: a question's `graph` is drawn plain under the question when there is no exam figure
+     (graph.js); the step-through lives in the solution panel */
+  return q.image ? `<figure class="q-fig"><img class="q-img" src="${escapeHtml(q.image)}" alt="" loading="lazy"></figure>` :
+    ((q.graph && window.Graph) ? window.Graph.figure(q.graph, { static:true }) : "");
 }
 /* bidi: Latin labels / formulas inside Hebrew are isolated at render time (Bidi lives in normalize.js, loaded first) */
 function iso(h){ return window.Bidi ? window.Bidi.render(h) : h; }
@@ -353,6 +356,7 @@ function solutionPanel(q){
   const open = !!P.justShow;
   const src = SOL_SRC[q.solutionSource];
   return `<details class="panel sol-panel"${open?" open":""}><summary><span class="sum-t">פתרון מלא ומחוון</span></summary><div class="panel-body">`+
+    ((q.graph && window.Graph) ? window.Graph.figure(q.graph) : "")+
     `<div class="solution-text">${iso(q.solutionHtml || escapeHtml(q.solution||""))}</div>`+
     (src?`<div class="src-note">${src}</div>`:"")+
     (q.confidence==="low"?`<div class="src-note warn">⚠ רמת ביטחון נמוכה בפתרון — מומלץ לאמת.</div>`:"")+
@@ -427,6 +431,7 @@ function renderQuestion(){
     }
   }
   $("#qBody").innerHTML = h;
+  if(window.Graph){ window.Graph.hydrate($("#qExtras")); window.Graph.hydrate($("#qBody")); }   // algorithms-1 extra (graph.js)
 
   if(q.kind==="mcq") bindMcq(q);
   else {

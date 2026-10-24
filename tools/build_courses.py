@@ -29,6 +29,7 @@ MathBank, HEB, rich_html = rt.MathBank, rt.HEB, rt.rich_html
 
 LESSON_MATH = re.compile(r"\$\$([\s\S]+?)\$\$|(?<![$\\])\$([^$\n]+?)\$")
 ESC = "\x00"
+GRAPH_ATTR = re.compile(r"""data-graph=(['"])(.*?)\1""", re.S)
 
 
 def lesson_html(h, bank, where, errs):
@@ -71,6 +72,7 @@ def main():
 
     bank, errs = MathBank(), []
     step_problems = []
+    graph_jobs = []
     courses = {}
     for entry in loaded["levels"]:
         cid, lv = entry["courseId"], entry["level"]
@@ -83,6 +85,14 @@ def main():
             L["goalHtml"] = rich_html(goal, bank, w + " goal", errs)
         lesson = dict(lv.get("lesson") or {})
         lesson["html"] = lesson_html(str(lesson.get("html") or ""), bank, w + " lesson", errs)
+        # graph visualizers in a lesson: <div class="graph-fig" data-graph='{...JSON...}'></div> (mounted by graph.js)
+        for m in GRAPH_ATTR.finditer(lesson["html"]):
+            try:
+                gspec = json.loads(html.unescape(m.group(2)))
+                validate.check_graph(w + " lesson", gspec, step_problems.append)
+                graph_jobs.append({"where": f"{w} lesson graph", "spec": gspec})
+            except ValueError as e:
+                step_problems.append(f"{w} lesson: data-graph is not valid JSON ({e})")
         L["lesson"] = lesson
         qs = []
         for i, q in enumerate(lv.get("questions") or []):
@@ -90,6 +100,17 @@ def main():
                 continue
             qw = f"{w} q{i + 1}"
             q = dict(q)
+            if q.get("graph") is not None:   # an own question's graph (algorithms-1 extra)
+                validate.check_graph(qw, q["graph"], step_problems.append)
+                gl = q["graph"] if isinstance(q["graph"], list) else [q["graph"]]
+                graph_jobs.extend({"where": f"{qw} graph", "spec": g} for g in gl)
+            st = q.get("step") if isinstance(q.get("step"), dict) else {}
+            if st.get("graph") is not None:
+                gl = st["graph"] if isinstance(st["graph"], list) else [st["graph"]]
+                graph_jobs.extend({"where": f"{qw} step graph", "spec": g} for g in gl)
+            if st.get("key"):
+                gs = st.get("graph") if isinstance(st.get("graph"), dict) else (q.get("graph") if isinstance(q.get("graph"), dict) else None)
+                graph_jobs.append({"where": f"{qw} step key {st['key']}", "spec": gs, "key": st["key"], "step": st})
             if "bankId" in q:
                 if q.get("recap"):
                     q["recapHtml"] = rich_html(q["recap"], bank, qw + " recap", errs)
@@ -116,6 +137,8 @@ def main():
         L["questions"] = qs
         courses.setdefault(cid, {"levels": []})["levels"].append(L)
 
+    if not step_problems:
+        step_problems += validate.run_graph_jobs(graph_jobs)   # graph.js: preconditions, expect, step keys
     if step_problems:
         sys.stderr.write(f"COURSES BUILD FAILED -- {len(step_problems)} invalid step(s), nothing written:\n")
         for p in step_problems:

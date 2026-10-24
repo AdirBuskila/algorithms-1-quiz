@@ -47,7 +47,14 @@
     const prompt = doc.createElement("div"); prompt.className = "s-prompt"; prompt.innerHTML = promptHtml(step);
     const work = doc.createElement("div"); work.className = "s-work";
     const fb = doc.createElement("div"); fb.className = "s-feedback"; fb.setAttribute("aria-live", "polite");
-    body.append(prompt, work, fb);
+    body.append(prompt);
+    let gfig = null;
+    if (step.graph && root.Graph) {   // algorithms-1 extra: the step's graph (graph.js), drawn plain; the step-through opens once answered
+      gfig = doc.createElement("div"); gfig.className = "s-graph"; gfig.innerHTML = root.Graph.figure(step.graph, { locked: true });
+      body.append(gfig);
+      root.Graph.hydrate(gfig);
+    }
+    body.append(work, fb);
     mountEl.appendChild(body);
 
     /* settle the step: verdict, optional reveal of the right answer, explanation, one callback */
@@ -60,6 +67,7 @@
       if (step.explainHtml || step.explain) h += `<div class="s-explain">${bidi(step.explainHtml != null ? step.explainHtml : esc(step.explain))}</div>`;
       fb.innerHTML = h;
       fb.className = "s-feedback " + (ok ? "good" : "bad");
+      if (gfig) root.Graph.unlock(gfig);
       if (typeof onResult === "function") onResult({ ok });
     }
     const msg = t => { fb.className = "s-feedback"; fb.innerHTML = `<div class="s-hint">${esc(t)}</div>`; };

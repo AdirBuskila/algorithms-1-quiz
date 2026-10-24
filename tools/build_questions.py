@@ -21,7 +21,12 @@ Questions on hold are left out of the bank. Unless config includeDrafts is true,
 are stripped (the question still ships with its solution): stepsSource "ai-draft" removes `steps`;
 rubricSource "ai-draft" removes `rubric`, `pitfalls` and `pointsTotal`. Listed in build_report.md.
 
-Run:  PYTHONUTF8=1 py tools/build_questions.py
+Algorithms-1 extra: a question's or step's `graph` (and a step's `key`) pass through to the bank unchanged
+(graph.js draws them; validate.check_graph checks the shape and tools/graph_check.js runs every graph, its
+`expect` and every step `key` through graph.js -- a mismatch fails the build).
+DEMO-* raw files are skipped unless --demo is given (they never ship; verify_dom.js uses them).
+
+Run:  PYTHONUTF8=1 py tools/build_questions.py [--demo]
 Prints ASCII only (the Windows console is cp1255); Hebrew goes to UTF-8 files.
 """
 import collections, datetime, json, pathlib, re, sys
@@ -77,7 +82,11 @@ def fail(lines, header):
 
 
 def main():
-    raw_files = [p for p in sorted(RAW.glob("*.json")) if EXAM_RE.match(p.name)]
+    # DEMO-* exams (tools/gen/gen_DEMO-G.py: the graph visualizer demo) never ship: built only with --demo, for
+    # tools/verify_dom.js. Rebuild without the flag before committing questions.js.
+    demo = "--demo" in sys.argv[1:]
+    raw_files = [p for p in sorted(RAW.glob("*.json")) if EXAM_RE.match(p.name)
+                 and (demo or not p.name.startswith("DEMO-"))]
     bank = rt.MathBank()
     math_errors = []
     contexts, questions = {}, []
@@ -89,6 +98,12 @@ def main():
         p, w, _n, _bt = validate.check_file(fp)
         problems += p
         warnings += w
+    if not problems:   # graphs: run through graph.js (preconditions, expect, step keys)
+        jobs = []
+        for fp in raw_files:
+            data = json.loads(fp.read_text(encoding="utf-8"))
+            jobs += validate.graph_jobs(data.get("examCode") or fp.stem, data)
+        problems += validate.run_graph_jobs(jobs)
     if problems:
         fail(problems, f"BUILD FAILED -- {len(problems)} problem(s), nothing written:")
 
@@ -227,6 +242,8 @@ def main():
          f"- Shared context blocks: **{len(contexts)}**",
          f"- Math spans rendered (distinct): **{len(bank.items)}**",
          f"- Guided steps: **{sum(n_steps.values())}** {dict(n_steps)}",
+         f"- Graph visualizers (graph): **{sum(1 for q in questions if q.get('graph'))}** questions, "
+         f"**{sum(1 for q in questions for s in q.get('steps', []) if s.get('graph'))}** steps",
          f"- includeDrafts: **{CFG['includeDrafts']}**",
          f"- **ai-draft parts stripped: {len(drafts)}** " + ", ".join(drafts),
          f"- **On hold (not in bank): {len(held)}**", ""] + [f"  - {h}" for h in held] + ["",
