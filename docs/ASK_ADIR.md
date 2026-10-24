@@ -95,6 +95,7 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 ### 25A-B, 24B-B - no answer source
 - Question: no key for any item of either sitting; all items are held no-key for the solver. The 24B-B cover says "מועד א" (14.8.24), treated as 24B-B per GATE1.
 - Status: hold (no-key)
+- 25A-B (2026-10-24): 11 of 12 items resolved by solver, pending refuter (solutionSource "solved", checks in tools/verify/25A-B/solve_25AB.py). Still held: bonus item b (adjacency list, number of neighbours in O(1)): false for a linked list (O(deg v)), true if the list stores its length; the wording does not decide it. Needed: Adir's reading of the course convention.
 - 24B-B: resolved by solver, pending refuter (11 of 12 items solved; Q2b stays held, see above). Assumptions stated in the solutions: Q1b no self-loops (with loops the claim fails), Q2a every coded letter occurs (c=0 would add (0,4)). Bonus: the tree forces T = ?ATATAT with ? not A/T (read R); the answer ATAT does not depend on it.
 
 ### 23A-A - no answer source
@@ -160,6 +161,6 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Page: 3-20
 - Question: no solution source exists for this sitting; all 8 items are held with reason no-key. Q1 and Q3 print one point total per question (30 each), not per part.
 - Needed: route to the solver.
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; all 8 items solved, checks in tools/verify/23B-C/solve_23BC.py). Q4 assumes c and d occur in S (frequency >= 1); with frequency 0 allowed, (0,7) would be one extra pair, noted in the solution.
 
 ## Resolved

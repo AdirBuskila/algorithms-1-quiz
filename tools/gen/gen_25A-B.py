@@ -3,22 +3,35 @@
 Run: PYTHONUTF8=1 py -W error::SyntaxWarning tools/gen/gen_25A-B.py
 
 Source: exam booklet pp.1-14 (cover + bonus on p.1, four questions with answer lines). Cap 115.
-No answer source exists, so EVERY item is held as no-key (the orchestrator routes them to the solver).
+No answer source exists. The solver wrote the solutions (solutionSource "solved", official false), pending the refuter.
 Items: Q1 a,b,c (5/15/5), Q2 a,b (15/10), Q3 a,b (15/10), Q4 a,b (15/10), bonus a,b,c (5 each; the cover
 says 15 points for the three).
 Q1: the matrix M is a figure (images/exams/25A-B-Q1-matrix.png, cropped from p.2).
 
-Reference values (not answers, not shipped): tools/verify/25A-B/checks.py computes the T table of Q1a, the
-greedy of Q2, inversions of Q3 and a linear almost-match of Q4 against brute force.
+Solver (2026-10-24): 11 items solved, 1 still held.
+- Held: bonus b (adjacency list, number of neighbours in constant time). The verdict depends on the list
+  implementation the course assumes: a linked list (CLRS) needs O(deg v) -> false; a list that stores its length
+  (array / vector, or a degree array) gives O(1) -> true. The wording does not decide it.
+- Q4 uses the Z-function (longest common prefix of P with every suffix of T). It is not in the course's KMP chapter,
+  so the solution presents it in full, with its linearity argument; no suffix structure is used, as required.
+Checks: tools/verify/25A-B/solve_25AB.py (each algorithm transcribed and tested against brute force; networkx for
+the bonus): Q1 table and recurrence (400 random matrices), Q2 greedy string optimal (500 random) and the proof's
+"k largest odd terms" identity, Q3 merge counting (800 random with duplicates), Q4 Z method vs naive (3000 random)
+plus the comparison count, Q5a/Q5c BFS vs networkx (600 random graphs). checks.py holds the transcriber's values.
 """
 import json, pathlib
 
 OUT = pathlib.Path(__file__).resolve().parents[1] / "raw" / "25A-B.json"
-NOKEY = "no-key: no answer source for this sitting"
+HOLD_5B = ("ambiguous: with a linked adjacency list (CLRS) the number of neighbours takes O(deg v) (false); if each list "
+           "stores its length (array/vector or a degree array) it is O(1) (true). The wording does not decide it")
 
 
-def Q(num, part, kind, topic, question, **kw):
-    q = {"num": num, "kind": kind, "topic": topic, "question": question, "hold": NOKEY}
+def Q(num, part, kind, topic, question, solution=None, hold=None, **kw):
+    q = {"num": num, "kind": kind, "topic": topic, "question": question}
+    if hold:
+        q["hold"] = hold
+    else:
+        q.update({"solution": solution, "solutionSource": "solved", "official": False, "confidence": "high"})
     if part:
         q["part"] = part
     q.update(kw)
@@ -59,40 +72,165 @@ C4 = (r"**הגדרה:** נאמר ששתי מחרוזות באותו אורך $P_
 
 C5 = (r"**שאלת בונוס - 15 נקודות** (יש להקיף את התשובה הנכונה): יהי $G$ גרף לא מכוון, קבע לכל אחת מהטענות אם היא נכונה או לא נכונה.")
 
+SOL = "**פתרון** (אין פתרון רשמי לבחינה זו; הפתרון נכתב ונבדק במחשב):\n"
+
+SOL_1A = SOL + r"""$T(i,j)$ הוא אורך הצלע של ריבוע האפסים הגדול ביותר שהפינה הימנית התחתונה שלו היא התא $(i,j)$:
+- תא שבו $M[i][j]=1$ מקבל $0$ (אין ריבוע אפסים שמסתיים בו).
+- תא אפס בשורה $0$ או בעמודה $0$ מקבל $1$ (אין מקום לריבוע גדול יותר).
+- בשאר התאים בודקים כמה אפשר "להתרחב" למעלה ושמאלה.
+
+$$\begin{array}{c|cccccc} T & 0 & 1 & 2 & 3 & 4 & 5\\ \hline 0 & 1 & 0 & 0 & 1 & 0 & 0\\ 1 & 1 & 1 & 0 & 1 & 1 & 1\\ 2 & 0 & 1 & 1 & 1 & 2 & 2\\ 3 & 0 & 0 & 1 & 2 & 2 & 0\\ 4 & 0 & 0 & 1 & 2 & 3 & 1 \end{array}$$
+לדוגמה, $T(2,4)=2$: התאים בשורות $1,2$ ובעמודות $3,4$ כולם אפס, אבל $M[0][2]=1$ חוסם ריבוע של $3$. $T(4,4)=3$ הוא הריבוע המודגש, והמקסימום בטבלה הוא $3$."""
+
+SOL_1B = SOL + r"""(האינדקסים מתחילים ב-$0$, כמו בטבלה.)
+$$T(i,j)=\begin{cases}0 & M[i][j]=1\\ 1 & M[i][j]=0 \text{ and } (i=0 \text{ or } j=0)\\ 1+\min\bigl(T(i-1,j),\,T(i,j-1),\,T(i-1,j-1)\bigr) & \text{otherwise}\end{cases}$$
+**נכונות** (למקרה השלישי, $M[i][j]=0$ ו-$i,j\ge 1$). נסמן $t=\min\bigl(T(i-1,j),T(i,j-1),T(i-1,j-1)\bigr)$.
+- $T(i,j)\le t+1$: אם יש ריבוע אפסים בצלע $s$ שפינתו הימנית התחתונה $(i,j)$, אז בתוכו יש ריבועי אפסים בצלע $s-1$ שפינותיהם $(i-1,j)$, $(i,j-1)$ ו-$(i-1,j-1)$. לכן כל אחד משלושת הערכים הוא לפחות $s-1$, כלומר $s\le t+1$.
+- $T(i,j)\ge t+1$: הריבוע בצלע $t+1$ שפינתו $(i,j)$ (שורות $i-t..i$, עמודות $j-t..j$) מכוסה על ידי שלושה ריבועי אפסים בצלע $t$: זה שפינתו $(i-1,j-1)$ מכסה את כל התאים שמעל ומשמאל ל-$(i,j)$, זה שפינתו $(i-1,j)$ מכסה את העמודה $j$ מעל $(i,j)$, וזה שפינתו $(i,j-1)$ מכסה את השורה $i$ משמאל ל-$(i,j)$. והתא $(i,j)$ עצמו הוא אפס.
+
+מקרי הבסיס: תא $1$ אינו יכול להיות פינה של ריבוע אפסים ($0$); תא אפס בשורה או בעמודה הראשונה הוא ריבוע בצלע $1$ ואין מקום לריבוע גדול יותר.
+התשובה: $\max_{i,j} T(i,j)$. ממלאים את הטבלה שורה אחר שורה, משמאל לימין, כך ששלושת התאים שהנוסחה צריכה כבר חושבו."""
+
+SOL_1C = SOL + r"""**זמן:** $O(n\cdot m)$. בטבלה $n\cdot m$ תאים וכל תא מחושב ב-$O(1)$ (מינימום של שלושה ערכים). מציאת המקסימום היא עוד מעבר אחד, $O(n\cdot m)$.
+**מקום:** $O(n\cdot m)$ לטבלה $T$. (אם רוצים רק את גודל הריבוע אפשר לשמור שתי שורות בלבד ולקבל $O(m)$ מקום נוסף, כי כל שורה תלויה רק בשורה שמעליה.)"""
+
+SOL_2A = SOL + r"""**רעיון:** הערך יורד הכי הרבה כשמורידים מופע של האות **השכיחה ביותר**: אם לאות יש $x$ מופעים, הורדת מופע אחד מקטינה את הערך ב-$x^2-(x-1)^2=2x-1$. לכן $k$ פעמים מורידים מופע אחד של האות שהשכיחות הנוכחית שלה מקסימלית, ושומרים את השכיחויות בערימת מקסימום.
+```
+ReduceValue(S, n, k):
+  f[a..z] <- 0
+  for i <- 1 to n:  f[S[i]] <- f[S[i]] + 1        // O(n)
+  H <- Build-Max-Heap of the pairs (f[c], c) with f[c] > 0
+  r[a..z] <- 0                                     // r[c] = how many c's to delete
+  repeat k times:
+      (x, c) <- Extract-Max(H)
+      r[c] <- r[c] + 1
+      Insert(H, (x - 1, c))
+  S' <- empty string
+  for i <- 1 to n:                                 // O(n)
+      if r[S[i]] > 0:  r[S[i]] <- r[S[i]] - 1      // this occurrence is deleted
+      else:            append S[i] to S'
+  return S'
+```
+**זמן:** ספירת השכיחויות ובניית המחרוזת $S'$ הן $O(n)$. בערימה יש לכל היותר $\min(26,n)$ איברים, כך שכל אחת מ-$k$ הפעולות עולה $O(\log k)$ לכל היותר (ואף $O(1)$, כי הא"ב קבוע). סה"כ $O(n+k\cdot\log k)$.
+**דוגמה:** `character` עם $k=2$: השכיחויות $a,c,r$ הן $2$. מורידים $c$ אחד ו-$a$ אחד (או $r$), ונשארות שכיחויות $1,1,1,1,2,1$, ערך $9$. למשל `hracter`; גם `charter` (הורדת $a$ ו-$c$ אחרים) נותנת $9$."""
+
+SOL_2B = SOL + r"""**כלי עזר:** לכל $x\ge 1$ מתקיים $x^2=1+3+\dots+(2x-1)$. לכן הערך של $S$ הוא סכום של "אוסף איברים" $W$: לכל אות $c$ עם שכיחות $f_c$ נכנסים ל-$W$ האיברים $1,3,\dots,2f_c-1$.
+הורדת מופע אחד של אות שיש לה כרגע $x$ מופעים מקטינה את הערך ב-$2x-1$, כלומר מוחקת מ-$W$ את האיבר **הגדול ביותר שנותר** של אותה אות.
+
+**חסם תחתון לכל פתרון.** כל מחרוזת $S'$ שמתקבלת מ-$S$ בהורדת $k$ אותיות מוחקת מ-$W$ בדיוק $k$ איברים (מכל אות $c$ את $r_c$ האיברים הגדולים שלה, $\sum r_c=k$). סכום של $k$ איברים מ-$W$ הוא לכל היותר סכום $k$ האיברים הגדולים ביותר ב-$W$, שנסמן $D_k$. לכן לכל פתרון: $\text{value}(S')\ge \text{value}(S)-D_k$.
+
+**החמדן משיג את החסם.** האיברים שנותרו לאות $c$ הם $1,3,\dots,2x_c-1$, כאשר $x_c$ השכיחות הנוכחית שלה. לכן האיבר הגדול ביותר שנותר ב-$W$ כולו הוא $2\max_c x_c-1$, וזה בדיוק האיבר שהחמדן מוחק (הוא מוריד מופע של אות עם $x_c$ מקסימלי). באינדוקציה על מספר הצעדים: אחרי $t$ צעדים החמדן מחק את $t$ האיברים הגדולים ביותר של $W$ (בצעד $t+1$ הוא מוחק את הגדול ביותר מבין הנותרים). אחרי $k$ צעדים הוא מחק סכום $D_k$, ולכן $\text{value}(S')=\text{value}(S)-D_k$, השווה לחסם. כלומר הפתרון אופטימלי.
+
+**חוקיות:** בכל צעד נשארות לפחות $n-k+1\ge 2$ אותיות, כך שהמקסימום בערימה הוא לפחות $1$ ותמיד יש מופע להוריד. בסריקה האחרונה נמחקים בדיוק $r_c$ מופעים של כל אות, כלומר $S'$ מתקבלת מ-$S$ בהורדת $k$ אותיות."""
+
+SOL_3A = SOL + r"""**רעיון:** מיון מיזוג שסופר היפוכים. כל היפוך $(i,j)$ הוא אחד משלושה סוגים: שני האינדקסים בחצי השמאלי, שניהם בחצי הימני, או $i$ בשמאלי ו-$j$ בימני ("חוצה"). את שני הסוגים הראשונים סופרים ברקורסיה, ואת החוצים סופרים בזמן המיזוג.
+```
+SortCount(A, lo, hi):          // sorts A[lo..hi], returns its number of inversions
+  if lo >= hi:  return 0
+  mid <- floor((lo + hi) / 2)
+  x <- SortCount(A, lo, mid)
+  y <- SortCount(A, mid + 1, hi)
+  z <- MergeCount(A, lo, mid, hi)
+  return x + y + z
+
+MergeCount(A, lo, mid, hi):
+  L <- A[lo..mid],  R <- A[mid+1..hi]
+  i <- 1,  j <- 1,  k <- lo,  z <- 0
+  while i <= |L| and j <= |R|:
+      if L[i] <= R[j]:  A[k] <- L[i];  i <- i + 1
+      else:             A[k] <- R[j];  j <- j + 1;  z <- z + (|L| - i + 1)
+      k <- k + 1
+  copy what is left of L or of R into A[k..hi]
+  return z
+```
+הקריאה הראשית: `SortCount(A, 1, n)`.
+**נכונות הספירה החוצה:** מיון כל חצי בנפרד לא משנה אילו זוגות (איבר מהשמאלי, איבר מהימני) מקיימים "השמאלי גדול יותר", ולכן אפשר לספור אותם על החצאים הממוינים. כש-$R[j]$ יוצא לפני $L[i]$ מתקיים $L[i]>R[j]$, וכל $L[i..|L|]$ (ממוין) גדולים מ-$R[j]$; האיברים $L[1..i-1]$ כבר יצאו, כלומר הם לכל היותר $R[j]$. לכן $|L|-i+1$ הוא בדיוק מספר האיברים בשמאלי שגדולים מ-$R[j]$. במקרה של שוויון ($L[i]=R[j]$) מוציאים את השמאלי, ולכן זוג שווה לא נספר, כנדרש (היפוך דורש $A[i]>A[j]$ ממש).
+**דוגמה:** $[30,10,40,20]$: בחצי $[30,10]$ היפוך אחד, בחצי $[40,20]$ היפוך אחד. במיזוג $[10,30]$ עם $[20,40]$: $20$ יוצא לפני $30$ ומוסיף $1$. סה"כ $3$."""
+
+SOL_3B = SOL + r"""**זמן:** $\Theta(n\log n)$.
+המיזוג לינארי: בכל איטרציה יוצא איבר אחד, ולכן $MergeCount$ על $n$ איברים עולה $\Theta(n)$ (והספירה מוסיפה $O(1)$ לאיטרציה). מכאן נוסחת הנסיגה
+$$T(n)=2T\left(\tfrac{n}{2}\right)+\Theta(n).$$
+לפי משפט האב עם $a=2$, $b=2$, $c=1$: $\log_b a=\log_2 2=1=c$, ולכן $T(n)=\Theta(n\log n)$. (זה טוב בהרבה מבדיקת כל הזוגות, $\Theta(n^2)$.)
+**מקום:** $O(n)$ למערכי העזר $L,R$ של המיזוג (ועוד $O(\log n)$ למחסנית הרקורסיה)."""
+
+SOL_4A = SOL + r"""**רעיון:** חלון $T[i..i+m-1]$ "כמעט תואם" ל-$P$ אם ורק אם: נסמן $a$ = אורך הרישא המשותפת הארוכה ביותר של $P$ ושל $T[i..]$. אם $a\ge m$ יש התאמה מלאה. אחרת $a$ הוא מיקום אי-ההתאמה הראשון, ונדרש שכל השאר יתאים: $P[a+1..m-1]=T[i+a+1..i+m-1]$, כלומר שהסיפא המשותפת של $P$ ושל $T[..i+m-1]$ תהיה באורך לפחות $m-1-a$.
+לכן מספיק לחשב לכל מקום בטקסט שני מספרים:
+- $pre[i]$ = אורך הרישא המשותפת הארוכה ביותר של $P$ ושל $T[i..n-1]$.
+- $suf[e]$ = אורך הסיפא המשותפת הארוכה ביותר של $P$ ושל $T[0..e]$.
+
+את שניהם מחשבים בזמן לינארי עם **פונקציית Z** (אינה עץ סיפות או מערך סיפות): עבור מחרוזת $s$, $Z[k]$ הוא אורך הרישא המשותפת הארוכה ביותר של $s$ ושל $s[k..]$.
+```
+Z-Function(s, L):                    // indices 0..L-1
+  Z[0] <- L;  l <- 0;  r <- 0        // [l, r) = the matching window that reaches furthest right
+  for k <- 1 to L - 1:
+      if k < r:  Z[k] <- min(r - k, Z[k - l])
+      else:      Z[k] <- 0
+      while k + Z[k] < L and s[Z[k]] = s[k + Z[k]]:
+          Z[k] <- Z[k] + 1
+      if k + Z[k] > r:  l <- k;  r <- k + Z[k]
+  return Z
+
+AlmostMatch(T, n, P, m):             // # is a character that is not in T or in P
+  Z1 <- Z-Function(P + '#' + T)
+  Z2 <- Z-Function(reverse(P) + '#' + reverse(T))
+  for i <- 0 to n - 1:
+      pre[i] <- Z1[m + 1 + i]
+      suf[i] <- Z2[m + 1 + (n - 1 - i)]
+  for i <- 0 to n - m:
+      if pre[i] >= m  or  pre[i] + suf[i + m - 1] >= m - 1:
+          output i + 1               // positions are 1-based in the question
+```
+**למה זה נכון:** בגלל התו `#` ההתאמה לא יכולה "לעבור" אותו, ולכן $Z1[m+1+i]$ הוא בדיוק $pre[i]$ (לכל היותר $m$). היפוך שתי המחרוזות הופך סיפא משותפת לרישא משותפת: $T[0..e]$ הפוך מתחיל במקום $n-1-e$ של $T$ ההפוך, ולכן $Z2[m+1+(n-1-e)]=suf[e]$. התנאי בלולאה האחרונה הוא בדיוק התנאי שבתחילת הפתרון.
+בתוך $Z$-Function: אם $k<r$ אז $s[k..r-1]=s[k-l..r-l-1]$, ולכן לפחות $\min(r-k,Z[k-l])$ תווים תואמים כבר ידועים, ולולאת ה-while רק ממשיכה מהם.
+**דוגמה:** $P=$`aababa`, $T=$`aaaaba`: $pre[0]=2$ (אי-התאמה במקום $2$), $suf[5]=3$ (`aba`), ו-$2+3\ge 5$, ולכן מיקום $1$ מדווח."""
+
+SOL_4B = SOL + r"""**זמן לינארי:** בפונקציה $Z$-Function על מחרוזת באורך $L$:
+- כל השוואה **מוצלחת** בלולאת ה-while נעשית במקום $k+Z[k]\ge r$ (אם $Z[k-l]<r-k$ ההשוואה הראשונה נכשלת מיד, כי היא חוזרת על אי-התאמה שכבר ידועה), ולכן כל השוואה מוצלחת מגדילה את $r$ ב-$1$. $r$ רק עולה ולא עובר את $L$, אז יש לכל היותר $L$ השוואות מוצלחות בסך הכל.
+- לכל $k$ יש לכל היותר השוואה **כושלת** אחת (היא עוצרת את הלולאה), כלומר עוד $L$ השוואות לכל היותר.
+
+לכן $Z$-Function עולה $O(L)$. אצלנו $L=n+m+1$ פעמיים, היפוך המחרוזות עולה $O(n+m)$, והלולאות על $T$ עולות $O(n)$. סה"כ $O(n+m)=O(n)$ (כי $m<n$), לינארי בגודל הקלט.
+**מקום:** $O(n+m)$: שתי המחרוזות המשורשרות, שני מערכי $Z$ באורך $n+m+1$ והמערכים $pre, suf$ באורך $n$."""
+
+SOL_5A = SOL + r"""**לא נכון.**
+אפשר לבדוק אם $G$ דו-צדדי בזמן $O(|V|+|E|)$, שהוא פולינומי: מריצים BFS מכל קודקוד שעוד לא בוקר וצובעים בשני צבעים לפי זוגיות המרחק מהשורש (שכן של קודקוד בצבע $0$ מקבל צבע $1$ וההפך). אם נמצאת צלע ששני קצותיה באותו צבע, יש מעגל אי-זוגי והגרף אינו דו-צדדי; אחרת הצביעה היא חלוקה לשני צדדים ללא צלע בתוך צד."""
+
+SOL_5C = SOL + r"""**נכון.**
+מריצים BFS מקודקוד כלשהו $s$. ה-BFS מבקר בדיוק בקודקודים שיש אליהם מסלול מ-$s$. לכן $G$ קשיר אם ורק אם בסוף הריצה כל הקודקודים סומנו כמבוקרים. הזמן הוא $O(|V|+|E|)$."""
+
 questions = [
     Q(1, "א", "computation", "dp_optimization",
       r"מלאו את ערכי המטריצה $T$ כפי שיתקבלו עבור המטריצה $M$ הנתונה בדוגמה בראש השאלה (מטריצה ריקה בגודל $5\times 6$, שורות ועמודות 0-4 ו-0-5)." "\n"
       r"שימו לב! אין צורך לכתוב את הנוסחה עדיין, אלא רק להבין מה הנוסחה מבטאת (על פי הכתוב לעיל בפונט מודגש).",
-      points=5, contextId="c1"),
+      SOL_1A, points=5, contextId="c1"),
     Q(1, "ב", "algorithm", "dp_optimization",
       r"כתבו נוסחה רקורסיבית עבור $T(i,j)$. שימו לב לציין גם את מקרי הבסיס של הנוסחה. "
       r"(כדאי לוודא שהנוסחה שכתבתם מתאימה לערכים שמילאתם בסעיף א'.)",
-      points=15, contextId="c1"),
+      SOL_1B, points=15, contextId="c1"),
     Q(1, "ג", "computation", "dp_optimization",
       r"מהי סיבוכיות זמן הריצה של אלגוריתם תכנון דינמי המבוסס על הנוסחה שכתבתם בסעיף ב', ומהי סיבוכיות המקום שלו?" "\n"
       r"אין צורך לפרט את האלגוריתם עצמו.",
-      points=5, contextId="c1"),
+      SOL_1C, points=5, contextId="c1"),
 
     Q(2, "א", "algorithm", "greedy",
       r"כתוב אלגוריתם חמדני לפתרון הבעיה בזמן $O(n+k\cdot\log k)$." "\n" r"**רמז:** העזר במבנה נתונים.",
-      points=15, contextId="c2"),
-    Q(2, "ב", "proof", "greedy", r"הוכח את נכונות הפתרון שהצגת בסעיף א'.", points=10, contextId="c2"),
+      SOL_2A, points=15, contextId="c2"),
+    Q(2, "ב", "proof", "greedy", r"הוכח את נכונות הפתרון שהצגת בסעיף א'.", SOL_2B, points=10, contextId="c2"),
 
-    Q(3, "א", "algorithm", "divide_conquer", r"הציעו אלגוריתם הפרד ומשול יעיל ככל הניתן לפתרון הבעיה.", points=15, contextId="c3"),
-    Q(3, "ב", "computation", "complexity_recurrence", r"מה סיבוכיות זמן הריצה של האלגוריתם שהצעתם? נמקו תשובתכם.", points=10, contextId="c3"),
+    Q(3, "א", "algorithm", "divide_conquer", r"הציעו אלגוריתם הפרד ומשול יעיל ככל הניתן לפתרון הבעיה.", SOL_3A, points=15, contextId="c3"),
+    Q(3, "ב", "computation", "complexity_recurrence", r"מה סיבוכיות זמן הריצה של האלגוריתם שהצעתם? נמקו תשובתכם.", SOL_3B, points=10, contextId="c3"),
 
     Q(4, "א", "algorithm", "kmp_strings",
-      r"הציעו אלגוריתם לינארי לפתרון הבעיה ללא שימוש בעצי סיפות או מערכי סיפות.", points=15, contextId="c4"),
+      r"הציעו אלגוריתם לינארי לפתרון הבעיה ללא שימוש בעצי סיפות או מערכי סיפות.", SOL_4A, points=15, contextId="c4"),
     Q(4, "ב", "computation", "kmp_strings",
-      r"הסבירו מדוע זמן הריצה לינארי בגודל הקלט? מה סיבוכיות המקום של האלגוריתם שהצעתם?", points=10, contextId="c4"),
+      r"הסבירו מדוע זמן הריצה לינארי בגודל הקלט? מה סיבוכיות המקום של האלגוריתם שהצעתם?", SOL_4B, points=10, contextId="c4"),
 
     Q(5, "א", "truefalse", "graphs_search",
-      r"לא ניתן לקבוע בזמן פולינומי האם הגרף $G$ הוא דו צדדי או לא." "\n" r"נכון / לא נכון", points=5, contextId="c5"),
+      r"לא ניתן לקבוע בזמן פולינומי האם הגרף $G$ הוא דו צדדי או לא." "\n" r"נכון / לא נכון", SOL_5A, points=5, contextId="c5", verdict=False),
     Q(5, "ב", "truefalse", "graphs_search",
       r"נניח כי הגרף $G$ מיוצג על ידי רשימת סמיכויות, אזי בהינתן קודקוד מהגרף, ניתן בזמן קבוע למצוא את כמות שכניו." "\n" r"נכון / לא נכון",
-      points=5, contextId="c5"),
+      hold=HOLD_5B, points=5, contextId="c5"),
     Q(5, "ג", "truefalse", "graphs_search",
-      r"ניתן לאפיין האם הגרף $G$ קשיר על ידי אלג' BFS." "\n" r"נכון / לא נכון", points=5, contextId="c5"),
+      r"ניתן לאפיין האם הגרף $G$ קשיר על ידי אלג' BFS." "\n" r"נכון / לא נכון", SOL_5C, points=5, contextId="c5", verdict=True),
 ]
 
 exam = {
