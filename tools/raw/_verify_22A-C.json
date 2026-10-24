@@ -1,0 +1,50 @@
+{
+ "derivation": "Blind: Q1 F(i)=1+min F(i-j^2) (BFS check N<200); Q2 pi(S#S^R) last value (exhaustive n<=7, random to 11; aabaac -> 5); Q3a sort and pair neighbours (500 random vs all pairings; 5,1,4,2,8,3 -> 14); Q4 Select at multiples of ceil(n/2), ceil(n/3) + count (40000 random vs brute force); Q5 redraw edges read from page 22: 15 edges, OPT=4, all 17 possible outputs have size 6 or 8.",
+ "answers": {
+  "1": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "standard recurrence, F(12)=3, F(13)=2, greedy gives 4. Labelled student-solution although the stored formula is the standard one (docstring says so)."
+  },
+  "2": {
+   "agrees": false,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "Algorithm, numeric steps (5, 3, 5) and sizes confirmed. Divergence: step[1] prompt says 'המחרוזת שבסעיף הקודם' (cites the previous step by position; breaks if steps are reordered).",
+   "flags": [
+    "positional citation"
+   ]
+  },
+  "3a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "agree"
+  },
+  "3b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "exchange argument valid; findbug index 3 is the only changed line; saving 2=min(5,9)-3 confirmed. Rubric split 10/15 (a/b) is reasonable."
+  },
+  "4": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "candidate algorithm matches brute force on 40000 random arrays incl. NIL cases; step answers 5 and 3 confirmed; at most 5 Select calls"
+  },
+  "5": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "Redraw matches the page-22 figure: edges ab ah af hg gf bi ih id bc cd de gd dj jf fe (15), same as the student's E' list. After (a,b),(h,g),(i,d),(f,e): E' sizes 10,6,2,0 and C sizes 2,4,6,8; OPT=4 (unique cover {b,d,f,h}). Steps fix the edge order. Text only, no crop, no name/ID in the raw JSON."
+  }
+ }
+}

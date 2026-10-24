@@ -1,0 +1,66 @@
+{
+ "derivation": "Blind: Q1 min-cut DP C(i)=min C(j)+T(j+1,i) (brute force 300 random); Q2a majority on slope classes / SELECT n/2; Q2b SELECT at ceil(n/3), ceil(2n/3) (verified for all n<400 with ceilings; floor fails for small n); Q3 complement P (a<->b) then KMP (2000 random vs brute force); Q4 Huffman merge cost (29 for 4,3,2,6, equals brute force over all merge orders). Typo 'P=p_1..p_n' on page 3 is p_n in the source; p_m in the item is right (m=|P|).",
+ "answers": {
+  "1": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "agree; C(4)=2, C(6)=2 confirmed"
+  },
+  "2a": {
+   "agrees": false,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "Algorithm and steps correct (max-on-line=3 < 3.06 confirmed). Divergences: (1) points: the part carries 25 but the source gives 25 for the whole 2-part question (same for Q4); (2) the point (0,0) lies on every line and 0/0 is undefined: plain slope-majority is wrong on 199 of 6000 random inputs that include the origin; official ignores it, item says nothing; (3) step-2 explain 'מתאים לסעיף אחר' cites a sub-part by position.",
+   "flags": [
+    "positional citation",
+    "points double-count",
+    "origin point unhandled (official gap, add a note)"
+   ]
+  },
+  "2b": {
+   "agrees": false,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "Algorithm correct; steps (17, 4, positions n/3 and 2n/3 with ceil) confirmed. Divergences: points 25 again (should split Q2's 25); rubric[0] 'כמו בסעיף הקודם' and pitfall 3 'מהסעיף הקודם' cite a sub-part by position.",
+   "flags": [
+    "positional citation",
+    "points double-count"
+   ]
+  },
+  "3": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "P' = swap a<->b, KMP on T and P', Theta(n). Text, solution, steps and rubric are consistent about the swap; P=aabab -> bbaba, count 2 for T=abbaabba confirmed; p_m vs p_n typo handled correctly."
+  },
+  "4a": {
+   "agrees": false,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "Official Huffman pseudocode and numbers (29, 15, 38/34/31) confirmed; bugIndex 4 correct. Divergences: points 25 for a part of a 25-point question; rubric[4] and pitfall 3 say the result is the total merge cost, but the official pseudocode returns EXTRACT-MIN(Q), the root node (f = total rope length, not the cost), so the pitfall would penalize the official solution; add a note that the cost is the sum of internal f values.",
+   "flags": [
+    "points double-count",
+    "rubric/pitfall vs official return"
+   ]
+  },
+  "4b": {
+   "agrees": false,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "all steps agree",
+   "note": "Proof and steps confirmed (B(T)=47, B(T')=39, diff 8; findbug index 2). Divergence: points 25 for a part of a 25-point question."
+  },
+  "5": {
+   "agrees": false,
+   "confident": true,
+   "transcriptionIssues": "",
+   "note": "held: the page prints only the header (15-pt bonus, 'question + solution in Moodle'); nothing to verify; the hold is correct"
+  }
+ }
+}
