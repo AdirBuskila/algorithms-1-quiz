@@ -1,0 +1,162 @@
+{
+ "examCode": "22B-B",
+ "refuter": "refute pass 2026-10-25",
+ "derivation": "Blind: Huffman with every tie-break: 1,1,2,3 -> only depths (3,3,2,1); 3,3,4,5 -> only (2,2,2,2); 1,1,1,3 vs 2,2,2,4: 2,2,2,4 can also produce the 1,1,1,3 trees; Q1b brute force over all tie-breaks and left<=right orientation: (x,y) in {(6,2),(5,3)}; ABABABA longest repeat ABABA; Q2 brute force vs select-based both-ends algorithm (0 failures), printed single-pivot version gives wrong sizes on 1520/4000; Q3 Prim order 13,8,5,2,1,4,7,10, 1 MST by brute force over all 8-edge subsets; Q4 window DP vs brute force, table recomputed (official printed C(2,6)=2 and C(6,8)=1 are wrong, true 1 and 0).",
+ "answers": {
+  "1a": {
+   "agrees": false,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "DISAGREE on the transcription note and rubric; verdict (false) and steps agree. (1) The note offers frequencies 1,1,1,3 -> 2,2,2,4 as an example where the structure changes: with arbitrary tie-breaks (GATE1 ruling) 2,2,2,4 can still produce all three tree shapes of 1,1,1,3 (plus the balanced one), so it does not show the tree changes. The steps use 1,1,2,3 vs 3,3,4,5, which is clean (unique shape each: depths (3,3,2,1) vs (2,2,2,2)) and is the right example. (2) The official counterexample (2,2|5 vs 7|4,4) is valid under the course convention used in Q1b/Q1c that the lighter sibling goes left (the code of b flips from 1 to 0), yet rubric point 4 and pitfall 1 present it as invalid. Reword: the official example is acceptable on the left<=right convention; the stronger example is 1,1,2,3 vs 3,3,4,5.",
+   "answer": false,
+   "flags": [
+    "a visible note about the official version exists but should be corrected as above"
+   ]
+  },
+  "1b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "GATE1 Huffman-ties ruling: the pair (5,3) only exists at the tie a=5 vs (b,c)=5; a visible note that a fixed tie-break can change the list is missing"
+   ]
+  },
+  "1c": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "rubric point 4 and pitfall 3 require the empty-suffix leaf ($ from the root), which the official tree itself omits (the transcription note says so); label it optional"
+   ]
+  },
+  "1d": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "2a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "correction verified against the page: the printed code computes S=select(A,n,k) once and then, for k>=n-k, gives B n-k elements and C k elements (wrong sizes; fails on [13,5,7],k=2 with diff 1 vs 15; printed variant wrong on 1520/4000). The corrected select(A,n,n-k) branch matches brute force on 4000 inputs"
+  },
+  "2b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "solution says the first option is at least as good as the second (cites the two bullets above it by position); name them (k smallest / k largest)"
+   ]
+  },
+  "3a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "step 1 text answer uses normalize none: only the exact string 'A, J, G, E, C, D, F, H, B' passes"
+   ]
+  },
+  "3b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "count 1 confirmed by brute force over all 8-edge subsets",
+   "flags": [
+    "official argument is a single-edge-swap argument; by itself it does not exclude an MST differing in several edges. The count is right and the teaching is acceptable, but the justification is incomplete"
+   ]
+  },
+  "4a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "4b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "4c": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "correction verified against the page: printed table has C(2,6)=2 and C(6,8)=1; the formula gives 1 and 0 (all other cells equal). Final 3 unchanged"
+  }
+ },
+ "summary": "10 items agree, 1 disagrees (Q1a note and rubric, not the verdict or steps). Official corrections for Q2a, Q2b, Q4c confirmed. Rubric splits sum to the exam totals (30/25/25/30) and look reasonable. Missing Huffman-ties note on Q1b."
+}

@@ -1,0 +1,192 @@
+{
+ "examCode": "25A-A",
+ "refuter": "refute pass 2026-10-25",
+ "derivation": "Blind: Q1a official Mid (typos repaired) vs sorted-merge median on 3000 random power-of-2 inputs; Q1c binary-search Find_r vs sorted()[r-1] on 5000 inputs (iterations within log2(r+1)+1), printed mid(A[1..r],B[1..r]) returns 2.5 for A=[1,2],B=[3,4],r=2 while the 2nd smallest is 2; Q2a 9-case recurrence vs brute-force interleaving on 4000 random triples (0 mismatches), printed rows with T(i,j-1,k) and no both-differ row wrong on 222/2000; Q3 greedy vs brute force; Q4a pi[n] vs longest proper border brute force, max(pi) wrong on abcabcd; Q5 DFS times on the 6-vertex graph (roots A,F; leaves C,E,F; F[C]=4).",
+ "answers": {
+  "1a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "official pseudocode typos copied verbatim and not flagged in the solution text: rows 1-2 return the SUM without /2; rows 6-7 print B[((k+l)-1/2)..l] (should start at (k+l+1)/2, like row 4); the i=j base case is listed after rows that already read A[(i+j-1)/2] with a fractional index (put it first)"
+   ]
+  },
+  "1b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "1c": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "correction verified: printed Return(mid(A[1..r],B[1..r])) is the average of the r-th and (r+1)-th smallest of the 2r elements (2.5 for A=[1,2],B=[3,4],r=2, true answer 2); the binary-search version matches sorted()[r-1] on 5000 inputs"
+  },
+  "2a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "correction verified against the page: printed rows 4 and 8 use T(i,j-1,k) (no k decrement) and there is no row for S1[i]!=S3[k] and S2[j]!=S3[k]; printed version wrong on 222/2000 random inputs, corrected 9-case version matches brute force on 4000",
+   "flags": [
+    "solution text cites the official rows by position (the fourth row, the last row); harmless but positional"
+   ]
+  },
+  "2b": {
+   "agrees": null,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "held item, not judged",
+   "note": "held: no-text: the printed input gives only S1=ebc and S2=dec; S3 is missing, so the d"
+  },
+  "2c": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "3a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "official claims O(m log m) is the most efficient; O(m) is possible with linear-time Select (binary search on rank). Not an error in the key, only a remark."
+   ]
+  },
+  "3b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "4a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "correction verified: official key (compute pi, return max(pi)) is wrong for abcabcd (max 3, true 0); pi[n] matches longest proper border on 3000 strings. The printed example aaaa->4 contradicts the proper-border reading (3) and aabcdaabc->4 contradicts the whole-string reading (9): the question text itself is inconsistent, the item states both readings",
+   "flags": [
+    "question own examples are mutually inconsistent; the solution mentions it, keep that visible"
+   ]
+  },
+  "4b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "step 1 explain says BA occurs at positions 1,3,5 (0-indexed); under the 1-indexing used elsewhere in this exam (A[1..n/2]) it is 2,4,6; the count 3 is right"
+   ]
+  },
+  "4c": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "5a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "answer": false
+  },
+  "5b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "answer": true
+  },
+  "5c": {
+   "agrees": null,
+   "confident": true,
+   "transcriptionIssues": "",
+   "stepsVerdict": "held item, not judged",
+   "note": "held: ambiguous: the answer depends on what 'linear in the size of the graph' means fo"
+  }
+ },
+ "summary": "12 non-held items agree; 2 held (2b, 5c). Official corrections for Q1c, Q2a, Q4a confirmed against page images and brute force. Minor explanation issue in Q4b step 1 (positions 1,3,5 are 0-indexed; answer 3 unaffected)."
+}

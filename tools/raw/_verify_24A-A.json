@@ -1,0 +1,167 @@
+{
+ "examCode": "24A-A",
+ "refuter": "refute pass 2026-10-25",
+ "derivation": "Blind: Q1a walk through z = z reaches x and y (product-graph brute force on 3000 random graphs, 0 mismatches); Q1b d(x,z)+d(z,y)=d(x,y) vs path enumeration (0 mismatches); Q2 greedy vs brute-force minimum cover (0 mismatches); Q3 P(correct|differ)=1/n, P(correct|equal)=1, bits ceil(log n)+1, half sample 1/2 (C(9,4)/C(10,5)); Q4 DP T(i)=H(i)+max T(j) over j<i with L(j)>L(i) (width descending) vs permutation brute force and reconstruction via parent array (0 mismatches); bonus counterexample [0,10],[9,12],[11,20] gives 1 vs 2.",
+ "answers": {
+  "1a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "solver item agrees; walk is defined visibly in the solution (vertices and edges may repeat)"
+  },
+  "1b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "2a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "2b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "2c": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "3a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "official key never states P(correct)=1 when x=y and P(correct)=1/n when they differ; the item steps and rubric do cover it, keep"
+   ]
+  },
+  "3b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "3c": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "4a": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "the printed question only says A is sorted by width (no direction); the official solution sheet carries a variant of the question that says descending, and the recurrence needs descending widths with L(j)>L(i). Steps state descending but the question stem shown does not: add a one-line note",
+    "T(i) = tallest tower with box i on top among boxes 1..i, base case L(0)=inf: verified with permutation brute force"
+   ]
+  },
+  "4b": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "flags": [
+    "labelled official:true, but the official line on the sheet belongs to the variant part about the algorithm that RETURNS the boxes (printed 4c) and says O(n^2) with a 1-D array; it has no explicit space statement. The space O(n) sentence is the solver's addition. The answer (time O(n^2), space O(n)) is correct either way; consider official:false for 4b and attach the official O(n^2) to 4c"
+   ]
+  },
+  "4c": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees"
+  },
+  "5": {
+   "agrees": true,
+   "confident": true,
+   "transcriptionIssues": "",
+   "steps": [
+    "agree",
+    "agree",
+    "agree"
+   ],
+   "stepsVerdict": "all steps agree",
+   "note": "recomputed independently, agrees",
+   "answer": false
+  }
+ },
+ "summary": "All 12 items agree on answers and steps (brute force and random-graph checks). Rubric totals match exam points. Only a source-labelling issue on Q4b and the missing sort-direction note on Q4a."
+}
