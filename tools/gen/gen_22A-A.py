@@ -14,7 +14,10 @@ Transcription notes
 - Q3: the printed solution is the algorithm plus one sentence on the cost; Q3b's answer (Theta(k*n)) is that sentence.
 - Q4 b: the proof of the greedy-choice property is split over the page break (pp.3-4); joined here.
 - Q5: unnumbered box after Q4 (no "שאלה 5" header). The page shows option e pre-marked (radio button), but
-  option c is also a possible output of the algorithm (see checks), so the key is ambiguous -> HELD (ASK_ADIR).
+  option c is also a possible output of the algorithm (see checks), so the key was ambiguous (ASK_ADIR).
+  Solver pass (2026-10-24, pending refuter): the stem asks which sets CAN be an output, and both e (matching X1X9, X5X6,
+  X3X8) and c (matching X1X6, X4X9, X3X8) are endpoint sets of a maximal matching, so the question allows both:
+  correctId e (the marked option), acceptedIds [e, c], solutionSource "solved". Checks: tools/verify/22A-A/solve_22A-A.py.
 
 Checks (tools/verify/22A-A/checks.py, brute force + networkx):
 - Q1: the recurrence equals a brute force over all common subsequences (300 random triples).
@@ -125,6 +128,16 @@ OPT5 = [
     {"id": "f", "value": r"$C=\{X_6,X_3,X_1,X_8,X_0,X_4\}$"},
 ]
 
+SOL5 = r"""אלגוריתם הקירוב שנלמד: כל עוד נשארו צלעות, בוחרים צלע כלשהי $(u,v)$, מוסיפים את $u$ ואת $v$ לכיסוי ומוחקים את כל הצלעות שנוגעות ב-$u$ או ב-$v$. הצלעות שנבחרו הן זיווג מקסימלי (אין להן קודקוד משותף, ואי אפשר להוסיף להן צלע). לכן קבוצה יכולה להיות פלט של האלגוריתם אם ורק אם היא קבוצת הקצוות של זיווג מקסימלי בגרף. בגרף יש $11$ צלעות, ובכל קבוצה $6$ קודקודים, כלומר צריך זיווג מקסימלי של $3$ צלעות שקצותיו הם בדיוק הקבוצה.
+- $C=\{X_1,X_9,X_6,X_3,X_5,X_8\}$: **יכולה** להתקבל, למשל בבחירת $(X_1,X_9)$, $(X_6,X_5)$, $(X_3,X_8)$. אחרי שלוש הבחירות כל צלע נוגעת בקודקוד שנבחר.
+- $C=\{X_1,X_8,X_3,X_4,X_9,X_6\}$: **גם היא יכולה** להתקבל, בבחירת $(X_4,X_9)$, $(X_1,X_6)$, $(X_3,X_8)$. גם כאן אין צלע ששני קצותיה מחוץ לקבוצה ($X_5$ מכוסה דרך $X_6,X_3,X_8$; $X_0$ דרך $X_9$; $X_2,X_7$ דרך $X_6$).
+- $C=\{X_5,X_3,X_2,X_7,X_1,X_9\}$: לא יכולה. השכן היחיד של $X_2$ ושל $X_7$ הוא $X_6$, שאינו בקבוצה, ולכן אין צלע שנבחרה שמכניסה אותם.
+- $C=\{X_3,X_4,X_1,X_9,X_0,X_6\}$: לא יכולה, היא בכלל לא כיסוי (הצלע $(X_5,X_8)$ אינה מכוסה).
+- $C=\{X_6,X_3,X_1,X_8,X_0,X_4\}$: לא יכולה. השכן היחיד של $X_0$ הוא $X_9$, שאינו בקבוצה.
+- לכן גם התשובה "לא הוצג פתרון התואם" שגויה.
+
+בדף הפתרון מסומנת רק הקבוצה $\{X_1,X_9,X_6,X_3,X_5,X_8\}$, אבל השאלה שואלת איזו קבוצה **יכולה** להתקבל, ושתי הקבוצות שמסומנות לעיל "יכולה" מתקבלות בסדר בחירה אחר של הצלעות. לכן שתיהן מתקבלות כתשובה נכונה."""
+
 questions = [
     Q(1, None, "algorithm", "dp_sequences", Q1, S1),
     Q(2, None, "algorithm", "kmp_strings", Q2, S2),
@@ -138,7 +151,9 @@ questions = [
       r"הוכח שהאלגוריתם שהצעת מקיים את תכונת הבחירה החמדנית.", S4B, contextId="c4"),
     {"num": 5, "kind": "mcq", "topic": "approximation", "question": Q5,
      "image": "images/exams/22A-A-Q5-graph.png", "options": OPT5,
-     "hold": "key-ambiguous: the page marks only option e, but option c is also a possible output of the 2-approximation (checked by enumeration)"},
+     "correctId": "e", "acceptedIds": ["e", "c"],
+     "solution": SOL5, "explanation": SOL5,
+     "solutionSource": "solved", "official": False, "confidence": "high"},
 ]
 
 exam = {

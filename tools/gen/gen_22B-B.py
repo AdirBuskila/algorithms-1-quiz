@@ -8,10 +8,13 @@ Q2 a,b (25), Q3 a,b (25), Q4 a,b,c (30); no per-part points are printed.
 The suffix tree of Q1c is hand-drawn on lined paper in the file: it is NOT cropped (no handwriting ships); it is
 transcribed as text and recorded in tools/verify/22B-B/graphs.json.
 
-Held items (official key problems found by checks.py, see docs/ASK_ADIR.md):
+Official key problems found by checks.py (see docs/ASK_ADIR.md), fixed by the solver pass (2026-10-24) under the typo
+ruling ("הפתרון הרשמי עם תיקון", solutionSource "solved", official false, pending refuter):
 - Q2a/Q2b: the official code is wrong whenever k > n-k (it always splits into the k smallest vs the n-k largest, and in the
-  else branch the sizes of B and C are swapped). Q2b explains/analyses that code, so it is held with it.
-- Q4c: two cells of the printed 5x5 table are wrong ((2,4) and (4,5)); the final answer 3 is right.
+  else branch the sizes of B and C are swapped). Fix: the else branch uses Select(A, n, n-k) as its pivot, so B gets the
+  k largest. Q2b keeps the official O(n) analysis (one Select per branch) and adds the correctness argument.
+- Q4c: two cells of the printed 5x5 table are wrong ((2,6)=2 should be 1, (6,8)=1 should be 0); fixed, answer 3.
+Solver checks: tools/verify/22B-B/solve_22B-B.py.
 Shipped with a visible transcription note: Q1a (the official counterexample has identical tree shape, differing only by
 left/right orientation), Q1c (the official tree lacks the leaf of the suffix '$'), Q1d (the official text never states
 the answer ABABA).
@@ -111,6 +114,42 @@ NOTE_2 = (r"**הערת תמלול:** בבדיקה במחשב נמצא שהאלג
 
 SOL_2A = (r"**פתרון רשמי** (22B-B פתרון עמ' 6):" "\n```\n" + CODE_2 + "\n```\n" + NOTE_2)
 
+SOLVED = {"solutionSource": "solved", "official": False, "confidence": "high"}
+
+CODE_2_FIX = r"""Alg (A, n ,k)
+{
+  r = 1, t=1;          //indexes
+  if (k<n-k) do
+    S = select (A, n, k)          // the k-th smallest
+    for i=1 to n do
+      if (A[i] > S) do
+        C[r++] = A[i]             // the n-k largest
+      else B[t++] = A[i]          // the k smallest
+      end if
+    end for
+  else
+    S = select (A, n, n-k)        // fix: the (n-k)-th smallest
+    for i=1 to n do
+      if (A[i]>S) do
+        B[t++]=A[i]               // the k largest
+      else C[r++] = A[i]          // the n-k smallest
+      end if
+    end for
+  end else
+}"""
+
+SOL_2A_FIX = (r"הפתרון הרשמי עם תיקון: בענף ה-else הודפס הציר $S=select(A,n,k)$, ולכן $B$ קיבל $n-k$ איברים ו-$C$ קיבל $k$ (ועבור $A=[13,5,7]$, $k=2$ ההפרש $1$ במקום $15$); הנכון הוא $S=select(A,n,n-k)$ בענף זה, כך ש-$B$ מקבל את $k$ האיברים הגדולים." "\n"
+              r"**רעיון:** כאשר $k<n-k$, $B$ מקבל את $k$ האיברים הקטנים ו-$C$ את השאר; אחרת $B$ מקבל את $k$ האיברים הגדולים ו-$C$ את $n-k$ הקטנים." "\n```\n" + CODE_2_FIX + "\n```")
+
+SOL_2B_FIX = r"""הפתרון הרשמי עם תיקון: הניתוח הרשמי מתייחס לקוד שבו $B$ ו-$C$ מוחלפים בענף ה-else ואינו מנמק את הנכונות; הנכון הוא הניתוח שלהלן לקוד המתוקן (קריאה אחת ל-select בכל ענף).
+**נכונות.** נסמן $Sum(A)=S_A$. לכל בחירה של $B$ בגודל $k$ מתקיים $Sum(C)=S_A-Sum(B)$, ולכן $|Sum(B)-Sum(C)|=|2Sum(B)-S_A|$. ביטוי זה מקסימלי כאשר $Sum(B)$ מינימלי ($B$ = $k$ הקטנים, ההפרש $S_A-2Sum(B)$) או כאשר $Sum(B)$ מקסימלי ($B$ = $k$ הגדולים, ההפרש $2Sum(B)-S_A$).
+- ב-$k$ הקטנים ההפרש הוא סכום $n-k$ הגדולים פחות סכום $k$ הקטנים.
+- ב-$k$ הגדולים ההפרש הוא סכום $k$ הגדולים פחות סכום $n-k$ הקטנים.
+
+כאשר $k\le n-k$, סכום $n-k$ הגדולים הוא לפחות סכום $k$ הגדולים (כל המספרים חיוביים), וסכום $k$ הקטנים הוא לכל היותר סכום $n-k$ הקטנים, ולכן האפשרות הראשונה טובה לפחות כמו השנייה. כאשר $k>n-k$ המצב הפוך. זה בדיוק מה שהאלגוריתם בוחר. הערך $S$ שמחזיר select מפריד בין הקבוצות כי כל האיברים שונים.
+**סיבוכיות.** בכל ענף מתבצעת קריאה אחת ל-select ב-$O(n)$, ולאחריה לולאה שרצה $n$ פעמים ומבצעת $k$ הכנסות למערך אחד ועוד $n-k$ הכנסות למערך השני. לכן סה"כ:
+$$O(n)+O(k)+O(n-k)=O(n)$$"""
+
 SOL_2B = (r"""**פתרון רשמי** (22B-B פתרון עמ' 8):
 שורת ה-select מתבצעת ב-$O(n)$ לאחר מכן מתבצעת לולאה שרצה $n$ פעמים אשר מבצעת הכנסה לשני מערכים: אחד בגודל $k$ והשני בגודל $n-k$ כך שבלולאה מתבצעות $k$ הכנסות למערך אחד ועוד $n-k$ הכנסות למערך שני.
 לכן סה"כ מקבלים:
@@ -141,6 +180,12 @@ $$\begin{array}{c|ccccc} & 1 & 2 & 5 & 6 & 8\\\hline 1 & 0 & 0 & 1 & 2 & 3\\ 2 &
 
 **הערת תמלול:** שני תאים בטבלה הרשמית אינם מתאימים לנוסחה: התא $(2,6)$ מודפס $2$ ובנוסחה $1$, והתא $(6,8)$ מודפס $1$ ובנוסחה $0$ (כי $|6-8|=2\le k$). התשובה הסופית $3$ נכונה."""
 
+SOL_4C_FIX = r"""הפתרון הרשמי עם תיקון: בטבלה הרשמית הודפס $2$ בתא (שורה $2$, עמודה $6$) ו-$1$ בתא (שורה $6$, עמודה $8$); לפי הנוסחה הנכון הוא $1$ ו-$0$. התשובה הסופית $3$ לא משתנה.
+הטבלה ($A=\{1,2,5,6,8\}$, $k=2$; שורות $i$ ועמודות $j$ לפי ערכי האיברים; $X$ - לא מוגדר, $i>j$). ממלאים לפי אורך הקטע $j-i$: אם $|A[i]-A[j]|\le k$ הערך $0$, אחרת $1+\min$ של התא שמתחת (מסירים את $A[i]$) והתא משמאל (מסירים את $A[j]$):
+$$\begin{array}{c|ccccc} & 1 & 2 & 5 & 6 & 8\\\hline 1 & 0 & 0 & 1 & 2 & 3\\ 2 & X & 0 & 1 & 1 & 2\\ 5 & X & X & 0 & 0 & 1\\ 6 & X & X & X & 0 & 0\\ 8 & X & X & X & X & 0\end{array}$$
+לדוגמה: $C(2,6)$: $|2-6|=4>2$, ולכן $C(2,6)=1+\min\bigl(C(5,6),C(2,5)\bigr)=1+\min(0,1)=1$. $C(6,8)=0$ כי $|6-8|=2\le k$. $C(1,8)=1+\min\bigl(C(2,8),C(1,6)\bigr)=1+\min(2,2)=3$.
+התשובה: $3$ (הפינה העליונה), למשל הסרת $1,2,8$ (נשארים $5,6$) או $5,6,8$ (נשארים $1,2$)."""
+
 questions = [
     Q(1, "א", "truefalse", "huffman",
       r"אלגוריתם הופמן מקבל מחרוזת ובונה עץ הופמן. האם **לכל** מחרוזת ולכל $k>0$, עץ הופמן יישאר ללא שינוי אם כל אות "
@@ -169,12 +214,10 @@ questions = [
       r"$$|Sum(B)-Sum(C)|\to\max$$" "\n"
       r"לדוגמא: עבור המערך $8,4,5,2,10$ ו-$k=2$ החלוקה האופטימלית היא $\{4,2\}$ ו-$\{8,5,10\}$ עם הפרש $17$." "\n"
       r"רמז: אפשר להיעזר באלגוריתם Select.",
-      SOL_2A, contextId="c2",
-      hold="official code is wrong for k > n-k (not optimal, sizes of B and C swapped); see ASK_ADIR"),
+      SOL_2A_FIX, contextId="c2", **SOLVED),
     Q(2, "ב", "computation", "divide_conquer",
       r"הסבירו את **נכונות** האלגוריתם שכתבתם בסעיף הקודם ונתחו את **סיבוכיותו**.",
-      SOL_2B, contextId="c2",
-      hold="depends on Q2a, whose official code is wrong for k > n-k; see ASK_ADIR"),
+      SOL_2B_FIX, contextId="c2", **SOLVED),
 
     Q(3, "א", "computation", "mst",
       r"כתבו את **המשקלים** של צלעות העץ לפי הסדר ש-**PRIM** הכניס אותם לעפ\"מ החל מקודקוד $A$.",
@@ -193,8 +236,7 @@ questions = [
     Q(4, "ג", "computation", "dp_optimization",
       r"תנו דוגמא לעבודת האלגוריתם שפותר את הבעיה בשיטה תכנון דינמי על בסיס נוסחה רקורסיבית מסעיף א עבור "
       r"$A=\{1,2,5,6,8\}$, $k=2$.",
-      SOL_4C, contextId="c4",
-      hold="two cells of the official table disagree with the official recurrence ((2,4) and (4,5)); see ASK_ADIR"),
+      SOL_4C_FIX, contextId="c4", **SOLVED),
 ]
 
 exam = {

@@ -21,7 +21,7 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Page: 4 (the unnumbered graph box after Q4)
 - Question: options c and e are both possible outputs of the vertex-cover 2-approximation (checked by enumeration); the page shows only e pre-marked.
 - Needed: which options the original quiz accepted (or accept both c and e).
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; the stem asks which set CAN be an output, so both are accepted: correctId e, acceptedIds [e, c]; checks in tools/verify/22A-A/solve_22A-A.py)
 
 ### 22A-B Q5 - bonus question text missing
 - Page: 5
@@ -39,13 +39,13 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Page: solution p.8
 - Question: official answer lists {c1,c3,c7} and {c1,c3,c6}; with the printed data c1 meets c3 and c3 meets c6. The example also says n=6 but lists 7 circles, and c5 is printed with r_4. "Not unique" is true (e.g. {c1,c2,c5}, {c1,c2,c7}).
 - Needed: the intended circle data, or accept the corrected answer.
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; typo ruling: verdict "not unique" kept, sets corrected to {c1,c2,c5} and {c1,c2,c7}, the only optimal sets; tools/verify/SAMP-1/solve_SAMP-1.py)
 
 ### 22A-C Q3b, Q4, Q5 - no key in the student paper
 - Page: 16 (Q3b), 20 (Q4), 22 (Q5)
 - Question: Q3b proof marked not proven (-10); Q4 student test uses == instead of "at least"; Q5 table incomplete (3/15) and the graph cannot be cropped from a student page.
 - Needed: route to the solver; Q5 needs the graph redrawn as new art.
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; Q5 graph redrawn from data by tools/verify/22A-C/draw_graph.py -> images/exams/22A-C-Q5-graph.png, no crop; checks in tools/verify/22A-C/solve_22A-C.py)
 
 ### 25B-A Q1a - official total weight is 13, the printed weights give 11
 - Page: solution p.2
@@ -73,19 +73,20 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Page: solution p.1
 - Question: the official answer Return(mid(A[1..r],B[1..r])) gives the average of the two middle elements of the 2r chosen elements (A=[1,2], B=[3,4], r=2 gives 2.5; the r-th smallest is 2).
 - Needed: a correct solution (looking only at the first r elements of each array is right).
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; typo ruling, binary search over A[1..r], B[1..r]; tools/verify/25A-A/solve_25A-A.py)
 
 ### 25A-A Q2a - printed recurrence is wrong or undefined
 - Page: solution p.2
 - Question: rows 3 and 8 of the official piecewise recurrence write T(i,j-1,k) (k should drop to k-1) and no row covers S1[i]!=S3[k] with S2[j]!=S3[k]. Checked against brute force (tools/verify/25A-A/checks.py).
 - Needed: a corrected recurrence for the solver; Q2b (the worked example) is held with it.
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; typo ruling, k-1 in both rows plus "false otherwise"). Q2b stays held: its printed input gives only S1=ebc and S2=dec, S3 is missing.
+- 25A-A bonus c stays held: "linear in the size of the graph" with an adjacency matrix is ambiguous (with D, F, Pi the classification is O(V^2) = linear in the matrix, statement false; but not O(V+E), statement true). Bonus a (false) and b (true) are solved. Needed: Adir's reading.
 
 ### 25A-A Q4a - the official note is not an algorithm and is unsafe
 - Page: solution p.4
 - Question: the solution gives only a remark (compute the KMP pi array, return its maximum). max(pi) differs from pi[n-1] (abcabcd). The question examples also conflict with its wording (aaaa gives 4, aabcdaabc gives 4).
 - Needed: a solver answer (pi[n-1], proper-border reading); confirm which reading the lecturer intends.
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; typo ruling: return pi[n] instead of max(pi); both official readings stated)
 
 ### 24B-B Q2b - question text missing from the booklet
 - Page: 6
@@ -107,19 +108,19 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Page: solution p.4
 - Question: the official pseudo-code tests CountL+CountM > n/2 but the task needs >= ceil(n/2). For even n it misses pairs whose total is exactly n/2 (A=[1,2,3,4]: true answer True, code False). Brute force over all arrays n<=8 confirms the idea is right with >= ceil(n/2).
 - Needed: decide whether to ship the official text with the note, or let the solver write a corrected version.
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; typo ruling). New finding: the idea is also incomplete for even n, testing only Select(A,(n+1)/2) misses A=[1,2,3,4,5,5] (pair 4,5 has 3 = n/2 occurrences, the median 3 is in no such pair; the earlier brute force used values 1..4 only). The fix also tests the element at position n/2+1; brute force over all arrays n<=8 with values 1..n (tools/verify/22B-A/solve_22B-A.py).
 
 ### 22B-B Q2a, Q2b - official split algorithm wrong when k > n-k
 - Page: 6, 8
 - Question: the official code always splits into the k smallest vs the n-k largest, optimal only when k <= n-k (A=[13,5,7], k=2: best 15, code 1); in the else branch the sizes of B and C are also swapped. Q2b analyses that code, so it is held with it.
 - Needed: the solver may write the correct algorithm (the bigger group takes the large values).
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; typo ruling: the else branch pivots on Select(A,n,n-k); Q2b adds the correctness argument; tools/verify/22B-B/solve_22B-B.py)
 
 ### 22B-B Q4c - two wrong cells in the official table
 - Page: 13
 - Question: row 2 / column 6 is printed 2 (recurrence gives 1) and row 6 / column 8 is printed 1 (recurrence gives 0). Final answer 3 is right.
 - Needed: confirm shipping with the corrected cells.
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; typo ruling, the two cells corrected)
 
 ### 22B-B Q1a, Q1c, Q1d - weak official solutions (notes only)
 - Page: 2, 4, 5
@@ -144,7 +145,7 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 - Page: solution p.1 (Q1 "solution in Moodle"), p.4 (Q4c time only, bonus "see homework")
 - Question: Q1a/b (walk / shortest path through z) and the bonus have no answer in the file; Q4c states only the time O(n^2), not the space. Held as no-key for the solver. Q4 in the solution file is a variant (example table, width sorted descending, different parts b/c); Q4a is kept with confidence med, Q4b (space O(n) from "one-dimensional array") with med.
 - Needed: route to the solver; optionally the Moodle model solution for Q1.
-- Status: hold
+- Status: resolved by solver, pending refuter (2026-10-24; all four solved, bonus false; tools/verify/24A-A/solve_24A-A.py)
 
 ### 24A-B Q3c, Q4c - weak key in the student paper
 - Page: 18 (Q3c), 24 (Q4c)

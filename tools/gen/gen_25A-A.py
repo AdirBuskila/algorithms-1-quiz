@@ -23,6 +23,14 @@ Transcription notes
   "l1"); transcribed verbatim, confidence med. checks.py runs it with the base case tested first.
 - Q4b: the official code and symbol table are transcribed; checks.py runs the same logic on a compacted suffix tree.
 Checks: tools/verify/25A-A/checks.py (brute force + the official algorithms).
+
+Solver pass (2026-10-24; solutionSource "solved", official false, pending refuter):
+- Q1c, Q2a, Q4a: typo ruling ("הפתרון הרשמי עם תיקון"). Q1c binary search over the split of A[1..r], B[1..r];
+  Q2a k-1 in rows 4 and 8 plus a final "false otherwise" row; Q4a return pi[n] instead of max(pi) (both official
+  readings, |S| and the proper border, are stated).
+- Bonus a (false: roots need a scan of all |V| entries) and b (true: leaves are the v with F[v]=D[v]+1, O(|V|)).
+- Still held: Q2b (S3 is not printed), bonus c (ambiguous for an adjacency matrix: linear in V^2 vs in V+E).
+Solver checks: tools/verify/25A-A/solve_25A-A.py (brute force for Q1c, Q2a, Q4a, bonus b).
 """
 import json, pathlib
 
@@ -164,6 +172,52 @@ SOL_4C = r"""**פתרון רשמי** (25A-A פתרון עמ' 6):
 
 HOLD = "no-key: "
 
+SOLVED = {"solutionSource": "solved", "official": False, "confidence": "high"}
+
+CODE_1C = r"""Find_r(A[1..n/2], B[1..n/2], r)
+   // A[0] = B[0] = -inf ; an index above r is read as +inf
+   // (only A[1..r] and B[1..r] take part)
+   lo <- 0 ; hi <- r
+   while lo <= hi
+      i <- floor((lo+hi)/2)        // i elements are taken from A
+      j <- r - i                   // and r-i elements from B
+      if A[i+1] < B[j]   then lo <- i+1     // too few from A
+      else if B[j+1] < A[i] then hi <- i-1  // too many from A
+      else return max(A[i], B[j])"""
+
+SOL_1C = (r"""הפתרון הרשמי עם תיקון: הודפס `Return(mid(A[1..r],B[1..r]))`, שמחזיר את הממוצע של שני האיברים האמצעיים מבין $2r$ האיברים (עבור $A=[1,2]$, $B=[3,4]$, $r=2$ יוחזר $2.5$); הנכון הוא להחזיר את האיבר ה-$r$ בגודלו מבין $A[1..r]$ ו-$B[1..r]$ (הקטן מבין שני האמצעיים), למשל בחיפוש בינארי:
+""" + "```\n" + CODE_1C + "\n```\n" + r"""**רעיון.** $r$ האיברים הקטנים ביותר במערך המאוחד מורכבים מ-$i$ האיברים הראשונים של $A$ ומ-$j=r-i$ האיברים הראשונים של $B$, עבור $i$ כלשהו בין $0$ ל-$r$. לכן מספיק להתבונן ב-$A[1..r]$ וב-$B[1..r]$. החלוקה $(i,j)$ נכונה בדיוק כאשר $A[i]<B[j+1]$ וגם $B[j]<A[i+1]$, ואז האיבר ה-$r$ בגודלו הוא $\max(A[i],B[j])$.
+- אם $A[i+1]<B[j]$, גם $A[i+1]$ צריך להיות בין $r$ הקטנים, ולכן צריך לקחת יותר איברים מ-$A$ ($i$ גדל).
+- אם $B[j+1]<A[i]$, לקחנו יותר מדי איברים מ-$A$ ($i$ קטן).
+
+**זמן ריצה.** טווח החיפוש $[lo,hi]$ מכיל בהתחלה $r+1$ ערכים, ובכל איטרציה הוא קטן לפחות בחצי בעבודה של $O(1)$. לכן מספר האיטרציות הוא $O(\log r)$, ובמקרה הגרוע $\Theta(\log r)$.""")
+
+SOL_2A = r"""הפתרון הרשמי עם תיקון: בשורה הרביעית ובשורה האחרונה הודפס $T(i,j-1,k)$ ולא הייתה שורה למקרה $S_1[i]\ne S_3[k]$ וגם $S_2[j]\ne S_3[k]$; הנכון הוא $T(i,j-1,k-1)$ בשתי השורות, ושורה נוספת שמחזירה שקר בכל מקרה אחר.
+**משמעות הקלט:** האינדקסים הם התו האחרון בכל מחרוזת בהתאמה. $T(i,j,k)$ הוא אמת אם ורק אם הרישא $S_3[1..k]$ היא מחרוזת שילוב של הרישות $S_1[1..i]$ ו-$S_2[1..j]$. התשובה לבעיה היא $T(|S_1|,|S_2|,|S_3|)$.
+$$T(i,j,k)=\begin{cases}true & i=j=k=0\\ T(i-1,j,k-1)\ \lor\ T(i,j-1,k-1) & i,j,k>0,\ S_1[i]=S_2[j]=S_3[k]\\ T(i-1,j,k-1) & i,j,k>0,\ S_1[i]=S_3[k],\ S_2[j]\ne S_3[k]\\ T(i,j-1,k-1) & i,j,k>0,\ S_1[i]\ne S_3[k],\ S_2[j]=S_3[k]\\ false & i,k>0,\ j=0,\ S_1[i]\ne S_3[k]\\ false & i=0,\ j,k>0,\ S_2[j]\ne S_3[k]\\ T(i-1,j,k-1) & i,k>0,\ j=0,\ S_1[i]=S_3[k]\\ T(i,j-1,k-1) & i=0,\ j,k>0,\ S_2[j]=S_3[k]\\ false & \text{otherwise}\end{cases}$$
+**הסבר.** התו האחרון $S_3[k]$ של מחרוזת שילוב הוא התו האחרון של $S_1[1..i]$ או של $S_2[1..j]$. אם הוא שווה ל-$S_1[i]$ אפשר לשייך אותו ל-$S_1$ ולהמשיך עם $(i-1,j,k-1)$, ואם הוא שווה ל-$S_2[j]$ אפשר לשייך אותו ל-$S_2$ ולהמשיך עם $(i,j-1,k-1)$; בכל צעד גם $k$ קטן באחד. אם הוא שונה משניהם, אין שילוב. השורה האחרונה מכסה גם את המקרים $k=0<i+j$ ו-$i=j=0<k$, כך שאם $|S_3|\ne|S_1|+|S_2|$ התשובה היא שקר."""
+
+CODE_4A = r"""Longest_Border(S[1..n])
+   pi[1] <- 0
+   k <- 0
+   for q <- 2 to n
+      while k > 0 and S[k+1] != S[q]
+         k <- pi[k]
+      if S[k+1] = S[q]
+         k <- k+1
+      pi[q] <- k
+   return pi[n]"""
+
+SOL_4A = (r"""הפתרון הרשמי עם תיקון: הודפס "חישוב מערך $\pi$ כפי שהוגדר באלגוריתם KMP והחזרת הערך המקסימלי במערך"; הנכון הוא להחזיר את הערך האחרון $\pi[n]$ (עבור `abcabcd` המקסימום הוא $3$ אבל אין רישא שהיא גם סיפא, והתשובה $0$).
+הפתרון הרשמי מציין שלפי נוסח השאלה התשובה היא אורך המחרוזת (כל מחרוזת היא רישא וסיפא של עצמה), אבל הדוגמה `aabcdaabc` מתייחסת לרישא קצרה מהמחרוזת, ולכן התקבלה גם התשובה לפי ההגדרה הזו (רישא אמיתית שהיא גם סיפא). לפי ההגדרה הזו:
+""" + "```\n" + CODE_4A + "\n```\n" + r"""**נכונות.** לפי הגדרת פונקציית הרישא, $\pi[q]$ הוא אורך הרישא האמיתית הארוכה ביותר של $S[1..q]$ שהיא גם סיפא של $S[1..q]$. עבור $q=n$ זה בדיוק הפלט המבוקש. הערך המקסימלי במערך מתאר רישא שהיא סיפא של רישא כלשהי של $S$, ולא בהכרח של $S$ כולה.
+**זמן ריצה.** $O(n)$, כמו חישוב פונקציית הרישא ב-KMP: $k$ גדל לכל היותר $n-1$ פעמים, וכל איטרציה של לולאת ה-while מקטינה אותו.
+דוגמה: עבור `aabcdaabc` מתקבל $\pi[9]=4$ (`aabc`). עבור `aaaa` מתקבל $\pi[4]=3$; התשובה $4$ שבדוגמה מתאימה לקריאה המילולית, שבה מחזירים את $n$.""")
+
+SOL_5A = r"""**לא נכון.** שורש בעץ של היער $\Pi$ הוא קודקוד $v$ שעבורו $\Pi[v]=NIL$. כדי לדעת אם קודקוד הוא שורש צריך לבדוק את הערך שלו: אלגוריתם שלא בודק את $\Pi[v]$ (או את $D[v]$, $F[v]$) של קודקוד כלשהו לא יכול לדעת אם $v$ הוא שורש. לכן צריך לעבור על כל $|V|$ הקודקודים, וזמן הריצה הוא $\Theta(|V|)$, לא לינארי בכמות השורשים (למשל כשיש שורש אחד בלבד)."""
+
+SOL_5B = r"""**נכון.** עלה ביער $\Pi$ הוא קודקוד שאינו אב של אף קודקוד. אפשר לעבור פעם אחת על המערך $\Pi$ ולסמן כל קודקוד $\Pi[v]\ne NIL$ כ"אב"; הקודקודים שלא סומנו הם העלים. לחלופין, $v$ הוא עלה אם ורק אם $F[v]=D[v]+1$ (בין הגילוי לסיום של $v$ לא התגלה אף קודקוד). בשני המקרים הזמן הוא $O(|V|)$."""
+
 questions = [
     Q(1, "א", "algorithm", "divide_conquer",
       r"כתבו פסודו קוד/אלגוריתם רקורסיבי למציאת החציון במערך המאוחד של $A,B$. זמן הריצה הנדרש $\theta(\log n)$.",
@@ -173,18 +227,17 @@ questions = [
       SOL_1B, points=5, contextId="c1"),
     Q(1, "ג", "algorithm", "divide_conquer",
       r"כתבו פסודו קוד/אלגוריתם למציאת האיבר ה-$r$ בגודלו במערך המאוחד של $A,B$, כאשר $1\le r\le\frac{n}{2}$. זמן הריצה הנדרש $\theta(\log r)$.",
-      None, points=10, contextId="c1",
-      hold="key-disagreement: the official answer Return(mid(A[1..r],B[1..r])) returns the average of the two middle elements of the 2r chosen elements, not the r-th smallest (A=[1,2], B=[3,4], r=2 gives 2.5, the r-th smallest is 2); see docs/ASK_ADIR.md"),
+      SOL_1C, points=10, contextId="c1", **SOLVED),
 
     Q(2, "א", "algorithm", "dp_sequences",
       r"כתבו נוסחה רקורסיבית $T(i,j,k)$ המקבלת שלושה אינדקסים אי שליליים מחזירה אמת אם המחרוזת $S_3$ הינה \"מחרוזת שילוב\" של $S_1,S_2$, אחרת, שקר." "\n"
       r"פרטו מה מייצג הקלט בנוסחה $T$.",
-      None, points=15, contextId="c2",
-      hold="key-disagreement: the official recurrence keeps k in two rows (T(i,j-1,k)) and has no row for S1[i]!=S3[k] and S2[j]!=S3[k]; against brute force it is wrong or undefined; see docs/ASK_ADIR.md"),
+      SOL_2A, points=15, contextId="c2", **SOLVED),
     Q(2, "ב", "computation", "dp_sequences",
       r"הדגימו בצורה ברורה את חישוב הנוסחה הרקורסיבית עבור הקלט הבא: $S_1=$`ebc`, $S_2=$`dec`.",
       None, points=5, contextId="c2",
-      hold="no-key: the solution file only says that similar demonstrations were done in the course"),
+      hold="no-text: the printed input gives only S1=ebc and S2=dec; S3 is missing, so the demonstration cannot be "
+           "written (the solution file only says that similar demonstrations were done in the course)"),
     Q(2, "ג", "computation", "dp_sequences",
       r"מה סיבוכיות הזמן וסיבוכיות המקום במקרה הגרוע לאלגוריתם תכנות דינמי הפותר את בעיית מחרוזת שילוב?" "\n"
       r"נמקו תשובתכם בקצרה ובבהירות (אין צורך לפרט את האלגוריתם עצמו).",
@@ -197,8 +250,7 @@ questions = [
 
     Q(4, "א", "algorithm", "kmp_strings",
       r"כתוב פסודו קוד/אלגוריתם היעיל ביותר לפתרון בעיית הרישא סיפא הארוכה ביותר.",
-      None, points=10, contextId="c4a",
-      hold="no-key: the solution file gives only a remark (compute the KMP pi array and return its maximum), not an algorithm, and the remark is unsafe (max(pi) != pi[n-1], e.g. abcabcd); the question examples also conflict with its wording; see docs/ASK_ADIR.md"),
+      SOL_4A, points=10, contextId="c4a", **SOLVED),
     Q(4, "ב", "algorithm", "suffix_structures",
       r"כתוב פסודו קוד/אלגוריתם היעיל ביותר לפתרון הבעיה.", SOL_4B, points=10, contextId="c4b"),
     Q(4, "ג", "computation", "suffix_structures",
@@ -206,13 +258,17 @@ questions = [
 
     Q(5, "א", "truefalse", "graphs_search",
       r"ניתן לאפיין את כל שורשי העצים ביער $\Pi$ בזמן לינארי בכמות שורשי העצים ביער." "\n" r"נכון / לא נכון",
-      None, points=5, contextId="c5", hold="no-key: bonus items have no solution in the solution file"),
+      SOL_5A, points=5, contextId="c5", verdict=False, **SOLVED),
     Q(5, "ב", "truefalse", "graphs_search",
       r"ניתן לאפיין את כל העלים ביער $\Pi$ בזמן לינארי בכמות הקודקודים ביער." "\n" r"נכון / לא נכון",
-      None, points=5, contextId="c5", hold="no-key: bonus items have no solution in the solution file"),
+      SOL_5B, points=5, contextId="c5", verdict=True, **SOLVED),
     Q(5, "ג", "truefalse", "graphs_search",
       r"לא ניתן לאפיין בזמן לינארי בגודל הגרף את כל סוגי הצלעות (צלע מהעץ, צלע חוזרת, צלע מקצרת מסלול בעץ, צלע חוצה בין עצים/תתי עצים)." "\n" r"נכון / לא נכון",
-      None, points=5, contextId="c5", hold="no-key: bonus items have no solution in the solution file"),
+      None, points=5, contextId="c5",
+      hold="ambiguous: the answer depends on what 'linear in the size of the graph' means for an adjacency matrix. "
+           "With D, F and Pi every edge is classified in O(1), so the classification is linear in the matrix size "
+           "Theta(V^2) (statement false); but listing the edges of a matrix takes Theta(V^2), not O(V+E) (statement "
+           "true). No key; see docs/ASK_ADIR.md"),
 ]
 
 exam = {

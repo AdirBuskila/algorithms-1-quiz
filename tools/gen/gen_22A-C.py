@@ -6,7 +6,7 @@ Source: a graded student answer booklet (33 pp scan, score 100). It is NOT an of
 student-solution, official False. PRIVACY: text only, no crops of any page (the pages carry a student id and handwriting);
 no id, name or grader mark is copied. The questions are printed text on the booklet pages; the answers are handwritten
 and were read as far as they are legible.
-Items: Q1; Q2; Q3 a (b held); Q4 held; Q5 (bonus) held.
+Items: Q1; Q2; Q3 a, b; Q4; Q5 (bonus). Q3b, Q4, Q5 were held (no key) and are solver-written.
 
 Transcription notes
 - Q2's header says "3 סעיפים" but one request is printed.
@@ -20,6 +20,13 @@ Transcription notes
 
 Checks (tools/verify/22A-C/checks.py): Q1 recurrence vs BFS (N<=60); Q2 pi(S$S^R) last value vs brute force
 (3000 random strings; aabaac -> 5); Q3a sort + pair neighbours vs all pairings (1500 random); Q4 shows the '==' flaw.
+
+Solver pass (2026-10-24, solutionSource "solved", official false, pending refuter): Q3b (exchange argument: some optimal
+pairing pairs the two cheapest items), Q4 (Select at the multiples of ceil(n/2) and ceil(n/3) gives at most 5 candidates,
+count each, O(n)) and Q5 (one run of the approximation, 4 iterations, C={a,b,d,e,f,g,h,i}). The Q5 figure is a clean
+redraw from data (tools/verify/22A-C/draw_graph.py -> images/exams/22A-C-Q5-graph.png), never a crop of the student page;
+the edge set is read off the printed figure and agrees with the student's E' list. Checks: tools/verify/22A-C/solve_22A-C.py
+(Q4 vs brute force on all 87380 arrays n<=8 over 1..4; graph data in tools/verify/22A-C/graphs.json).
 """
 import json, pathlib
 
@@ -82,18 +89,46 @@ Q5 = (r"**שאלת בונוס (15 נקודות).**" "\n"
       r"נתון הגרף הבא, כתבו את ערכי קבוצת הכיסוי $C$ וערכי הקבוצה $E'$ בכל איטרציה בהרצת האלגוריתם למציאת קירוב לכיסוי "
       r"קודקודים שלמדנו במסגרת הקורס.")
 
+SOLVED = {"solutionSource": "solved", "official": False, "confidence": "high"}
+
+S3B = r"""נמיין את המחירים: $p_1\le p_2\le\ldots\le p_{2n}$. **הבחירה החמדנית** של האלגוריתם היא לשים בזוג אחד את שני המוצרים הזולים ביותר, $p_1$ ו-$p_2$ (ומשלמים $p_2$). נוכיח שקיים פתרון אופטימלי שמכיל את הזוג הזה.
+יהי $OPT$ חלוקה אופטימלית לזוגות. אם $p_1$ ו-$p_2$ באותו זוג ב-$OPT$, סיימנו. אחרת, ב-$OPT$ יש זוג $(p_1,x)$ וזוג $(p_2,y)$, כאשר $x,y$ הם מוצרים אחרים, ולכן $x\ge p_2$ ו-$y\ge p_2\ge p_1$. בשני הזוגות משלמים על היקר, כלומר על $x$ ועל $y$, ובסך הכול $x+y$.
+נחליף את שני הזוגות בזוגות $(p_1,p_2)$ ו-$(x,y)$. עכשיו משלמים $p_2+\max(x,y)$. מתקיים
+$$x+y=\max(x,y)+\min(x,y)\ge\max(x,y)+p_2$$
+כי $\min(x,y)\ge p_2$. לכן החלוקה החדשה אינה יקרה יותר מ-$OPT$, ומכיוון ש-$OPT$ אופטימלית גם היא אופטימלית, והיא מכילה את הזוג $(p_1,p_2)$. לכן הבחירה החמדנית נמצאת בפתרון אופטימלי כלשהו."""
+
+CODE_4 = r"""Find_k_m(A, n)
+   h = ceil(n/2) ; t = ceil(n/3)
+   Kc = { Select(A, q) : q = h, 2h, ... , q <= n }        // at most 2 candidates for k
+   Mc = { Select(A, q) : q = t, 2t, 3t, ... , q <= n }    // at most 3 candidates for m
+   for each value v in Kc u Mc
+      cnt[v] = number of i with A[i] = v                  // one pass over A
+   for each k in Kc
+      for each m in Mc
+         if k < m and cnt[k] >= n/2 and cnt[m] >= n/3
+            return (k, m)
+   return NIL                                           // no such pair"""
+
+S4 = (r"""**רעיון.** נסתכל על המערך הממוין. אם ערך $v$ מופיע לפחות $n/2$ פעמים, המופעים שלו תופסים רצף של לפחות $h=\lceil n/2\rceil$ מקומות סמוכים, וכל רצף של $h$ מקומות סמוכים מכיל מקום שהוא כפולה של $h$. לכן $v$ הוא האיבר ה-$q$ בגודלו עבור כפולה כלשהי $q$ של $h$ (יש לכל היותר $2$ כפולות כאלה עד $n$). באותו אופן, ערך שמופיע לפחות $n/3$ פעמים הוא האיבר ה-$q$ בגודלו עבור כפולה $q$ של $t=\lceil n/3\rceil$ (לכל היותר $3$ כפולות). מוצאים את המועמדים בעזרת Select, סופרים את המופעים של כל מועמד, ובודקים את התנאים (כולל $k<m$) במפורש:
+""" + "```\n" + CODE_4 + "\n```\n" + r"""**נכונות.** כל זוג שהאלגוריתם מחזיר מקיים את שלושת התנאים, כי הם נבדקים במפורש עם "לפחות" (ולא שוויון). להפך, אם קיים זוג $k<m$ מתאים, אז לפי הרעיון $k$ נמצא ב-$Kc$ ו-$m$ נמצא ב-$Mc$, ולכן האלגוריתם ימצא זוג מתאים.
+**סיבוכיות.** לכל היותר $5$ קריאות ל-Select, כל אחת $O(n)$; לכל היותר $5$ מעברי ספירה על המערך, כל אחד $O(n)$; ולכל היותר $2\cdot3$ בדיקות של זוגות. סה"כ $O(n)$.
+דוגמה: $A$ עם שש פעמים $1$ ושש פעמים $2$ ($n=12$): $h=6$, המועמדים ל-$k$ הם האיברים במקומות $6,12$, כלומר $1,2$; $t=4$, המועמדים ל-$m$ הם האיברים במקומות $4,8,12$, כלומר $1,2,2$. הזוג $(1,2)$ מקיים $6\ge6$ ו-$6\ge4$ ומוחזר.""")
+
+S5 = r"""**האלגוריתם (קירוב 2 לכיסוי קודקודים):** $C\leftarrow\emptyset$, $E'\leftarrow E$. כל עוד $E'\ne\emptyset$: בוחרים צלע כלשהי $(u,v)\in E'$, מוסיפים את $u$ ואת $v$ ל-$C$, ומוחקים מ-$E'$ את כל הצלעות שנוגעות ב-$u$ או ב-$v$.
+בגרף $15$ צלעות: $ab$, $ah$, $af$, $hg$, $gf$, $bi$, $ih$, $id$, $bc$, $cd$, $de$, $gd$, $dj$, $jf$, $fe$. בחירת הצלעות שרירותית, ולכן יש כמה הרצות נכונות; להלן הרצה אחת:
+$$\begin{array}{c|c|l|l} \text{iteration} & \text{edge} & C & E'\\\hline 1 & (a,b) & \{a,b\} & \{hg,gf,ih,id,cd,de,gd,dj,jf,fe\}\\ 2 & (h,g) & \{a,b,g,h\} & \{id,cd,de,dj,jf,fe\}\\ 3 & (i,d) & \{a,b,d,g,h,i\} & \{jf,fe\}\\ 4 & (f,e) & \{a,b,d,e,f,g,h,i\} & \emptyset\end{array}$$
+בכל איטרציה נמחקות הצלעות שנוגעות בשני הקודקודים שנבחרו: באיטרציה 1 נמחקות $ab,ah,af,bi,bc$; באיטרציה 2 $hg,gf,ih,gd$; באיטרציה 3 $id,cd,de,dj$; באיטרציה 4 $fe,jf$.
+הפלט: $C=\{a,b,d,e,f,g,h,i\}$, $|C|=8$. הצלעות שנבחרו, $(a,b),(h,g),(i,d),(f,e)$, הן זיווג מקסימלי, וכל כיסוי חייב להכיל קודקוד אחד לפחות מכל אחת מהן, ולכן $|C|=2\cdot4\le2\cdot OPT$ (בגרף זה $OPT=4$)."""
+
 questions = [
     Q(1, None, "algorithm", "dp_sequences", Q1, S1, points=25),
     Q(2, None, "algorithm", "kmp_strings", Q2, S2, points=25),
     Q(3, "א", "algorithm", "greedy",
       r"הציעו אלגוריתם חמדני המחלק את המוצרים ל-$n$ זוגות, כך שהסכום הכולל שנשלם עבורם יהיה מינימלי.", S3A, contextId="c3"),
-    {"num": 3, "part": "ב", "kind": "proof", "topic": "greedy", "contextId": "c3",
-     "question": r"הוכיחו שהאלגוריתם שהצעת מקיים את תכונת הבחירה החמדנית.",
-     "hold": "no-key: the student's proof of the greedy-choice property was marked 'not proven' (-10)"},
-    {"num": 4, "kind": "algorithm", "topic": "divide_conquer", "question": Q4, "points": 25,
-     "hold": "no-key: the student's algorithm tests the counts with '==' instead of 'at least' (see tools/verify/22A-C/checks.py); a sound solution is needed"},
-    {"num": 5, "kind": "computation", "topic": "approximation", "question": Q5, "points": 15,
-     "hold": "no-key: the student's iteration table is incomplete (scored 3/15) and the figure cannot be cropped from the student's page"},
+    Q(3, "ב", "proof", "greedy", r"הוכיחו שהאלגוריתם שהצעת מקיים את תכונת הבחירה החמדנית.", S3B,
+      contextId="c3", **SOLVED),
+    Q(4, None, "algorithm", "divide_conquer", Q4, S4, points=25, **SOLVED),
+    Q(5, None, "computation", "approximation", Q5, S5, points=15, image="images/exams/22A-C-Q5-graph.png", **SOLVED),
 ]
 
 exam = {

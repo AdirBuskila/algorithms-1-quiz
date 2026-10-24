@@ -11,7 +11,9 @@ Transcription notes
 - Q4 example: the text says n=6 but lists seven circles, and c5 is printed as (c_5 = 6, r_4 = 2). Transcribed as printed.
 - Q4a: the official answer says the solution is not unique and lists {c1,c3,c7} and {c1,c3,c6}; under the printed data
   c1 and c3 intersect (c3 spans [-3,3], c1 spans [-6.5,-2.5]) and c3 meets c6, so neither set is disjoint. The maximum is 3,
-  e.g. {c1,c2,c5} and {c1,c2,c7}. HELD (ASK_ADIR); the official key is not changed.
+  e.g. {c1,c2,c5} and {c1,c2,c7}. Solver pass (2026-10-24, typo ruling, solutionSource "solved", pending refuter): the
+  verdict "not unique" is kept and the two sets are replaced by {c1,c2,c5} and {c1,c2,c7}, the only optimal sets
+  (tools/verify/SAMP-1/solve_SAMP-1.py).
 - Q5: the official solution is the lecture slide picture of the suffix trie of banana$ (the lone "$" suffix is not drawn).
 - Q3d: the printed argument is short; transcribed as is.
 
@@ -123,7 +125,14 @@ S4A = r"""הפתרון אינו יחיד.
 פתרון ראשון: $\{c_1,c_3,c_7\}$
 ופתרון שני $\{c_1,c_3,c_6\}$"""
 
-S4B = r"""1. נגדיר את $n$ להיות מספר המעגלים.
+S4A_FIX = r"""הפתרון הרשמי עם תיקון: הודפסו הפתרונות $\{c_1,c_3,c_7\}$ ו-$\{c_1,c_3,c_6\}$, שאינם זרים לפי נתוני הדוגמה ($c_1$ חותך את $c_3$); הנכון הוא $\{c_1,c_2,c_5\}$ ו-$\{c_1,c_2,c_7\}$.
+הפתרון אינו יחיד.
+נימוק: כל מעגל מכסה על ציר ה-$x$ את הקטע $[c-r,c+r]$, ושני מעגלים זרים אם ורק אם הקטעים שלהם זרים (בלי נקודה משותפת). בדוגמה: $c_1:[-6.5,-2.5]$, $c_2:[-2,2]$, $c_3:[-3,3]$, $c_4:[1,9]$, $c_5:[4,8]$, $c_6:[2,12]$, $c_7:[5,11]$.
+האלגוריתם החמדני מסעיף ב' (שהוכח אופטימלי בסעיפים ג'-ד') עובר לפי הקצה הימני: הוא בוחר את $c_1$, אחר כך את $c_2$ (מתחיל ב-$-2>-2.5$), אחר כך את $c_5$ (המעגל הראשון שמתחיל אחרי $2$), ואחרי $8$ לא מתחיל אף מעגל. לכן המקסימום הוא $3$. גם $c_7$ זר ל-$c_1$ ול-$c_2$, ולכן יש לפחות שני פתרונות אופטימליים:
+פתרון ראשון: $\{c_1,c_2,c_5\}$
+ופתרון שני: $\{c_1,c_2,c_7\}$"""
+
+S4B = r"""1.נגדיר את $n$ להיות מספר המעגלים.
 2. מיין את המעגלים לפי נקודת חיתוך הימנית עם ציר $x$ בסדר עולה, סמן רשימה זאת ב-$L$.
 3. $C=\emptyset$
 4. כל עוד הרשימה $L$ אינה ריקה:
@@ -166,9 +175,8 @@ questions = [
     Q(3, "ג", "computation", "randomized", r"מה זמן הריצה של האלגוריתם ההסתברותי? נמקו.", S3C, contextId="c3"),
     Q(3, "ד", "proof", "randomized", r"מה ההסתברות שהאלגוריתם טועה? נמקו.", S3D, contextId="c3"),
 
-    {"num": 4, "part": "א", "kind": "computation", "topic": "greedy",
-     "question": r"האם קיים פתרון יחיד לבעיה? נמקו תשובתכם.", "contextId": "c4",
-     "hold": "key-disagrees: the official sets {c1,c3,c7} and {c1,c3,c6} are not pairwise disjoint under the printed data (c1 meets c3, c3 meets c6); the answer 'not unique' itself holds (checked by brute force)"},
+    Q(4, "א", "computation", "greedy", r"האם קיים פתרון יחיד לבעיה? נמקו תשובתכם.", S4A_FIX, contextId="c4",
+      solutionSource="solved", official=False),
     Q(4, "ב", "algorithm", "greedy",
       r"כתבו אלגוריתם חמדני לפתרון הבעיה. (רצוי לנסח את האלגוריתם במילים ולא בפסודו קוד).", S4B, contextId="c4"),
     Q(4, "ג", "proof", "greedy", r"הוכח שהאלגוריתם שהצעת מקיים את תכונת הבחירה החמדנית.", S4C, contextId="c4"),

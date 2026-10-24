@@ -33,7 +33,10 @@
    "kind": "algorithm",
    "topic": "graphs_search",
    "question": "כתבו אלגוריתם (או פסודוקוד) המקבל כקלט את הגרף $G$ (המיוצג על ידי רשימת סמיכויות) ושלושה קודקודים $x,y,z\\in V$ בגרף $G$ ומחזיר אמת אם קיים **טיול** מ-$x$ ל-$y$ שעובר דרך $z$.",
-   "hold": "no-key: the solution file says Q1 is solved in the Moodle model solution (not included)",
+   "solution": "**רעיון.** בטיול מותר לחזור על קודקודים ועל צלעות. לכן קיים טיול מ-$x$ ל-$y$ שעובר דרך $z$ אם ורק אם קיים טיול מ-$x$ ל-$z$ וקיים טיול מ-$z$ ל-$y$ (משרשרים את שניהם). הגרף לא מכוון, ולכן זה שקול לכך ש-$x$ ו-$y$ נמצאים באותו רכיב קשירות כמו $z$, כלומר סריקת BFS (או DFS) מ-$z$ מגיעה גם ל-$x$ וגם ל-$y$.\n```\nWalk_Through(G, x, y, z)\n   for each v in V:  color[v] <- WHITE\n   color[z] <- GRAY ; Q <- {z}\n   while Q is not empty\n      u <- Dequeue(Q)\n      for each v in Adj[u]\n         if color[v] = WHITE\n            color[v] <- GRAY ; Enqueue(Q, v)\n   return (color[x] != WHITE and color[y] != WHITE)\n```\n**נכונות.** אם הסריקה מ-$z$ מגיעה ל-$x$ ול-$y$, יש מסלול $z\\leadsto x$ ומסלול $z\\leadsto y$; הפיכת הראשון (הגרף לא מכוון) ושרשור השני נותנים טיול $x\\leadsto z\\leadsto y$. להפך, אם יש טיול כזה, החלק $z\\leadsto y$ שלו והחלק $x\\leadsto z$ (הפוך) מראים ש-$x$ ו-$y$ ישיגים מ-$z$, ולכן הסריקה מגיעה אליהם.\n**סיבוכיות.** סריקת BFS אחת על רשימות סמיכויות: $O(|V|+|E|)$.",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "part": "א",
    "points": 10,
    "contextId": "c1"
@@ -43,7 +46,10 @@
    "kind": "algorithm",
    "topic": "graphs_search",
    "question": "כתבו אלגוריתם (או פסודוקוד) המקבל כקלט את הגרף $G$ (המיוצג על ידי רשימת סמיכויות) ושלושה קודקודים $x,y,z\\in V$ בגרף $G$ ומחזיר אמת אם קיים מסלול קצר ביותר מ-$x$ ל-$y$ שעובר דרך $z$.",
-   "hold": "no-key: the solution file says Q1 is solved in the Moodle model solution (not included)",
+   "solution": "**רעיון.** הגרף לא ממושקל, ולכן BFS מחשב מרחקים (מספר צלעות במסלול קצר ביותר). קיים מסלול קצר ביותר מ-$x$ ל-$y$ שעובר דרך $z$ אם ורק אם $d(x,z)+d(z,y)=d(x,y)$ (והמרחק סופי). מריצים BFS מ-$x$ ומ-$y$; בגרף לא מכוון $d(z,y)=d(y,z)$.\n```\nShortest_Through(G, x, y, z)\n   dx <- BFS(G, x)        // dx[v] = distance from x (infinity if unreachable)\n   dy <- BFS(G, y)        // dy[v] = distance from y\n   if dx[y] = infinity  return false\n   return (dx[z] + dy[z] = dx[y])\n```\n**נכונות.** אם $d(x,z)+d(z,y)=d(x,y)$, שרשור מסלול קצר ביותר $x\\leadsto z$ עם מסלול קצר ביותר $z\\leadsto y$ נותן הילוך באורך $d(x,y)$ מ-$x$ ל-$y$. הילוך באורך המרחק אינו חוזר על קודקוד (אחרת היה אפשר לקצר אותו), ולכן זהו מסלול קצר ביותר שעובר דרך $z$. להפך, אם מסלול קצר ביותר $P$ עובר דרך $z$, אז החלקים שלו $x\\leadsto z$ ו-$z\\leadsto y$ באורכים לפחות $d(x,z)$ ו-$d(z,y)$, כך ש-$d(x,y)=|P|\\ge d(x,z)+d(z,y)$; מאי-שוויון המשולש $d(x,y)\\le d(x,z)+d(z,y)$, ולכן יש שוויון.\n**סיבוכיות.** שתי סריקות BFS: $O(|V|+|E|)$.",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "part": "ב",
    "points": 15,
    "contextId": "c1"
@@ -157,7 +163,10 @@
    "kind": "computation",
    "topic": "complexity_recurrence",
    "question": "מה סיבוכיות הזמן והמקום לאלגוריתם תכנות דינמי המחזיר את הקוביות מהם ניתן לבנות את המגדל היציב הגבוה ביותר. נמקו תשובתכם (אין צורך לפרט את האלגוריתם עצמו).",
-   "hold": "no-key: the solution file states only the time (O(n^2) overall); the space is not stated",
+   "solution": "**זמן $O(n^2)$, מקום $O(n)$.**\nאת גובה המגדל מחשבים כמו בסעיף הקודם: לכל $i$ עוברים על כל $j<i$, כלומר $O(n^2)$ זמן, ושומרים את המערך החד ממדי $T$. כדי להחזיר את התיבות שומרים מערך חד ממדי נוסף $P$: $P(i)$ הוא האינדקס $j$ שבו התקבל המקסימום עבור $T(i)$ (התיבה שמתחת לתיבה $i$ במגדל הטוב ביותר שבראשו $i$), או $0$ אם התיבה $i$ היא התחתונה. בסוף מוצאים את $i$ שעבורו $T(i)$ מקסימלי ($O(n)$) והולכים אחורה לפי $P$ עד $0$, ומדפיסים את התיבות. המגדל מכיל לכל היותר $n$ תיבות, ולכן השחזור לוקח $O(n)$.\nסה\"כ זמן $O(n^2)+O(n)=O(n^2)$, ומקום: שני מערכים בגודל $n$, $O(n)$.",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "part": "ג",
    "points": 5,
    "contextId": "c4"
@@ -167,8 +176,12 @@
    "kind": "truefalse",
    "topic": "greedy",
    "question": "**שאלת בונוס (5 נקודות)** - ענה נכון או לא נכון, אין צורך לנמק.\nבבעיית תזמון מקטעים, הגישה החמדנית הבוחרת במקטע שמשך הזמן שלו קצר ביותר תניב בהכרח פתרון אופטימלי.",
-   "hold": "no-key: the solution file says 'see the homework solutions'",
-   "points": 5
+   "solution": "**לא נכון.** הבחירה החמדנית לפי המקטע הקצר ביותר אינה מבטיחה פתרון אופטימלי. דוגמה נגדית: המקטעים $[0,10]$, $[9,12]$, $[11,20]$. הקצר ביותר הוא $[9,12]$; הוא נחתך עם שני האחרים, ולכן מתקבל מקטע אחד בלבד, בעוד שהפתרון האופטימלי בוחר שניים: $[0,10]$ ו-$[11,20]$. (הבחירה החמדנית הנכונה היא לפי זמן הסיום המוקדם ביותר.)",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "points": 5,
+   "verdict": false
   }
  ]
 }

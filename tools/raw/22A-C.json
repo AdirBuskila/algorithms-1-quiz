@@ -49,28 +49,38 @@
   },
   {
    "num": 3,
-   "part": "ב",
    "kind": "proof",
    "topic": "greedy",
-   "contextId": "c3",
    "question": "הוכיחו שהאלגוריתם שהצעת מקיים את תכונת הבחירה החמדנית.",
-   "hold": "no-key: the student's proof of the greedy-choice property was marked 'not proven' (-10)"
+   "solution": "נמיין את המחירים: $p_1\\le p_2\\le\\ldots\\le p_{2n}$. **הבחירה החמדנית** של האלגוריתם היא לשים בזוג אחד את שני המוצרים הזולים ביותר, $p_1$ ו-$p_2$ (ומשלמים $p_2$). נוכיח שקיים פתרון אופטימלי שמכיל את הזוג הזה.\nיהי $OPT$ חלוקה אופטימלית לזוגות. אם $p_1$ ו-$p_2$ באותו זוג ב-$OPT$, סיימנו. אחרת, ב-$OPT$ יש זוג $(p_1,x)$ וזוג $(p_2,y)$, כאשר $x,y$ הם מוצרים אחרים, ולכן $x\\ge p_2$ ו-$y\\ge p_2\\ge p_1$. בשני הזוגות משלמים על היקר, כלומר על $x$ ועל $y$, ובסך הכול $x+y$.\nנחליף את שני הזוגות בזוגות $(p_1,p_2)$ ו-$(x,y)$. עכשיו משלמים $p_2+\\max(x,y)$. מתקיים\n$$x+y=\\max(x,y)+\\min(x,y)\\ge\\max(x,y)+p_2$$\nכי $\\min(x,y)\\ge p_2$. לכן החלוקה החדשה אינה יקרה יותר מ-$OPT$, ומכיוון ש-$OPT$ אופטימלית גם היא אופטימלית, והיא מכילה את הזוג $(p_1,p_2)$. לכן הבחירה החמדנית נמצאת בפתרון אופטימלי כלשהו.",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "part": "ב",
+   "contextId": "c3"
   },
   {
    "num": 4,
    "kind": "algorithm",
    "topic": "divide_conquer",
    "question": "נתון מערך $A$ עם $n$ מספרים טבעיים.\nהציעו אלגוריתם לינארי המקבל כקלט את המערך $A$ ומחזיר שני ערכים מהמערך $k,m$ כך ששלושת התנאים הבאים מתקיימים:\nI. $k<m$\nII. $k$ מופיע במערך לפחות $n/2$ פעמים.\nIII. $m$ מופיע במערך לפחות $n/3$ פעמים",
-   "points": 25,
-   "hold": "no-key: the student's algorithm tests the counts with '==' instead of 'at least' (see tools/verify/22A-C/checks.py); a sound solution is needed"
+   "solution": "**רעיון.** נסתכל על המערך הממוין. אם ערך $v$ מופיע לפחות $n/2$ פעמים, המופעים שלו תופסים רצף של לפחות $h=\\lceil n/2\\rceil$ מקומות סמוכים, וכל רצף של $h$ מקומות סמוכים מכיל מקום שהוא כפולה של $h$. לכן $v$ הוא האיבר ה-$q$ בגודלו עבור כפולה כלשהי $q$ של $h$ (יש לכל היותר $2$ כפולות כאלה עד $n$). באותו אופן, ערך שמופיע לפחות $n/3$ פעמים הוא האיבר ה-$q$ בגודלו עבור כפולה $q$ של $t=\\lceil n/3\\rceil$ (לכל היותר $3$ כפולות). מוצאים את המועמדים בעזרת Select, סופרים את המופעים של כל מועמד, ובודקים את התנאים (כולל $k<m$) במפורש:\n```\nFind_k_m(A, n)\n   h = ceil(n/2) ; t = ceil(n/3)\n   Kc = { Select(A, q) : q = h, 2h, ... , q <= n }        // at most 2 candidates for k\n   Mc = { Select(A, q) : q = t, 2t, 3t, ... , q <= n }    // at most 3 candidates for m\n   for each value v in Kc u Mc\n      cnt[v] = number of i with A[i] = v                  // one pass over A\n   for each k in Kc\n      for each m in Mc\n         if k < m and cnt[k] >= n/2 and cnt[m] >= n/3\n            return (k, m)\n   return NIL                                           // no such pair\n```\n**נכונות.** כל זוג שהאלגוריתם מחזיר מקיים את שלושת התנאים, כי הם נבדקים במפורש עם \"לפחות\" (ולא שוויון). להפך, אם קיים זוג $k<m$ מתאים, אז לפי הרעיון $k$ נמצא ב-$Kc$ ו-$m$ נמצא ב-$Mc$, ולכן האלגוריתם ימצא זוג מתאים.\n**סיבוכיות.** לכל היותר $5$ קריאות ל-Select, כל אחת $O(n)$; לכל היותר $5$ מעברי ספירה על המערך, כל אחד $O(n)$; ולכל היותר $2\\cdot3$ בדיקות של זוגות. סה\"כ $O(n)$.\nדוגמה: $A$ עם שש פעמים $1$ ושש פעמים $2$ ($n=12$): $h=6$, המועמדים ל-$k$ הם האיברים במקומות $6,12$, כלומר $1,2$; $t=4$, המועמדים ל-$m$ הם האיברים במקומות $4,8,12$, כלומר $1,2,2$. הזוג $(1,2)$ מקיים $6\\ge6$ ו-$6\\ge4$ ומוחזר.",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
+   "points": 25
   },
   {
    "num": 5,
    "kind": "computation",
    "topic": "approximation",
    "question": "**שאלת בונוס (15 נקודות).**\nנתון הגרף הבא, כתבו את ערכי קבוצת הכיסוי $C$ וערכי הקבוצה $E'$ בכל איטרציה בהרצת האלגוריתם למציאת קירוב לכיסוי קודקודים שלמדנו במסגרת הקורס.",
+   "solution": "**האלגוריתם (קירוב 2 לכיסוי קודקודים):** $C\\leftarrow\\emptyset$, $E'\\leftarrow E$. כל עוד $E'\\ne\\emptyset$: בוחרים צלע כלשהי $(u,v)\\in E'$, מוסיפים את $u$ ואת $v$ ל-$C$, ומוחקים מ-$E'$ את כל הצלעות שנוגעות ב-$u$ או ב-$v$.\nבגרף $15$ צלעות: $ab$, $ah$, $af$, $hg$, $gf$, $bi$, $ih$, $id$, $bc$, $cd$, $de$, $gd$, $dj$, $jf$, $fe$. בחירת הצלעות שרירותית, ולכן יש כמה הרצות נכונות; להלן הרצה אחת:\n$$\\begin{array}{c|c|l|l} \\text{iteration} & \\text{edge} & C & E'\\\\\\hline 1 & (a,b) & \\{a,b\\} & \\{hg,gf,ih,id,cd,de,gd,dj,jf,fe\\}\\\\ 2 & (h,g) & \\{a,b,g,h\\} & \\{id,cd,de,dj,jf,fe\\}\\\\ 3 & (i,d) & \\{a,b,d,g,h,i\\} & \\{jf,fe\\}\\\\ 4 & (f,e) & \\{a,b,d,e,f,g,h,i\\} & \\emptyset\\end{array}$$\nבכל איטרציה נמחקות הצלעות שנוגעות בשני הקודקודים שנבחרו: באיטרציה 1 נמחקות $ab,ah,af,bi,bc$; באיטרציה 2 $hg,gf,ih,gd$; באיטרציה 3 $id,cd,de,dj$; באיטרציה 4 $fe,jf$.\nהפלט: $C=\\{a,b,d,e,f,g,h,i\\}$, $|C|=8$. הצלעות שנבחרו, $(a,b),(h,g),(i,d),(f,e)$, הן זיווג מקסימלי, וכל כיסוי חייב להכיל קודקוד אחד לפחות מכל אחת מהן, ולכן $|C|=2\\cdot4\\le2\\cdot OPT$ (בגרף זה $OPT=4$).",
+   "solutionSource": "solved",
+   "official": false,
+   "confidence": "high",
    "points": 15,
-   "hold": "no-key: the student's iteration table is incomplete (scored 3/15) and the figure cannot be cropped from the student's page"
+   "image": "images/exams/22A-C-Q5-graph.png"
   }
  ]
 }

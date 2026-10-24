@@ -13,9 +13,14 @@ demonstrate the recurrence on that example and, as part c, for the time and spac
 the printed exam has no table, does not state the direction, and asks (b) time/space of the height-only DP, (c) time/space
 of the algorithm that returns the boxes. The bonus says "see the homework solutions" -> no key.
 
-Holds (reason no-key): Q1a, Q1b (Moodle), Q4c (the file gives only the time, O(n^2) overall; space is not stated), bonus.
+Former holds (no-key, now solved below): Q1a, Q1b (Moodle), Q4c (the file gives only the time, O(n^2) overall; space is
+not stated), bonus.
 Q4b: the file says finding the tallest height needs O(n^2) (a one-dimensional array, each cell compares with up to n values);
 the O(n) space follows from "one-dimensional array", so it is kept with confidence med.
+Solver pass (2026-10-24, solutionSource "solved", official false, pending refuter): Q1a (BFS from z reaches x and y),
+Q1b (BFS from x and from y, d(x,z)+d(z,y)=d(x,y)), Q4c (time O(n^2), space O(n) with a predecessor array) and the bonus
+(false) are solved; checks in tools/verify/24A-A/solve_24A-A.py (product-graph BFS, networkx all_shortest_paths, brute
+force over towers).
 Q2a: the printed text reads "תבו" (missing letter); the solution file repeats it as "כתבו", which is used.
 Q2b: the official proof is transcribed as printed (it writes p2>q2 where the lengths of both segments are 1).
 Q4a: the official recurrence assumes the boxes are sorted by width in descending order (stated only in the solution file).
@@ -131,13 +136,45 @@ $$T(i)=\begin{cases}0 & ;\ i=0\\ \max\limits_{0\le j\le i-1\ \text{and}\ L(j)>L(
 SOL_4B = r"""**פתרון רשמי** (24A-A פתרון עמ' 4):
 מציאת הגובה הגבוה ביותר דורשת $O(n^2)$ (כיוון שלכל מיקום במערך החד ממדי נצטרך לבצע השוואה עם מקסימום $n$ ערכים). מערך חד ממדי - לכן סיבוכיות המקום $O(n)$."""
 
+SOLVED = {"solutionSource": "solved", "official": False, "confidence": "high"}
+
+CODE_1A = r"""Walk_Through(G, x, y, z)
+   for each v in V:  color[v] <- WHITE
+   color[z] <- GRAY ; Q <- {z}
+   while Q is not empty
+      u <- Dequeue(Q)
+      for each v in Adj[u]
+         if color[v] = WHITE
+            color[v] <- GRAY ; Enqueue(Q, v)
+   return (color[x] != WHITE and color[y] != WHITE)"""
+
+SOL_1A = (r"""**רעיון.** בטיול מותר לחזור על קודקודים ועל צלעות. לכן קיים טיול מ-$x$ ל-$y$ שעובר דרך $z$ אם ורק אם קיים טיול מ-$x$ ל-$z$ וקיים טיול מ-$z$ ל-$y$ (משרשרים את שניהם). הגרף לא מכוון, ולכן זה שקול לכך ש-$x$ ו-$y$ נמצאים באותו רכיב קשירות כמו $z$, כלומר סריקת BFS (או DFS) מ-$z$ מגיעה גם ל-$x$ וגם ל-$y$.
+""" + "```\n" + CODE_1A + "\n```\n" + r"""**נכונות.** אם הסריקה מ-$z$ מגיעה ל-$x$ ול-$y$, יש מסלול $z\leadsto x$ ומסלול $z\leadsto y$; הפיכת הראשון (הגרף לא מכוון) ושרשור השני נותנים טיול $x\leadsto z\leadsto y$. להפך, אם יש טיול כזה, החלק $z\leadsto y$ שלו והחלק $x\leadsto z$ (הפוך) מראים ש-$x$ ו-$y$ ישיגים מ-$z$, ולכן הסריקה מגיעה אליהם.
+**סיבוכיות.** סריקת BFS אחת על רשימות סמיכויות: $O(|V|+|E|)$.""")
+
+CODE_1B = r"""Shortest_Through(G, x, y, z)
+   dx <- BFS(G, x)        // dx[v] = distance from x (infinity if unreachable)
+   dy <- BFS(G, y)        // dy[v] = distance from y
+   if dx[y] = infinity  return false
+   return (dx[z] + dy[z] = dx[y])"""
+
+SOL_1B = (r"""**רעיון.** הגרף לא ממושקל, ולכן BFS מחשב מרחקים (מספר צלעות במסלול קצר ביותר). קיים מסלול קצר ביותר מ-$x$ ל-$y$ שעובר דרך $z$ אם ורק אם $d(x,z)+d(z,y)=d(x,y)$ (והמרחק סופי). מריצים BFS מ-$x$ ומ-$y$; בגרף לא מכוון $d(z,y)=d(y,z)$.
+""" + "```\n" + CODE_1B + "\n```\n" + r"""**נכונות.** אם $d(x,z)+d(z,y)=d(x,y)$, שרשור מסלול קצר ביותר $x\leadsto z$ עם מסלול קצר ביותר $z\leadsto y$ נותן הילוך באורך $d(x,y)$ מ-$x$ ל-$y$. הילוך באורך המרחק אינו חוזר על קודקוד (אחרת היה אפשר לקצר אותו), ולכן זהו מסלול קצר ביותר שעובר דרך $z$. להפך, אם מסלול קצר ביותר $P$ עובר דרך $z$, אז החלקים שלו $x\leadsto z$ ו-$z\leadsto y$ באורכים לפחות $d(x,z)$ ו-$d(z,y)$, כך ש-$d(x,y)=|P|\ge d(x,z)+d(z,y)$; מאי-שוויון המשולש $d(x,y)\le d(x,z)+d(z,y)$, ולכן יש שוויון.
+**סיבוכיות.** שתי סריקות BFS: $O(|V|+|E|)$.""")
+
+SOL_4C = r"""**זמן $O(n^2)$, מקום $O(n)$.**
+את גובה המגדל מחשבים כמו בסעיף הקודם: לכל $i$ עוברים על כל $j<i$, כלומר $O(n^2)$ זמן, ושומרים את המערך החד ממדי $T$. כדי להחזיר את התיבות שומרים מערך חד ממדי נוסף $P$: $P(i)$ הוא האינדקס $j$ שבו התקבל המקסימום עבור $T(i)$ (התיבה שמתחת לתיבה $i$ במגדל הטוב ביותר שבראשו $i$), או $0$ אם התיבה $i$ היא התחתונה. בסוף מוצאים את $i$ שעבורו $T(i)$ מקסימלי ($O(n)$) והולכים אחורה לפי $P$ עד $0$, ומדפיסים את התיבות. המגדל מכיל לכל היותר $n$ תיבות, ולכן השחזור לוקח $O(n)$.
+סה"כ זמן $O(n^2)+O(n)=O(n^2)$, ומקום: שני מערכים בגודל $n$, $O(n)$."""
+
+SOL_5 = r"""**לא נכון.** הבחירה החמדנית לפי המקטע הקצר ביותר אינה מבטיחה פתרון אופטימלי. דוגמה נגדית: המקטעים $[0,10]$, $[9,12]$, $[11,20]$. הקצר ביותר הוא $[9,12]$; הוא נחתך עם שני האחרים, ולכן מתקבל מקטע אחד בלבד, בעוד שהפתרון האופטימלי בוחר שניים: $[0,10]$ ו-$[11,20]$. (הבחירה החמדנית הנכונה היא לפי זמן הסיום המוקדם ביותר.)"""
+
 questions = [
-    H(1, "א", "algorithm", "graphs_search",
+    Q(1, "א", "algorithm", "graphs_search",
       r"כתבו אלגוריתם (או פסודוקוד) המקבל כקלט את הגרף $G$ (המיוצג על ידי רשימת סמיכויות) ושלושה קודקודים $x,y,z\in V$ בגרף $G$ ומחזיר אמת אם קיים **טיול** מ-$x$ ל-$y$ שעובר דרך $z$.",
-      "no-key: the solution file says Q1 is solved in the Moodle model solution (not included)", points=10, contextId="c1"),
-    H(1, "ב", "algorithm", "graphs_search",
+      SOL_1A, points=10, contextId="c1", **SOLVED),
+    Q(1, "ב", "algorithm", "graphs_search",
       r"כתבו אלגוריתם (או פסודוקוד) המקבל כקלט את הגרף $G$ (המיוצג על ידי רשימת סמיכויות) ושלושה קודקודים $x,y,z\in V$ בגרף $G$ ומחזיר אמת אם קיים מסלול קצר ביותר מ-$x$ ל-$y$ שעובר דרך $z$.",
-      "no-key: the solution file says Q1 is solved in the Moodle model solution (not included)", points=15, contextId="c1"),
+      SOL_1B, points=15, contextId="c1", **SOLVED),
 
     Q(2, "א", "algorithm", "greedy", "כתבו אלגוריתם (או פסודו-קוד) לפתרון הבעיה.", SOL_2A, points=10, contextId="c2"),
     Q(2, "ב", "proof", "greedy", "הוכיחו את נכונות האלגוריתם שהצגתם.", SOL_2B, points=10, contextId="c2"),
@@ -158,14 +195,14 @@ questions = [
     Q(4, "ב", "computation", "complexity_recurrence",
       "מה סיבוכיות הזמן והמקום לאלגוריתם תכנות דינמי למציאת גובה המגדל היציב הגבוה ביותר. נמקו תשובתכם (אין צורך לפרט את האלגוריתם עצמו).",
       SOL_4B, points=5, contextId="c4", confidence="med"),
-    H(4, "ג", "computation", "complexity_recurrence",
+    Q(4, "ג", "computation", "complexity_recurrence",
       "מה סיבוכיות הזמן והמקום לאלגוריתם תכנות דינמי המחזיר את הקוביות מהם ניתן לבנות את המגדל היציב הגבוה ביותר. נמקו תשובתכם (אין צורך לפרט את האלגוריתם עצמו).",
-      "no-key: the solution file states only the time (O(n^2) overall); the space is not stated", points=5, contextId="c4"),
+      SOL_4C, points=5, contextId="c4", **SOLVED),
 
-    H(5, "", "truefalse", "greedy",
+    Q(5, "", "truefalse", "greedy",
       "**שאלת בונוס (5 נקודות)** - ענה נכון או לא נכון, אין צורך לנמק." "\n"
       "בבעיית תזמון מקטעים, הגישה החמדנית הבוחרת במקטע שמשך הזמן שלו קצר ביותר תניב בהכרח פתרון אופטימלי.",
-      "no-key: the solution file says 'see the homework solutions'", points=5),
+      SOL_5, points=5, verdict=False, **SOLVED),
 ]
 
 exam = {

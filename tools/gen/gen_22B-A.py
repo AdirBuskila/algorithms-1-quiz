@@ -9,7 +9,11 @@ Cap 110 (cover of the sister sitting 22B-B; this file's cover page has no cap li
 
 Transcription notes
 - Q1c: the official tree is drawn with leaf a on the left; transcribed as a text description + graph data.
-- Q2 is HELD (reason below): the official pseudo-code uses CountL+CountM > n/2 while the question needs >= ceil(n/2);
+- Q2 (solver pass 2026-10-24, typo ruling, solutionSource "solved", pending refuter): besides '>' n/2, testing only
+  the median Select(A,(n+1)/2) misses pairs that sit on the upper half for even n (A=[1,2,3,4,5,5]: pair 4,5 has 3
+  occurrences, the median 3 is in no such pair). The fix tests both medians (positions ceil(n/2) and floor(n/2)+1) with
+  >= ceil(n/2); brute force over all 17.6M arrays n<=8 with values 1..n (tools/verify/22B-A/solve_22B-A.py).
+  Original hold reason: the official pseudo-code uses CountL+CountM > n/2 while the question needs >= ceil(n/2);
   for every even n this misses pairs whose total is exactly n/2 (A=[1,2,3,4]: the true answer is True, the code returns
   False). The loops of the official code also have no increments. Idea and explanation of the official solution are right.
 - Q4a: the official solution text writes P[1..i-1] and T[1..j-1] (indices swapped); the recurrence itself is right.
@@ -106,6 +110,41 @@ SOL_2 = (r"""**פתרון רשמי** (22B-A פתרון עמ' 4):
 **הערת תמלול:** בבדיקה במחשב נמצא שהקוד הרשמי מחזיר תשובה שגויה לכל מערך שבו $n$ זוגי והסכום הוא בדיוק $n/2$ (למשל $A=[1,2,3,4]$: התשובה הנכונה היא True והקוד מחזיר False), כי התנאי בקוד הוא $>n/2$ ולא $\ge\lceil n/2\rceil$. הרעיון וההסבר הרשמיים נכונים."""
          )
 
+CODE_2_FIX = r"""Pair(A, n)
+   M1 = Select(A, ceil(n/2))
+   M2 = Select(A, floor(n/2)+1)       // = M1 when n is odd
+   return Check(A, n, M1) or Check(A, n, M2)
+
+Check(A, n, M)
+   Count_M = 0
+   for i = 1 to n
+      if (A[i] == M) Count_M++
+   if (ceil(n/2) <= Count_M < n) return True
+   // L = the largest value smaller than M (the "left" neighbour)
+   flag = 0
+   for i = 1 to n
+      if (A[i] < M and (flag == 0 or A[i] > L))  { L = A[i]; flag = 1 }
+   if (flag)
+      Count_L = 0
+      for i = 1 to n
+         if (A[i] == L) Count_L++
+      if (Count_L + Count_M >= ceil(n/2)) return True
+   // R = the smallest value larger than M (the "right" neighbour)
+   flag = 0
+   for i = 1 to n
+      if (A[i] > M and (flag == 0 or A[i] < R))  { R = A[i]; flag = 1 }
+   if (flag)
+      Count_R = 0
+      for i = 1 to n
+         if (A[i] == R) Count_R++
+      if (Count_R + Count_M >= ceil(n/2)) return True
+   return False"""
+
+SOL_2_FIX = (r"""הפתרון הרשמי עם תיקון: הודפס התנאי $CountL+CountM>n/2$ ונבדק רק החציון $Select(A,(n+1)/2)$; הנכון הוא התנאי $\ge\lceil n/2\rceil$, ועבור $n$ זוגי לבדוק גם את האיבר במקום $n/2+1$ (עבור $A=[1,2,3,4]$ הקוד המודפס מחזיר False, ועבור $A=[1,2,3,4,5,5]$ הזוג $4,5$ מופיע $3$ פעמים אבל החציון $3$ אינו חלק ממנו).
+**רעיון (כמו בפתרון הרשמי).** אם זוג ערכים עוקבים $x<y$ מופיע יחד לפחות $\lceil n/2\rceil$ פעמים, אז במערך הממוין המופעים שלהם תופסים רצף של לפחות $\lceil n/2\rceil$ מקומות. רצף כזה מכיל את המקום $\lceil n/2\rceil$ או את המקום $\lfloor n/2\rfloor+1$ (אם הוא מתחיל אחרי המקום $\lceil n/2\rceil$, הוא מתחיל בדיוק במקום $n/2+1$ עבור $n$ זוגי). לכן אחד מערכי הזוג הוא $M_1$ או $M_2$, והערך השני הוא השכן שלו: הערך הגדול ביותר שקטן ממנו או הערך הקטן ביותר שגדול ממנו. בודקים את כל המועמדים:
+""" + "```\n" + CODE_2_FIX + "\n```\n" + r"""אם $M$ מופיע לפחות $\lceil n/2\rceil$ פעמים, אך יש עוד איברים במערך ($Count\_M<n$), אז $M$ ואחד משכניו הם זוג ערכים עוקבים שמופיע לפחות $\lceil n/2\rceil$ פעמים.
+**סיבוכיות.** שתי קריאות ל-Select ב-$O(n)$, ובכל קריאה ל-Check מספר קבוע של מעברים על המערך, $O(n)$. סה"כ $O(n)$.""")
+
 SOL_3A = r"""**פתרון רשמי** (22B-A פתרון עמ' 5):
 הגרף: משולש על 3 קודקודים עם המשקלים $1,2,2$ (הצלע בעלת המשקל 1 מחברת את הקודקוד העליון לימני; שתי הצלעות האחרות במשקל 2).
 **MST:** הצלע בעלת המשקל 1 והצלע התחתונה בעלת המשקל 2. משקל של צלע צוואר בקבוק הוא $2$.
@@ -159,8 +198,7 @@ questions = [
       r"לדוגמא: במערך $5,2,8,3,2,5,8$ הערכים $3$ ו-$5$ הם עוקבים, וגם $5,8$ - הם ערכים עוקבים, אך רק זוג $5$ ו-$8$ מקיים את "
       r"התנאי שסכום המופעים ($5,8$ מופיעים $4$ פעמים) של הזוג הוא לפחות $\lceil n/2\rceil=4$." "\n"
       r"רמז: אפשר להיעזר באלגוריתם Select.",
-      SOL_2, points=25,
-      hold="official pseudo-code disagrees with brute force for every even n (uses > n/2 instead of >= ceil(n/2)); see ASK_ADIR"),
+      SOL_2_FIX, points=25, solutionSource="solved", official=False, confidence="high"),
 
     Q(3, "א", "computation", "mst",
       r"יהי $G=(V,E,w)$ גרף לא מכוון, קשיר ומשוקלל ויהי $T=(V,E_T)$ - עץ פורש." "\n"
