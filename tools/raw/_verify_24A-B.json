@@ -1,0 +1,272 @@
+{
+ "examCode": "24A-B",
+ "role": "refuter",
+ "method": "independent brute force / networkx / simulation, see tools/verify/24A-B/refute_*.py",
+ "items": [
+  {
+   "item": "1א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "The definition of 'טיול' is 'as in the assignment' and is not on the page. Walk semantics (vertices may repeat) is confirmed by grading: the student's reachability-only answer was fully marked (1.1) and 1ב's d_x[v]+d_y[v] answer was fully marked (1.2). Verified vs product-graph BFS on 3000 random graphs. Add a הערה 'טיול = הילוך שמותר בו לחזור על קודקודים'."
+  },
+  {
+   "item": "1ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "See 1א note on the definition of טיול."
+  },
+  {
+   "item": "2א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Unstated assumption l_i<=m. Step 0 explain has a garbled clause about option c (new tape only when remainder is zero); option c is still wrong."
+  },
+  {
+   "item": "2ב",
+   "solution": "agree-with-gap",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "order",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "findbug",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Student proof is structurally correct (greedy-choice by exchange + optimal substructure) but the exchange step is only asserted ('נחליף A1 ב-g1 והפתרון נשאר אופטימלי'): it omits that the surplus boxes g1\\A1 are a prefix of the later tapes, so removing them keeps every later tape feasible and never raises the tape count. The steps (order/findbug) supply that justification, so they are correct; the solution text alone has the gap. Greedy vs exact DP verified on 5000 random instances."
+  },
+  {
+   "item": "2ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "3א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Verdict true confirmed; q=2 example (10 vs 8) valid; brute force over all 6-bit x and one-bit-different y shows collisions exist."
+  },
+  {
+   "item": "3ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "3ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "VERDICT: NOT held. Printed statement on page 18 is clean and legible: 'אם ידוע שההסתברות להחזרת שווים היא לפחות 1/4, הציעו אלגוריתם ... המקטין את ההסתברות ל-0<p<=1/4', and it matches the transcription. Only the handwritten answer is partly hard to read; its gist (several independent primes q, say 'different' if any run does, 'twice is enough') matches the transcription. Odd premise ('at least 1/4'): the solution never justifies the needed bound p0<=1/2; it holds because x-y=+-2^i is divisible only by q=2 (p0=1/pi(n^2)<=1/2 for n>=2, verified n=2..20), so k=2 gives <=1/4. Suggest adding that sentence."
+  },
+  {
+   "item": "4א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "4ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "4ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "text",
+     "verdict": "disagree",
+     "first_divergence": "prompt says 'משחזר גם את הצירוף' (one combination). Printed question (page 24) says 'המחזיר את הצירופים השונים' (plural = all of them). Listing all outcomes costs output size (e.g. n=20,m=70: 1.9e14 outcomes vs 1400 table cells), so O(nm)/O(nm) holds only for table plus reconstructing one. The graded student answer O(mn)/O(mn) was accepted. Needs a visible הערה with the reading."
+    },
+    {
+     "i": 1,
+     "type": "text",
+     "verdict": "agree",
+     "first_divergence": "value O(nm) agrees under the reconstruct-one reading; see step 0 for the הערה."
+    }
+   ],
+   "notes": "VERDICT: הערה needed. Ambiguous 'one vs all combinations'. Recommended text: 'הפתרון מניח שנדרש לשחזר צירוף אחד מהטבלה; הדפסת כל הצירופים תוסיף גודל פלט, שיכול להיות אקספוננציאלי'."
+  },
+  {
+   "item": "5",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  }
+ ]
+}

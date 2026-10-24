@@ -1,0 +1,302 @@
+{
+ "examCode": "24A-C",
+ "role": "refuter",
+ "method": "independent brute force / networkx / simulation, see tools/verify/24A-C/refute_*.py",
+ "items": [
+  {
+   "item": "1א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Official algorithm compared with the 'more components' definition on 4000 random graphs (including disconnected): identical."
+  },
+  {
+   "item": "1ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "1ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "2א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Greedy equals exhaustive optimum on 3000 random instances (ties in weight must be ordered by value descending)."
+  },
+  {
+   "item": "2ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "order",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "findbug",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "2ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "3א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Official tree (a1,a3 merged, then a2 with a4+a5 node) is a Huffman outcome only for one of three tie-breaks (3,4,3,1,2 has a three-way tie at weight 3); under the 2026-10-24 ruling that is acceptable. A tie-free alternative exists (7,9,8,4,6 gives exactly this tree). A short הערה is optional. Cost 29 verified."
+  },
+  {
+   "item": "3ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "3ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Step 0 prompt says 'של סעיף ב' = positional citation of a sub-part; reword to 'מהעץ של השכיחויות 1,3,9,27,81'. Content agrees: q=1 (and q=1.2) differ, every integer q>=2 gives the chain (checked q=2..10 plus 1.5)."
+  },
+  {
+   "item": "4א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "4ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "4ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Singular reading ('את הפתרון עצמו') so O(n^2)/O(n) is fine; unique 3-jump path is 1,2,5,10."
+  },
+  {
+   "item": "5",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Redraw matches the printed graph: 8 vertices, 10 edges L-TL 12, TL-TM 9, TM-TR 11, TM-C 8, TR-BR 13, C-BL 10, C-BM 9, BL-BM 8, BM-BR 13, L-BL 15. The printed page also has a struck-out '14' floating inside the right face; it is not an edge label (TR-BR reads 13) and even with 14 the possible Prim orders and MST weight 70 are unchanged. Enumeration of all Prim tie-breaks gives exactly (8,9,8,9,11,12,13) and (8,9,9,8,11,12,13), so the claim is true."
+  }
+ ]
+}

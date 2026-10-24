@@ -1,0 +1,271 @@
+{
+ "examCode": "23A-B",
+ "role": "refuter",
+ "method": "independent brute force / networkx / simulation, see tools/verify/23A-B/refute_*.py",
+ "items": [
+  {
+   "item": "1א",
+   "solution": "agree",
+   "rubric": "agree-with-note",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Rubric line 3 reasons 'every path between the two cells has length 4, hence longest'; the real requirement is that the array's GLOBAL longest snake path is 4. Verified by brute force for the official array (max 4; unique legal path 7,8,8,9). Wording only."
+  },
+  {
+   "item": "1ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "1ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "text",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "2א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "2ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "2ג",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "3א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "disagree",
+     "first_divergence": "explain only: says a node has at most 4 children, but with distinct separators $i a node such as 'A' has children A,C,G,T plus one per word ending there (up to 1000). Key (a) is right."
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "order",
+     "verdict": "agree"
+    }
+   ]
+  },
+  {
+   "item": "3ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "text",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Position-dedupe: for P with <3 distinct letters several permutations give identical patterns (aaa, T=aaaa gives positions 0,1 once each); pitfall is real."
+  },
+  {
+   "item": "4א",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Huffman tie: 3,2,1,1 has no tie; cost 13 verified. Frequencies 13,0,0,0 violate f>0 and the solution already says so."
+  },
+  {
+   "item": "4ב",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "agree"
+    },
+    {
+     "i": 3,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ],
+   "notes": "Drawing = square plus one diagonal, 5 edges, all weights 1 = K4 minus an edge: 8 spanning trees (matrix-tree and brute force), not the official 6. Visible הערת תמלול is present in the solution; solution stays valid (>=5 MSTs). Not stated that G is simple: a 2-vertex multigraph with 5 parallel edges would also qualify, so a short 'גרף פשוט' note is advisable."
+  },
+  {
+   "item": "5",
+   "solution": "agree",
+   "rubric": "agree",
+   "pitfalls": "agree",
+   "steps": [
+    {
+     "i": 0,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 1,
+     "type": "choice",
+     "verdict": "agree"
+    },
+    {
+     "i": 2,
+     "type": "numeric",
+     "verdict": "disagree",
+     "first_divergence": "explain only: 'removes two vertices from each side' - each chosen edge removes ONE vertex per side (two total). Answer 6 is right."
+    },
+    {
+     "i": 3,
+     "type": "numeric",
+     "verdict": "agree"
+    }
+   ]
+  }
+ ]
+}
