@@ -1919,7 +1919,7 @@ window.COURSES = {
      },
      {
       "id": "C03-Q4",
-      "question": "בריצת DFS נמצא ש-$d[u]=2$, $f[u]=9$, $d[v]=4$, $f[v]=6$. מה בהכרח נכון?",
+      "question": "בריצת DFS נמצא ש-$d[u]=2$, $f[u]=9$, $d[v]=4$, $f[v]=5$. מה בהכרח נכון?",
       "options": [
        {
         "id": "a",
@@ -1947,10 +1947,10 @@ window.COURSES = {
        }
       ],
       "correctId": "a",
-      "explanation": "הקטע $[4,6]$ מוכל בקטע $[2,9]$, ולפי משפט הסוגריים זה אומר ש-$v$ צאצא של $u$. אם $u$ היה צאצא של $v$ הקטע $[2,9]$ היה צריך להיות מוכל ב-$[4,6]$. אם היו בעצים שונים הקטעים היו זרים. והרצה כזו אפשרית: קטעים מקוננים אינם סותרים את משפט הסוגריים.",
+      "explanation": "הקטע $[4,5]$ מוכל בקטע $[2,9]$, ולפי משפט הסוגריים זה אומר ש-$v$ צאצא של $u$ (ובנוסף $f[v]=d[v]+1$, כלומר $v$ עלה). אם $u$ היה צאצא של $v$ הקטע $[2,9]$ היה צריך להיות מוכל ב-$[4,5]$. אם היו בעצים שונים הקטעים היו זרים. והרצה כזו אפשרית: קטעים מקוננים אינם סותרים את משפט הסוגריים.",
       "recap": "קטע מוכל בקטע ← צאצא; קטעים זרים ← אין קשר אב-צאצא",
-      "questionHtml": "בריצת DFS נמצא ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">d[u]=2</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">f[u]=9</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">d[v]=4</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">f[v]=6</annotation></semantics></math></span>. מה בהכרח נכון?",
-      "explanationHtml": "הקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[4,6]</annotation></semantics></math></span> מוכל בקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[2,9]</annotation></semantics></math></span>, ולפי משפט הסוגריים זה אומר ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>. אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> היה צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> הקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[2,9]</annotation></semantics></math></span> היה צריך להיות מוכל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[4,6]</annotation></semantics></math></span>. אם היו בעצים שונים הקטעים היו זרים. והרצה כזו אפשרית: קטעים מקוננים אינם סותרים את משפט הסוגריים.",
+      "questionHtml": "בריצת DFS נמצא ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">d[u]=2</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">f[u]=9</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">d[v]=4</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">f[v]=5</annotation></semantics></math></span>. מה בהכרח נכון?",
+      "explanationHtml": "הקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[4,5]</annotation></semantics></math></span> מוכל בקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[2,9]</annotation></semantics></math></span>, ולפי משפט הסוגריים זה אומר ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> (ובנוסף <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">f[v]=d[v]+1</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> עלה). אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> היה צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> הקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[2,9]</annotation></semantics></math></span> היה צריך להיות מוכל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[4,5]</annotation></semantics></math></span>. אם היו בעצים שונים הקטעים היו זרים. והרצה כזו אפשרית: קטעים מקוננים אינם סותרים את משפט הסוגריים.",
       "recapHtml": "קטע מוכל בקטע ← צאצא; קטעים זרים ← אין קשר אב-צאצא"
      },
      {
@@ -2317,6 +2317,47 @@ window.COURSES = {
       "correctId": "a",
       "explanation": "ברגע שבו $A$ מתגלה כל הקודקודים לבנים, לכן לפי משפט השביל הלבן צאצאי $A$ הם בדיוק הקודקודים הישיגים ממנו: $B,C,D$. אל $E$ ו-$F$ אין מסלול מ-$A$, ו-$E$ הוא שורש של עץ חדש ש-$F$ בנו. הצלע $E\\to D$ אינה מכניסה את $D$ לעץ של $E$, כי $D$ כבר היה שחור.",
       "recap": "צאצאי השורש הראשון = כל הישיגים ממנו",
+      "graph": {
+       "nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+       ],
+       "directed": true,
+       "edges": [
+        {
+         "u": "A",
+         "v": "B"
+        },
+        {
+         "u": "A",
+         "v": "C"
+        },
+        {
+         "u": "A",
+         "v": "D"
+        },
+        {
+         "u": "B",
+         "v": "C"
+        },
+        {
+         "u": "C",
+         "v": "A"
+        },
+        {
+         "u": "E",
+         "v": "D"
+        },
+        {
+         "u": "E",
+         "v": "F"
+        }
+       ]
+      },
       "questionHtml": "בגרף המכוון עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>C</mi><mo>→</mo><mi>A</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mo>→</mo><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">A\\to B,\\ A\\to C,\\ A\\to D,\\ B\\to C,\\ C\\to A,\\ E\\to D,\\ E\\to F</annotation></semantics></math></span> מריצים DFS ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> נבחר ראשון. מי מהקודקודים אינם צאצאים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> ביער?",
       "explanationHtml": "ברגע שבו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> מתגלה כל הקודקודים לבנים, לכן לפי משפט השביל הלבן צאצאי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> הם בדיוק הקודקודים הישיגים ממנו: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">B,C,D</annotation></semantics></math></span>. אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> אין מסלול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> הוא שורש של עץ חדש ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> בנו. הצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi><mo>→</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">E\\to D</annotation></semantics></math></span> אינה מכניסה את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> לעץ של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span>, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> כבר היה שחור.",
       "recapHtml": "צאצאי השורש הראשון = כל הישיגים ממנו"
