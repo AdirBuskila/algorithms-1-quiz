@@ -954,6 +954,243 @@ window.COURSES = {
       "recapHtml": "ספירת מופעים של תת-סדרה: סופרים אוספי מקומות, לא מחרוזות."
      }
     ]
+   },
+   {
+    "id": "C08",
+    "order": 8,
+    "icon": "🎒",
+    "title": "תרמיל, ספירת תת-קבוצות ומקרה חסר",
+    "goal": "לפתור בעיות בצורת תרמיל (בחירה עם משקל וקיבולת), ולמצוא באג של מקרה חסר בנוסחה או בקוד.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<h3>צורת מבחן: תרמיל</h3>\n<p>נתונים פריטים עם משקלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>w</mi><mn>1</mn></msub><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><msub><mi>w</mi><mi>n</mi></msub></mrow><annotation encoding=\"application/x-tex\">w_1,\\dots,w_n</annotation></semantics></math></span> וערכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>v</mi><mn>1</mn></msub><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><msub><mi>v</mi><mi>n</mi></msub></mrow><annotation encoding=\"application/x-tex\">v_1,\\dots,v_n</annotation></semantics></math></span> וקיבולת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>W</mi></mrow><annotation encoding=\"application/x-tex\">W</annotation></semantics></math></span>. בוחרים תת-קבוצה של פריטים שמשקלה לכל היותר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>W</mi></mrow><annotation encoding=\"application/x-tex\">W</annotation></semantics></math></span> וערכה מקסימלי (כל פריט נלקח לכל היותר פעם אחת). הצעד האחרון: האם לקחת את הפריט האחרון? כאן יש <b>שני פרמטרים</b>, כי צריך לדעת גם כמה פריטים וגם כמה קיבולת נשארה:</p>\n<p><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>K</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>w</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">K(i,w)</annotation></semantics></math></span> הוא הערך המקסימלי שאפשר לקבל מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> הפריטים הראשונים בקיבולת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>w</mi></mrow><annotation encoding=\"application/x-tex\">w</annotation></semantics></math></span>. התשובה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>K</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>W</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">K(n,W)</annotation></semantics></math></span>.\n<span class=\"math-block\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><mi>K</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mi>w</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mspace width=\"2em\"/><mi>K</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>w</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mrow><mo fence=\"true\">{</mo><mtable rowspacing=\"0.36em\" columnalign=\"left left\" columnspacing=\"1em\"><mtr><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mrow><mi>K</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>w</mi><mo stretchy=\"false\">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mrow><mo separator=\"true\">;</mo><mtext> </mtext><msub><mi>w</mi><mi>i</mi></msub><mo>&gt;</mo><mi>w</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mrow><mi>max</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>K</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>w</mi><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mtext> </mtext><msub><mi>v</mi><mi>i</mi></msub><mo>+</mo><mi>K</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>w</mi><mo>−</mo><msub><mi>w</mi><mi>i</mi></msub><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mrow><mo separator=\"true\">;</mo><mtext> </mtext><msub><mi>w</mi><mi>i</mi></msub><mo>≤</mo><mi>w</mi></mrow></mstyle></mtd></mtr></mtable></mrow></mrow><annotation encoding=\"application/x-tex\">K(0,w)=0,\\qquad K(i,w)=\\begin{cases}K(i-1,w) &amp; ;\\ w_i&gt;w\\\\ \\max\\bigl(K(i-1,w),\\ v_i+K(i-1,w-w_i)\\bigr) &amp; ;\\ w_i\\le w\\end{cases}</annotation></semantics></math></span>\nהמקרה העליון הוא <b>המקרה שקל לשכוח</b>: פריט שלא נכנס לא נלקח, והערך הוא כמו בלעדיו. הקריאה לשורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">i-1</annotation></semantics></math></span> (ולא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>) היא מה שמבטיח שכל פריט נלקח פעם אחת בלבד.</p>\n<p>הזמן הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mi>W</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(nW)</annotation></semantics></math></span> (לפי מספר התאים, ולא לפי גודל הקלט בביטים).</p>\n<h3>צורת מבחן: ספירת תת-קבוצות</h3>\n<p><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mrow><mi mathvariant=\"normal\">C</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">t</mi></mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>s</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\mathrm{Cnt}(i,s)</annotation></semantics></math></span> הוא מספר תת-הקבוצות של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>a</mi><mn>1</mn></msub><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">a_1,\\dots,a_i</annotation></semantics></math></span> שסכומן בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span>. הפריט האחרון נלקח או לא, והמקרים זרים:\n<span class=\"math-block\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><mrow><mi mathvariant=\"normal\">C</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">t</mi></mrow><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo separator=\"true\">,</mo><mspace width=\"1em\"/><mrow><mi mathvariant=\"normal\">C</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">t</mi></mrow><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mi>s</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn><mtext>  </mtext><mo stretchy=\"false\">(</mo><mi>s</mi><mo>&gt;</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mspace width=\"1em\"/><mrow><mi mathvariant=\"normal\">C</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">t</mi></mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>s</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mrow><mi mathvariant=\"normal\">C</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">t</mi></mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>s</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mrow><mi mathvariant=\"normal\">C</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">t</mi></mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>s</mi><mo>−</mo><msub><mi>a</mi><mi>i</mi></msub><mo stretchy=\"false\">)</mo><mtext>  </mtext><mo stretchy=\"false\">(</mo><msub><mi>a</mi><mi>i</mi></msub><mo>≤</mo><mi>s</mi><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo></mrow><annotation encoding=\"application/x-tex\">\\mathrm{Cnt}(0,0)=1,\\quad \\mathrm{Cnt}(0,s)=0\\ \\ (s&gt;0),\\quad \\mathrm{Cnt}(i,s)=\\mathrm{Cnt}(i-1,s)+\\mathrm{Cnt}(i-1,s-a_i)\\ \\ (a_i\\le s),</annotation></semantics></math></span>\nו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mrow><mi mathvariant=\"normal\">C</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">t</mi></mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>s</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mrow><mi mathvariant=\"normal\">C</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">t</mi></mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>s</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\mathrm{Cnt}(i,s)=\\mathrm{Cnt}(i-1,s)</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub><mo>&gt;</mo><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">a_i&gt;s</annotation></semantics></math></span>. אותו שלד עם OR נותן שאלה של כן או לא (האם יש תת-קבוצה שסכומה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span>).</p>\n<h3>מחרוזת שילוב</h3>\n<p><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>3</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_3</annotation></semantics></math></span> היא מחרוזת שילוב של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span> אם אפשר לחלק את מקומותיה לשתי קבוצות שמרכיבות את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_1</annotation></semantics></math></span> ואת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span> לפי הסדר. כשהאורכים מתאימים, התו האחרון של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>3</mn></msub><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo>+</mo><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S_3[1..i+j]</annotation></semantics></math></span> בא מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_1</annotation></semantics></math></span> או מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span>, ולכן מספיקים שני פרמטרים:\n<span class=\"math-block\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mtext>true</mtext><mo separator=\"true\">,</mo><mspace width=\"2em\"/><mi>T</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>i</mi><mo>&gt;</mo><mn>0</mn><mo>∧</mo><msub><mi>S</mi><mn>1</mn></msub><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo><mo>=</mo><msub><mi>S</mi><mn>3</mn></msub><mo stretchy=\"false\">[</mo><mi>i</mi><mo>+</mo><mi>j</mi><mo stretchy=\"false\">]</mo><mo>∧</mo><mi>T</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo><mo>∨</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>j</mi><mo>&gt;</mo><mn>0</mn><mo>∧</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy=\"false\">[</mo><mi>j</mi><mo stretchy=\"false\">]</mo><mo>=</mo><msub><mi>S</mi><mn>3</mn></msub><mo stretchy=\"false\">[</mo><mi>i</mi><mo>+</mo><mi>j</mi><mo stretchy=\"false\">]</mo><mo>∧</mo><mi>T</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo><mi mathvariant=\"normal\">.</mi></mrow><annotation encoding=\"application/x-tex\">T(0,0)=\\text{true},\\qquad T(i,j)=\\bigl(i&gt;0\\wedge S_1[i]=S_3[i+j]\\wedge T(i-1,j)\\bigr)\\vee\\bigl(j&gt;0\\wedge S_2[j]=S_3[i+j]\\wedge T(i,j-1)\\bigr).</annotation></semantics></math></span>\nאם אף אחד משני המקרים לא חל, התוצאה <b>שקר</b>. זה המקרה החסר שבו נופלים: נוסחה שלא מכסה \"התו שונה משני התווים\" היא חסרה.</p>\n<div class=\"lesson-rule\">🔑 איך מחפשים מקרה חסר: לכל תא שואלים \"מה אם הפריט לא נכנס?\", \"מה אם התו לא מתאים?\", \"מה אם האינדקס יצא מהטווח?\". כל תשובה צריכה שורה בנוסחה או בקוד.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C08-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "פריטים בזוגות (משקל, ערך): $(2,3)$, $(3,4)$, $(4,5)$, $(5,8)$, והקיבולת $W=9$. מהו הערך המקסימלי של תת-קבוצה שמשקלה לכל היותר $9$?",
+       "answer": 13,
+       "tol": 0,
+       "explain": "הפריטים $(4,5)$ ו-$(5,8)$ שוקלים יחד $9$ וערכם $13$. כל זוג אחר, וכל שלישייה, נותנים פחות: למשל $(2,3),(3,4),(4,5)$ שוקלים $9$ וערכם $12$.",
+       "promptHtml": "פריטים בזוגות (משקל, ערך): <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,3)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(3,4)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(4,5)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>8</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(5,8)</annotation></semantics></math></span>, והקיבולת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>W</mi><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">W=9</annotation></semantics></math></span>. מהו הערך המקסימלי של תת-קבוצה שמשקלה לכל היותר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">9</annotation></semantics></math></span>?",
+       "explainHtml": "הפריטים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(4,5)</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>8</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(5,8)</annotation></semantics></math></span> שוקלים יחד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">9</annotation></semantics></math></span> וערכם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">13</annotation></semantics></math></span>. כל זוג אחר, וכל שלישייה, נותנים פחות: למשל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,3),(3,4),(4,5)</annotation></semantics></math></span> שוקלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">9</annotation></semantics></math></span> וערכם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">12</annotation></semantics></math></span>."
+      },
+      "recap": "תרמיל: מקסימום על לקיחה או אי-לקיחה של כל פריט.",
+      "recapHtml": "תרמיל: מקסימום על לקיחה או אי-לקיחה של כל פריט."
+     },
+     {
+      "id": "C08-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "כמה תת-קבוצות של $\\{2,3,5,7,8\\}$ סכומן בדיוק $10$?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "התת-קבוצות הן $\\{2,8\\}$, $\\{3,7\\}$ ו-$\\{2,3,5\\}$. אותה תשובה נותנת הטבלה $\\mathrm{Cnt}(5,10)$.",
+       "promptHtml": "כמה תת-קבוצות של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>8</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{2,3,5,7,8\\}</annotation></semantics></math></span> סכומן בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">10</annotation></semantics></math></span>?",
+       "explainHtml": "התת-קבוצות הן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>8</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{2,8\\}</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>7</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{3,7\\}</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{2,3,5\\}</annotation></semantics></math></span>. אותה תשובה נותנת הטבלה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mrow><mi mathvariant=\"normal\">C</mi><mi mathvariant=\"normal\">n</mi><mi mathvariant=\"normal\">t</mi></mrow><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\mathrm{Cnt}(5,10)</annotation></semantics></math></span>."
+      },
+      "recap": "ספירת תת-קבוצות: לוקחים או לא לוקחים את הפריט האחרון, ומחברים.",
+      "recapHtml": "ספירת תת-קבוצות: לוקחים או לא לוקחים את הפריט האחרון, ומחברים."
+     },
+     {
+      "id": "C08-Q3",
+      "step": {
+       "type": "fillblank",
+       "code": true,
+       "prompt": "השלימו את הקוד של התרמיל (כל פריט נלקח לכל היותר פעם אחת). מה צריך להיות במקום הרווח?",
+       "lines": [
+        "def knap(W, V, cap):",
+        "    n = len(V)",
+        "    K = [[0] * (cap + 1) for _ in range(n + 1)]",
+        "    for i in range(1, n + 1):",
+        "        for w in range(cap + 1):",
+        "            K[i][w] = K[i-1][w]",
+        "            if W[i-1] <= w:",
+        "                K[i][w] = max(K[i][w], ___)",
+        "    return K[n][cap]"
+       ],
+       "blankIndex": 7,
+       "options": [
+        {
+         "id": "a",
+         "value": "V[i-1] + K[i-1][w - W[i-1]]",
+         "type": "text",
+         "html": "V[i-1] + K[i-1][w - W[i-1]]"
+        },
+        {
+         "id": "b",
+         "value": "V[i-1] + K[i][w - W[i-1]]",
+         "type": "text",
+         "html": "V[i-1] + K[i][w - W[i-1]]"
+        },
+        {
+         "id": "c",
+         "value": "K[i-1][w - W[i-1]]",
+         "type": "text",
+         "html": "K[i-1][w - W[i-1]]"
+        },
+        {
+         "id": "d",
+         "value": "V[i-1] + K[i-1][w]",
+         "type": "text",
+         "html": "V[i-1] + K[i-1][w]"
+        }
+       ],
+       "correctId": "a",
+       "explain": "לוקחים את הפריט: מקבלים את ערכו ועוד הערך הטוב ביותר מהפריטים הקודמים בקיבולת שנשארה, $w-w_i$. השורה $i$ במקום $i-1$ מאפשרת לקחת את אותו פריט שוב ושוב, ולכן מחשבת תרמיל בלי הגבלת עותקים. בלי הערך $v_i$ לא סופרים את מה שלקחנו, ובלי להקטין את הקיבולת מתעלמים ממשקל הפריט.",
+       "promptHtml": "השלימו את הקוד של התרמיל (כל פריט נלקח לכל היותר פעם אחת). מה צריך להיות במקום הרווח?",
+       "explainHtml": "לוקחים את הפריט: מקבלים את ערכו ועוד הערך הטוב ביותר מהפריטים הקודמים בקיבולת שנשארה, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>w</mi><mo>−</mo><msub><mi>w</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">w-w_i</annotation></semantics></math></span>. השורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> במקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">i-1</annotation></semantics></math></span> מאפשרת לקחת את אותו פריט שוב ושוב, ולכן מחשבת תרמיל בלי הגבלת עותקים. בלי הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>v</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">v_i</annotation></semantics></math></span> לא סופרים את מה שלקחנו, ובלי להקטין את הקיבולת מתעלמים ממשקל הפריט.",
+       "linesHtml": [
+        "def knap(W, V, cap):",
+        "    n = len(V)",
+        "    K = [[0] * (cap + 1) for _ in range(n + 1)]",
+        "    for i in range(1, n + 1):",
+        "        for w in range(cap + 1):",
+        "            K[i][w] = K[i-1][w]",
+        "            if W[i-1] &lt;= w:",
+        "                K[i][w] = max(K[i][w], ___)",
+        "    return K[n][cap]"
+       ]
+      },
+      "recap": "לקיחה: $v_i+K(i-1,w-w_i)$, עם $i-1$ כדי לקחת פעם אחת.",
+      "recapHtml": "לקיחה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>v</mi><mi>i</mi></msub><mo>+</mo><mi>K</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>w</mi><mo>−</mo><msub><mi>w</mi><mi>i</mi></msub><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">v_i+K(i-1,w-w_i)</annotation></semantics></math></span>, עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">i-1</annotation></semantics></math></span> כדי לקחת פעם אחת."
+     },
+     {
+      "id": "C08-Q4",
+      "step": {
+       "type": "findbug",
+       "code": true,
+       "prompt": "בקוד הבא של התרמיל שורה אחת שונתה. הוא נותן תשובה שגויה כשיש פריט שלא נכנס בקיבולת. מצאו את השורה.",
+       "lines": [
+        "def knap(W, V, cap):",
+        "    n = len(V)",
+        "    K = [[0] * (cap + 1) for _ in range(n + 1)]",
+        "    for i in range(1, n + 1):",
+        "        for w in range(cap + 1):",
+        "            K[i][w] = 0",
+        "            if W[i-1] <= w:",
+        "                K[i][w] = max(K[i-1][w], V[i-1] + K[i-1][w - W[i-1]])",
+        "    return K[n][cap]"
+       ],
+       "bugIndex": 5,
+       "explain": "כשהפריט לא נכנס ($w_i>w$) אף שורה לא ממלאת את התא, והוא נשאר $0$. הנוסחה דורשת בו $K(i-1,w)$, כלומר הערך בלי הפריט. השורה הנכונה היא $K[i][w]=K[i-1][w]$.",
+       "promptHtml": "בקוד הבא של התרמיל שורה אחת שונתה. הוא נותן תשובה שגויה כשיש פריט שלא נכנס בקיבולת. מצאו את השורה.",
+       "explainHtml": "כשהפריט לא נכנס (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>&gt;</mo><mi>w</mi></mrow><annotation encoding=\"application/x-tex\">w_i&gt;w</annotation></semantics></math></span>) אף שורה לא ממלאת את התא, והוא נשאר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>. הנוסחה דורשת בו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>K</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>w</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">K(i-1,w)</annotation></semantics></math></span>, כלומר הערך בלי הפריט. השורה הנכונה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>K</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">[</mo><mi>w</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>K</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">[</mo><mi>w</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">K[i][w]=K[i-1][w]</annotation></semantics></math></span>.",
+       "linesHtml": [
+        "def knap(W, V, cap):",
+        "    n = len(V)",
+        "    K = [[0] * (cap + 1) for _ in range(n + 1)]",
+        "    for i in range(1, n + 1):",
+        "        for w in range(cap + 1):",
+        "            K[i][w] = 0",
+        "            if W[i-1] &lt;= w:",
+        "                K[i][w] = max(K[i-1][w], V[i-1] + K[i-1][w - W[i-1]])",
+        "    return K[n][cap]"
+       ]
+      },
+      "recap": "המקרה החסר בתרמיל: פריט שלא נכנס משאיר את הערך הקודם.",
+      "recapHtml": "המקרה החסר בתרמיל: פריט שלא נכנס משאיר את הערך הקודם."
+     },
+     {
+      "id": "C08-Q5",
+      "step": {
+       "type": "findbug",
+       "code": true,
+       "prompt": "הקוד הבא בודק אם $S_3$ היא מחרוזת שילוב של $S_1$ ו-$S_2$. שורה אחת שונתה, והוא מחזיר אמת על קלטים שבהם התשובה שקר. מצאו אותה.",
+       "lines": [
+        "def inter(s1, s2, s3):",
+        "    n, m = len(s1), len(s2)",
+        "    if len(s3) != n + m: return False",
+        "    T = [[False] * (m + 1) for _ in range(n + 1)]",
+        "    T[0][0] = True",
+        "    for i in range(n + 1):",
+        "        for j in range(m + 1):",
+        "            if i > 0 and s1[i-1] == s3[i+j-1] and T[i-1][j]: T[i][j] = True",
+        "            if j > 0 and T[i][j-1]: T[i][j] = True",
+        "    return T[n][m]"
+       ],
+       "bugIndex": 8,
+       "explain": "בשורה שמטפלת בתו האחרון מ-$S_2$ חסרה ההשוואה $S_2[j]=S_3[i+j]$. בלעדיה אפשר \"להשתמש\" בתו של $S_2$ גם כשהוא שונה מהתו של $S_3$. למשל $S_1=a$, $S_2=b$, $S_3=ac$ מחזירה אמת בטעות.",
+       "promptHtml": "הקוד הבא בודק אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>3</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_3</annotation></semantics></math></span> היא מחרוזת שילוב של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span>. שורה אחת שונתה, והוא מחזיר אמת על קלטים שבהם התשובה שקר. מצאו אותה.",
+       "explainHtml": "בשורה שמטפלת בתו האחרון מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span> חסרה ההשוואה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub><mo stretchy=\"false\">[</mo><mi>j</mi><mo stretchy=\"false\">]</mo><mo>=</mo><msub><mi>S</mi><mn>3</mn></msub><mo stretchy=\"false\">[</mo><mi>i</mi><mo>+</mo><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S_2[j]=S_3[i+j]</annotation></semantics></math></span>. בלעדיה אפשר \"להשתמש\" בתו של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span> גם כשהוא שונה מהתו של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>3</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_3</annotation></semantics></math></span>. למשל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>=</mo><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">S_1=a</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub><mo>=</mo><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">S_2=b</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>3</mn></msub><mo>=</mo><mi>a</mi><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">S_3=ac</annotation></semantics></math></span> מחזירה אמת בטעות.",
+       "linesHtml": [
+        "def inter(s1, s2, s3):",
+        "    n, m = len(s1), len(s2)",
+        "    if len(s3) != n + m: return False",
+        "    T = [[False] * (m + 1) for _ in range(n + 1)]",
+        "    T[0][0] = True",
+        "    for i in range(n + 1):",
+        "        for j in range(m + 1):",
+        "            if i &gt; 0 and s1[i-1] == s3[i+j-1] and T[i-1][j]: T[i][j] = True",
+        "            if j &gt; 0 and T[i][j-1]: T[i][j] = True",
+        "    return T[n][m]"
+       ]
+      },
+      "recap": "כל מקרה בשילוב דורש גם התאמת תו וגם ערך תקין בתא הקודם.",
+      "recapHtml": "כל מקרה בשילוב דורש גם התאמת תו וגם ערך תקין בתא הקודם."
+     },
+     {
+      "id": "C08-Q6",
+      "step": {
+       "type": "numeric",
+       "prompt": "מהו הסכום הגדול ביותר שאינו עולה על $13$ ואפשר לקבל כסכום של תת-קבוצה של $\\{5,7,9\\}$?",
+       "answer": 12,
+       "tol": 0,
+       "explain": "הסכומים האפשריים הם $0,5,7,9,12,14,16,21$. הגדול ביותר שאינו עולה על $13$ הוא $12=5+7$. זו שאלת כן או לא עם OR, ואחר כך מסתכלים על הסכום הטוב ביותר.",
+       "promptHtml": "מהו הסכום הגדול ביותר שאינו עולה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">13</annotation></semantics></math></span> ואפשר לקבל כסכום של תת-קבוצה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{5,7,9\\}</annotation></semantics></math></span>?",
+       "explainHtml": "הסכומים האפשריים הם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>14</mn><mo separator=\"true\">,</mo><mn>16</mn><mo separator=\"true\">,</mo><mn>21</mn></mrow><annotation encoding=\"application/x-tex\">0,5,7,9,12,14,16,21</annotation></semantics></math></span>. הגדול ביותר שאינו עולה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">13</annotation></semantics></math></span> הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn><mo>=</mo><mn>5</mn><mo>+</mo><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">12=5+7</annotation></semantics></math></span>. זו שאלת כן או לא עם OR, ואחר כך מסתכלים על הסכום הטוב ביותר."
+      },
+      "recap": "סכום תת-קבוצה: OR על לקיחה ואי-לקיחה, ובסוף קוראים את הסכום הגדול ביותר האפשרי.",
+      "recapHtml": "סכום תת-קבוצה: OR על לקיחה ואי-לקיחה, ובסוף קוראים את הסכום הגדול ביותר האפשרי."
+     }
+    ]
+   },
+   {
+    "id": "C09",
+    "order": 9,
+    "icon": "🏆",
+    "title": "מבחן גמר: תכנות דינמי",
+    "goal": "לפתור שאלות אמיתיות מהמבחנים: הגדרה, נוסחה ומקרי בסיס, טבלה והרצה, וסיבוכיות.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>זה מבחן הגמר של הקורס: שאלות אמיתיות מהמאגר, בלי רמזים נוספים. כל שאלה מבקשת אחד או כמה משלבי הסולם.</p>\n<ul>\n<li>להגדיר במילים מה הפונקציה מחזירה ומה כל פרמטר מציין;</li>\n<li>לכתוב נוסחה עם מקרי בסיס, ולוודא שאין מקרה חסר;</li>\n<li>לקבוע טבלה וסדר מילוי, ולהריץ על דוגמה;</li>\n<li>לשחזר את הפתרון ולחשב זמן ומקום.</li>\n</ul>\n<div class=\"lesson-rule\">🔑 בכל שאלה: קודם הצעד האחרון (איזה מקרים יש), אחר כך מינימום או מקסימום או סכום, ורק בסוף מקרי בסיס. ובדקו מה קורה כשאף מקרה לא מתאים.</div>\n<div class=\"lesson-trap\">⚠️ הגדרה בלי \"מה מוחזר ועבור איזה קלט\", בסיס שגוי בספירה ומקרה שלא מכוסה הם שלוש הטעויות שמורידות הכי הרבה נקודות.</div>\n"
+    },
+    "questions": [
+     {
+      "bankId": "22A-B-Q1",
+      "recap": "חיתוך: הצעד האחרון הוא החלק האחרון, $\\min$ על נקודת החיתוך, ו-$\\infty$ לחלק לא חוקי.",
+      "recapHtml": "חיתוך: הצעד האחרון הוא החלק האחרון, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>min</mi><mo>⁡</mo></mrow><annotation encoding=\"application/x-tex\">\\min</annotation></semantics></math></span> על נקודת החיתוך, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∞</mi></mrow><annotation encoding=\"application/x-tex\">\\infty</annotation></semantics></math></span> לחלק לא חוקי."
+     },
+     {
+      "bankId": "22B-A-Q4a",
+      "recap": "ספירה: כשהתווים שווים מחברים את שתי הקבוצות הזרות, ובבסיס $C(i,0)=1$.",
+      "recapHtml": "ספירה: כשהתווים שווים מחברים את שתי הקבוצות הזרות, ובבסיס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">C(i,0)=1</annotation></semantics></math></span>."
+     },
+     {
+      "bankId": "25A-A-Q2a",
+      "recap": "שילוב: כל מקרה דורש התאמת תו, וצריך שורה של שקר לכל מקרה אחר.",
+      "recapHtml": "שילוב: כל מקרה דורש התאמת תו, וצריך שורה של שקר לכל מקרה אחר."
+     },
+     {
+      "bankId": "25A-C-Q1a",
+      "recap": "מרחק יישור: ארבעה מקרים, ובתווים שווים אלכסון בלי תוספת.",
+      "recapHtml": "מרחק יישור: ארבעה מקרים, ובתווים שווים אלכסון בלי תוספת."
+     },
+     {
+      "bankId": "25B-A-Q4a",
+      "recap": "הגדרה במילים: האיבר $A[i]$ הוא האיבר המקסימלי בתת-הקבוצה.",
+      "recapHtml": "הגדרה במילים: האיבר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">A[i]</annotation></semantics></math></span> הוא האיבר המקסימלי בתת-הקבוצה."
+     },
+     {
+      "bankId": "25A-C-Q1b",
+      "recap": "סיבוכיות: זמן הוא מספר התאים כפול העבודה לתא, ומקום הוא הטבלה, או שורה אחת בלי שחזור.",
+      "recapHtml": "סיבוכיות: זמן הוא מספר התאים כפול העבודה לתא, ומקום הוא הטבלה, או שורה אחת בלי שחזור."
+     }
+    ]
    }
   ]
  },
