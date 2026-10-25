@@ -59,7 +59,22 @@
       "אלגוריתמי קירוב"
     ]
   ],
-  "briefs": [],
+  "briefs": [
+    ["01 - complexity.md", "complexity", "complexity_recurrence", "topic"],
+    ["02 - divide_conquer.md", "divide_conquer", "divide_conquer", "topic"],
+    ["03 - dp_sequences.md", "dp_sequences", "dp_sequences", "topic"],
+    ["04 - dp_optimization.md", "dp_optimization", "dp_optimization", "topic"],
+    ["05 - graphs_search.md", "graphs_search", "graphs_search", "topic"],
+    ["06 - graph_proofs.md", "graph_proofs", "graph_proofs", "topic"],
+    ["07 - mst.md", "mst", "mst", "topic"],
+    ["08 - greedy.md", "greedy", "greedy", "topic"],
+    ["09 - huffman.md", "huffman", "huffman", "topic"],
+    ["10 - randomized.md", "randomized", "randomized", "topic"],
+    ["11 - kmp_strings.md", "kmp_strings", "kmp_strings", "topic"],
+    ["12 - suffix_structures.md", "suffix_structures", "suffix_structures", "topic"],
+    ["13 - approximation.md", "approximation", "approximation", "topic"],
+    ["14 - cheat.md", "cheat", "complexity_recurrence", "cheat"]
+  ],
   "needHelp": [
     {
       "id": "dp_ladder",
