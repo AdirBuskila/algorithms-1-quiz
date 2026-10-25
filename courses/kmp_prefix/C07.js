@@ -49,7 +49,7 @@ COURSE_LEVEL("kmp_prefix", {
     { id: "C07-Q5",
       step: { type: "numeric", prompt: "הטקסט $T=$`cbacbaxcba`. כמה פעמים מופיעה ההפוכה של $P=$`abc` בטקסט (חיפוש $P^R$ ב-$T$) ?", answer: 3, tol: 0,
               explain: "$P^R=$`cba`. היא מופיעה במקומות 1, 4 ו-8 של `cbacbaxcba`. כלומר שלוש פעמים. ($P$ עצמה, `abc`, לא מופיעה כלל.)" },
-      recap: "מחפשים את P^R עם KMP רגיל" },
+      recap: "מחפשים את ההפוכה של P עם KMP רגיל" },
     { id: "C07-Q6",
       question: "איזו מהמחרוזות הבאות היא רוטציה מעגלית של `abcde` ?",
       options: [

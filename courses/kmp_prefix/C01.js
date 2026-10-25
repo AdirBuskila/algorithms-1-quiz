@@ -48,6 +48,6 @@ COURSE_LEVEL("kmp_prefix", {
     { id: "C01-Q5",
       step: { type: "numeric", prompt: "עבור $P=$`AAAAA` מה הערך של $\\pi[5]$ ?", answer: 4, tol: 0,
               explain: "הרישא `AAAA` היא גם סיפא של `AAAAA`, והיא רישא אמיתית באורך 4. אי אפשר 5, כי זו המחרוזת עצמה. בכלל, ל-$P=a^m$ מתקבל $\\pi[m]=m-1$." },
-      recap: "ל-a^m: π[m] = m−1" },
+      recap: "למחרוזת של m פעמים a: π[m] = m−1" },
   ],
 });

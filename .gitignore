@@ -20,3 +20,7 @@ tools/raw/_blind_*.json
 tools/redact.txt
 docs/triage/
 docs/format_triage.md
+
+# scratch
+tools/tmp_*/
+tools/verify/refute_tmp/

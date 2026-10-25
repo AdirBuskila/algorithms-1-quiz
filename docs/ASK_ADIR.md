@@ -4,6 +4,15 @@ Open questions for Adir. One entry per item; the orchestrator moves it to Resolv
 
 ## Open
 
+### Short list (details below)
+Held out of the bank, need the missing text or a ruling to ship:
+- 22A-B Q5 (bonus): no question text in the file.
+- 24B-B Q2b: question text missing from the booklet, no key.
+- 25A-A Q2b: S3 missing from the printed input.
+- 25A-A Q5c: ambiguous for an adjacency matrix, no key.
+
+Shipped as noted (notes only, nothing blocks): every other entry below.
+
 ### 26A-A Q3 - printed sub-points sum to 20, not 25
 - Path: 26A-A exam booklet (course sources, 2026 folder)
 - Page: 9-10 (Q3a and Q3b print 10 points each)

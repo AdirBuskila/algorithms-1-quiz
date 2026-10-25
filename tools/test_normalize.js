@@ -19,6 +19,19 @@ assert.notStrictEqual(N.complexity("O(n log n)"), N.complexity("O(n^2)"));
 assert.strictEqual(N.complexity("Θ(n)"), N.complexity("O(n)"));
 assert.notStrictEqual(N.complexity("O(n)"), N.complexity("O(n^2)"));
 
+// common typed / LaTeX variants of the same answer (algorithms-1 QA)
+for (const v of ["O(nlogn)", "n log n", "n\\log n", "n·log n", "n\\cdot\\log n", "$\\Theta(n \\log n)$", "Theta(n log(n))",
+                 "O\\left(n\\log n\\right).", "O(n*log n)", "Θ(n lg n)", "n log_2 n", "O(n \\cdot \\log n)"])
+  assert.strictEqual(N.complexity(v), N.complexity("O(n log n)"), v);
+for (const v of ["O(n²)", "n^2", "O(n^{2})", "$O(n^2)$", "\\Theta(n^2)", "O(n ^ 2)."])
+  assert.strictEqual(N.complexity(v), N.complexity("O(n^2)"), v);
+// ... but different answers stay different
+assert.notStrictEqual(N.complexity("Ω(n)"), N.complexity("O(n)"));
+assert.notStrictEqual(N.complexity("O(n)+O(m)"), N.complexity("O(n)"));
+assert.notStrictEqual(N.complexity("O(n log n)"), N.complexity("O(n)"));
+assert.notStrictEqual(N.complexity("O(log n)"), N.complexity("O(n log n)"));
+assert.notStrictEqual(N.complexity("O(n^1.5)"), N.complexity("O(n^15)"));
+
 // number: comma decimal, unicode minus, fractions, junk
 assert.strictEqual(N.number("2,5"), 2.5);
 assert.strictEqual(N.number(" 3.25 "), 3.25);

@@ -716,6 +716,7 @@ window.COURSES = {
        "type": "text",
        "prompt": "מהי סיבוכיות הזמן של אלגוריתם תכנות דינמי ל-LCS של שלוש סדרות באורך $n$ כל אחת, כשחישוב תא לוקח זמן קבוע? (למשל O(n))",
        "accept": [
+        "O(n³)",
         "O(n^3)"
        ],
        "normalize": "complexity",
@@ -732,6 +733,7 @@ window.COURSES = {
        "type": "text",
        "prompt": "מחרוזת $S$ באורך $n$ נחתכת למילים חוקיות במינימום חלקים לפי $C(i)=\\min_{0\\le j<i}\\bigl(C(j)+\\tau(j+1,i)\\bigr)$, כשבדיקת $\\tau$ לוקחת זמן קבוע. מהי סיבוכיות הזמן? (למשל O(n))",
        "accept": [
+        "O(n²)",
         "O(n^2)"
        ],
        "normalize": "complexity",
@@ -4340,8 +4342,8 @@ window.COURSES = {
        "promptHtml": "עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AAAAA</code> מה הערך של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[5]</annotation></semantics></math></span> ?",
        "explainHtml": "הרישא <code class=\"tok\" dir=\"ltr\">AAAA</code> היא גם סיפא של <code class=\"tok\" dir=\"ltr\">AAAAA</code>, והיא רישא אמיתית באורך 4. אי אפשר 5, כי זו המחרוזת עצמה. בכלל, ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo><msup><mi>a</mi><mi>m</mi></msup></mrow><annotation encoding=\"application/x-tex\">P=a^m</annotation></semantics></math></span> מתקבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>m</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[m]=m-1</annotation></semantics></math></span>."
       },
-      "recap": "ל-a^m: π[m] = m−1",
-      "recapHtml": "ל-a^m: π[m] = m−1"
+      "recap": "למחרוזת של m פעמים a: π[m] = m−1",
+      "recapHtml": "למחרוזת של m פעמים a: π[m] = m−1"
      }
     ]
    },
@@ -5187,8 +5189,8 @@ window.COURSES = {
        "promptHtml": "הטקסט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">cbacbaxcba</code>. כמה פעמים מופיעה ההפוכה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">abc</code> בטקסט (חיפוש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>P</mi><mi>R</mi></msup></mrow><annotation encoding=\"application/x-tex\">P^R</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span>) ?",
        "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>P</mi><mi>R</mi></msup><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P^R=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">cba</code>. היא מופיעה במקומות 1, 4 ו-8 של <code class=\"tok\" dir=\"ltr\">cbacbaxcba</code>. כלומר שלוש פעמים. (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> עצמה, <code class=\"tok\" dir=\"ltr\">abc</code>, לא מופיעה כלל.)"
       },
-      "recap": "מחפשים את P^R עם KMP רגיל",
-      "recapHtml": "מחפשים את P^R עם KMP רגיל"
+      "recap": "מחפשים את ההפוכה של P עם KMP רגיל",
+      "recapHtml": "מחפשים את ההפוכה של P עם KMP רגיל"
      },
      {
       "id": "C07-Q6",

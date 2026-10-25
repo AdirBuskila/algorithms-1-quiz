@@ -13,7 +13,8 @@
 
   function complexity(s) {
     let t = String(s == null ? "" : s).normalize("NFC");
-    t = t.replace(/[Θθ]/g, "O").replace(/\\(?:Theta|theta|Omicron)/g, "O");
+    t = t.replace(/\$/g, "").replace(/\\(?:left|right|,|;|!)/g, "").replace(/\\(?:cdot|times)(?![a-z])/g, "");   // $...$, \left( \right), n\cdot\log n
+    t = t.replace(/[Θθ]/g, "O").replace(/\\?(?:Theta|theta|Omicron)(?![a-z])/g, "O");
     t = t.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, m => "^" + [...m].map(c => SUP[c]).join(""));
     t = t.toLowerCase().replace(/\s+/g, "").replace(/\\/g, "");
     t = t.replace(/[·⋅*×]/g, "");                     // "n·log n" -> "nlog n"
@@ -21,6 +22,18 @@
     t = t.replace(/log(?:_?2|₂)?(?![a-z])/g, "log");   // log, log2, log_2, log₂ -> log
     t = t.replace(/lg/g, "log");
     t = t.replace(/log(?:_?2|₂)/g, "log");
+    t = t.replace(/log\(([a-z0-9]+)\)/g, "log$1");     // log(n) -> logn
+    t = t.replace(/[.。]+$/, "");                       // trailing period
+    return unwrapO(t);                                  // "n^2" == "O(n^2)"
+  }
+
+  function unwrapO(t) {   // "o(x)" whose "(" closes at the very end -> "x"; anything else is left alone
+    if (!/^o\(/.test(t) || t[t.length - 1] !== ")") return t;
+    let d = 0;
+    for (let i = 1; i < t.length; i++) {
+      if (t[i] === "(") d++;
+      else if (t[i] === ")" && --d === 0) return i === t.length - 1 ? t.slice(2, -1) : t;
+    }
     return t;
   }
 
