@@ -1,1 +1,4999 @@
-window.COURSES = {};
+window.COURSES = {
+ "dp_ladder": {
+  "levels": [
+   {
+    "id": "C01",
+    "order": 1,
+    "icon": "🧱",
+    "title": "מגדירים תת-בעיה במילים",
+    "goal": "לנסח במילים מה הפונקציה מחזירה, מה כל פרמטר מציין, ואיפה נמצאת התשובה לבעיה המלאה.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<h3>למה תכנות דינמי</h3>\n<p>בבעיות אופטימיזציה ובעיות ספירה על סדרות ומחרוזות, הפתרון הנאיבי עובר על כל האפשרויות, למשל על כל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mn>2</mn><mi>n</mi></msup></mrow><annotation encoding=\"application/x-tex\">2^n</annotation></semantics></math></span> תתי-הסדרות של מחרוזת באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span>. תכנות דינמי מחליף את זה בסדרה של <b>תת-בעיות קטנות</b>: כל תת-בעיה נפתרת פעם אחת ונשמרת בטבלה, ופתרון הבעיה המלאה נבנה מהן.</p>\n<p>הדרך לפתור בעיה כזאת היא סולם של שישה שלבים, ובמהלך הקורס נעלה אותו שלב אחרי שלב:</p>\n<ul>\n<li>להגדיר את תת-הבעיה במילים (הרמה הזאת);</li>\n<li>לכתוב נוסחה רקורסיבית עם מקרי בסיס;</li>\n<li>לקבוע את צורת הטבלה ואת סדר המילוי;</li>\n<li>למלא טבלה קטנה ביד;</li>\n<li>לשחזר את הפתרון עצמו מהטבלה;</li>\n<li>לחשב סיבוכיות זמן ומקום.</li>\n</ul>\n<h3>שלב 1: ההגדרה במילים</h3>\n<p>לפני כל נוסחה כותבים משפט שאומר שלושה דברים: <b>מה</b> הפונקציה מחזירה (מספר, אורך, אמת או שקר), <b>עבור איזה חלק מהקלט</b> (מה כל פרמטר מציין), ו<b>איפה התשובה</b> לבעיה המלאה.</p>\n<div class=\"lesson-ex\">בעיית הריבועים: נתון מספר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi></mrow><annotation encoding=\"application/x-tex\">N</annotation></semantics></math></span>, מצאו את המספר המינימלי של ריבועים שלמים חיוביים (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>9</mn><mo separator=\"true\">,</mo><mo>…</mo></mrow><annotation encoding=\"application/x-tex\">1,4,9,\\dots</annotation></semantics></math></span>) שסכומם בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi></mrow><annotation encoding=\"application/x-tex\">N</annotation></semantics></math></span>.<br>\nהגדרה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)</annotation></semantics></math></span> הוא המספר המינימלי של ריבועים שלמים חיוביים שסכומם בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>. התשובה לבעיה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>N</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(N)</annotation></semantics></math></span>.</div>\n<div class=\"lesson-ex\">תת-סדרה משותפת ארוכה ביותר (LCS) של שתי מחרוזות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span> באורכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span>.<br>\nהגדרה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j)</annotation></semantics></math></span> הוא אורך התת-סדרה המשותפת הארוכה ביותר של הרישא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">X[1..i]</annotation></semantics></math></span> ושל הרישא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">Y[1..j]</annotation></semantics></math></span>. התשובה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(n,m)</annotation></semantics></math></span>.</div>\n<div class=\"lesson-rule\">🔑 הגדרה טובה אומרת מה מוחזר, על איזה חלק מהקלט, ואיפה התשובה. בלי ההגדרה הזאת הנוסחה נחשבת לא מוגדרת, ובמבחן היא מנוקדת בנפרד.</div>\n<div class=\"lesson-trap\">⚠️ משפט כמו \"<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)</annotation></semantics></math></span> הוא הפתרון\" או \"<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi></mrow><annotation encoding=\"application/x-tex\">L</annotation></semantics></math></span> היא ה-LCS\" לא מגדיר כלום: אין בו איזה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>, ואין בו אם הערך הוא אורך או מחרוזת.</div>\n<h3>איך בוחרים את הפרמטרים</h3>\n<p>מסתכלים על האיבר האחרון של הקלט ושואלים מה נשאר אחרי שמורידים אותו. אם נשארת רישא של אותו קלט, מספיק פרמטר אחד לכל קלט (אינדקס הסוף של הרישא). בשתי מחרוזות מקבלים שני פרמטרים, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span>.</p>\n<p>לפעמים מה שנשאר הוא קטע באמצע ולא רישא. בתת-סדרה פולינדרומית ארוכה ביותר של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>s</mi><mn>1</mn></msub><mo>…</mo><msub><mi>s</mi><mi>n</mi></msub></mrow><annotation encoding=\"application/x-tex\">s_1\\dots s_n</annotation></semantics></math></span> מורידים את שני הקצוות יחד, ולכן הפרמטרים הם קצה שמאל וקצה ימין: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)</annotation></semantics></math></span> הוא אורך תת-הסדרה הפולינדרומית הארוכה ביותר של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>s</mi><mi>i</mi></msub><mo>…</mo><msub><mi>s</mi><mi>j</mi></msub></mrow><annotation encoding=\"application/x-tex\">s_i\\dots s_j</annotation></semantics></math></span>.</p>\n<div class=\"lesson-ex\">למה רישא לא מספיקה כאן? בגלל שלמחרוזות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">ab</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">ba</annotation></semantics></math></span> אותו ערך (אורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>), אבל אחרי הוספת התו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">aba</annotation></semantics></math></span> עם ערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi><mi>a</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">baa</annotation></semantics></math></span> עם ערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>. הערך על הרישא לבדו לא קובע את הערך הבא.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C01-Q1",
+      "question": "נתונות שתי מחרוזות $X$ ו-$Y$. כדי לחשב את אורך ה-LCS כתבו את הנוסחה\n$$L(i,j)=\\begin{cases}0 & ;\\ i=0\\ \\vee\\ j=0\\\\ L(i-1,j-1)+1 & ;\\ X_i=Y_j\\\\ \\max\\bigl(L(i,j-1),L(i-1,j)\\bigr) & ;\\ X_i\\neq Y_j\\end{cases}$$\nאיזו הגדרה במילים מתאימה לנוסחה הזאת?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$L(i,j)$ הוא אורך התת-סדרה המשותפת הארוכה ביותר של $X[1..i]$ ושל $Y[1..j]$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j)</annotation></semantics></math></span> הוא אורך התת-סדרה המשותפת הארוכה ביותר של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">X[1..i]</annotation></semantics></math></span> ושל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">Y[1..j]</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$L(i,j)$ הוא מספר המקומות $k\\le\\min(i,j)$ שבהם $X_k=Y_k$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j)</annotation></semantics></math></span> הוא מספר המקומות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>≤</mo><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">k\\le\\min(i,j)</annotation></semantics></math></span> שבהם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mi>k</mi></msub><mo>=</mo><msub><mi>Y</mi><mi>k</mi></msub></mrow><annotation encoding=\"application/x-tex\">X_k=Y_k</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$L(i,j)$ היא תת-סדרה משותפת ארוכה של $X$ ושל $Y$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j)</annotation></semantics></math></span> היא תת-סדרה משותפת ארוכה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> ושל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$L(i,j)$ הוא $1$ אם $X_i=Y_j$ ו-$0$ אחרת",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j)</annotation></semantics></math></span> הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mi>i</mi></msub><mo>=</mo><msub><mi>Y</mi><mi>j</mi></msub></mrow><annotation encoding=\"application/x-tex\">X_i=Y_j</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> אחרת"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "ההגדרה הנכונה מתייחסת לרישות באורכים $i$ ו-$j$ ומחזירה אורך, וזה בדיוק מה שהנוסחה מחשבת: בתא עם תווים שווים היא מוסיפה $1$ לאורך הרישות הקצרות יותר. ההגדרה על מקומות שבהם $X_k=Y_k$ סופרת התאמות באותו מקום ולא תת-סדרות, ולכן נותנת ערכים אחרים (ל-$X=ab$ ו-$Y=ba$ היא נותנת $0$ והנוסחה נותנת $1$). ההגדרה \"תת-סדרה משותפת של $X$ ושל $Y$\" לא תלויה ב-$i$ וב-$j$ ואינה מספר. ההגדרה \"$1$ אם $X_i=Y_j$\" לא סופרת כלום מעבר לתו האחרון, והנוסחה כן.",
+      "recap": "הגדרה במילים: מה מוחזר (אורך), ועבור אילו רישות ($i$ ו-$j$).",
+      "questionHtml": "נתונות שתי מחרוזות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span>. כדי לחשב את אורך ה-LCS כתבו את הנוסחה<br><span class=\"math-block\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mrow><mo fence=\"true\">{</mo><mtable rowspacing=\"0.36em\" columnalign=\"left left\" columnspacing=\"1em\"><mtr><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mrow><mo separator=\"true\">;</mo><mtext> </mtext><mi>i</mi><mo>=</mo><mn>0</mn><mtext> </mtext><mo>∨</mo><mtext> </mtext><mi>j</mi><mo>=</mo><mn>0</mn></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn></mrow></mstyle></mtd><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mrow><mo separator=\"true\">;</mo><mtext> </mtext><msub><mi>X</mi><mi>i</mi></msub><mo>=</mo><msub><mi>Y</mi><mi>j</mi></msub></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mrow><mi>max</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel=\"0\" displaystyle=\"false\"><mrow><mo separator=\"true\">;</mo><mtext> </mtext><msub><mi>X</mi><mi>i</mi></msub><mo mathvariant=\"normal\">≠</mo><msub><mi>Y</mi><mi>j</mi></msub></mrow></mstyle></mtd></mtr></mtable></mrow></mrow><annotation encoding=\"application/x-tex\">L(i,j)=\\begin{cases}0 &amp; ;\\ i=0\\ \\vee\\ j=0\\\\ L(i-1,j-1)+1 &amp; ;\\ X_i=Y_j\\\\ \\max\\bigl(L(i,j-1),L(i-1,j)\\bigr) &amp; ;\\ X_i\\neq Y_j\\end{cases}</annotation></semantics></math></span><br>איזו הגדרה במילים מתאימה לנוסחה הזאת?",
+      "explanationHtml": "ההגדרה הנכונה מתייחסת לרישות באורכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> ומחזירה אורך, וזה בדיוק מה שהנוסחה מחשבת: בתא עם תווים שווים היא מוסיפה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> לאורך הרישות הקצרות יותר. ההגדרה על מקומות שבהם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mi>k</mi></msub><mo>=</mo><msub><mi>Y</mi><mi>k</mi></msub></mrow><annotation encoding=\"application/x-tex\">X_k=Y_k</annotation></semantics></math></span> סופרת התאמות באותו מקום ולא תת-סדרות, ולכן נותנת ערכים אחרים (ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>a</mi><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">X=ab</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>b</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">Y=ba</annotation></semantics></math></span> היא נותנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> והנוסחה נותנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>). ההגדרה \"תת-סדרה משותפת של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> ושל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span>\" לא תלויה ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> וב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> ואינה מספר. ההגדרה \"<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mi>i</mi></msub><mo>=</mo><msub><mi>Y</mi><mi>j</mi></msub></mrow><annotation encoding=\"application/x-tex\">X_i=Y_j</annotation></semantics></math></span>\" לא סופרת כלום מעבר לתו האחרון, והנוסחה כן.",
+      "recapHtml": "הגדרה במילים: מה מוחזר (אורך), ועבור אילו רישות (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span>)."
+     },
+     {
+      "id": "C01-Q2",
+      "question": "רובוט צועד על לוח מ-$(1,1)$ אל $(n,m)$, ובכל צעד זז תא אחד ימינה או תא אחד למטה. רוצים לספור את המסלולים השונים. כתבו את הנוסחה $P(i,j)=P(i-1,j)+P(i,j-1)$ עם $P(1,j)=1$ ו-$P(i,1)=1$. איזו הגדרה במילים מתאימה לה?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$P(i,j)$ הוא מספר המסלולים מהתא $(1,1)$ אל התא $(i,j)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)</annotation></semantics></math></span> הוא מספר המסלולים מהתא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(1,1)</annotation></semantics></math></span> אל התא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$P(i,j)$ הוא מספר התאים במלבד שפינותיו $(1,1)$ ו-$(i,j)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)</annotation></semantics></math></span> הוא מספר התאים במלבד שפינותיו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(1,1)</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$P(i,j)$ הוא אורך המסלול הקצר ביותר מהתא $(1,1)$ אל התא $(i,j)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)</annotation></semantics></math></span> הוא אורך המסלול הקצר ביותר מהתא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(1,1)</annotation></semantics></math></span> אל התא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$P(i,j)$ הוא מספר המסלולים מהתא $(i,j)$ אל התא $(n,m)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)</annotation></semantics></math></span> הוא מספר המסלולים מהתא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)</annotation></semantics></math></span> אל התא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(n,m)</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "אל תא $(i,j)$ מגיעים מהתא שמעליו או מהתא שמשמאלו, ולכן מספר המסלולים אליו הוא סכום שני המספרים האלה, ובשורה הראשונה ובעמודה הראשונה יש מסלול אחד. מספר התאים במלבד הוא $i\\cdot j$, ולכן ב-$(2,2)$ מקבלים $4$ והנוסחה נותנת $2$. אורך המסלול הקצר ביותר הוא $i+j-2$, ובשורה הראשונה הוא לא $1$. מספר המסלולים מ-$(i,j)$ אל $(n,m)$ הוא פונקציה אחרת: הערך שלה ב-$(1,j)$ אינו $1$.",
+      "recap": "בספירת מסלולים הפרמטרים הם התא שאליו מגיעים, והפונקציה סופרת מסלולים אליו.",
+      "questionHtml": "רובוט צועד על לוח מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(1,1)</annotation></semantics></math></span> אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(n,m)</annotation></semantics></math></span>, ובכל צעד זז תא אחד ימינה או תא אחד למטה. רוצים לספור את המסלולים השונים. כתבו את הנוסחה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)=P(i-1,j)+P(i,j-1)</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">P(1,j)=1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">P(i,1)=1</annotation></semantics></math></span>. איזו הגדרה במילים מתאימה לה?",
+      "explanationHtml": "אל תא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)</annotation></semantics></math></span> מגיעים מהתא שמעליו או מהתא שמשמאלו, ולכן מספר המסלולים אליו הוא סכום שני המספרים האלה, ובשורה הראשונה ובעמודה הראשונה יש מסלול אחד. מספר התאים במלבד הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>⋅</mo><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">i\\cdot j</annotation></semantics></math></span>, ולכן ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,2)</annotation></semantics></math></span> מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span> והנוסחה נותנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>. אורך המסלול הקצר ביותר הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>+</mo><mi>j</mi><mo>−</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">i+j-2</annotation></semantics></math></span>, ובשורה הראשונה הוא לא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>. מספר המסלולים מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)</annotation></semantics></math></span> אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(n,m)</annotation></semantics></math></span> הוא פונקציה אחרת: הערך שלה ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(1,j)</annotation></semantics></math></span> אינו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>.",
+      "recapHtml": "בספירת מסלולים הפרמטרים הם התא שאליו מגיעים, והפונקציה סופרת מסלולים אליו."
+     },
+     {
+      "id": "C01-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "בבעיית הריבועים עם $N=30$ מחשבים את $F(i)$ לכל $i$ מ-$0$ ועד $30$ כולל. כמה תת-בעיות שונות יש?",
+       "answer": 31,
+       "tol": 0,
+       "explain": "הפרמטר $i$ מקבל כל ערך שלם מ-$0$ ועד $30$, כלומר $31$ ערכים. זה מספר תאי הטבלה, והוא קטן בהרבה ממספר הדרכים לבחור ריבועים.",
+       "promptHtml": "בבעיית הריבועים עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo>=</mo><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">N=30</annotation></semantics></math></span> מחשבים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)</annotation></semantics></math></span> לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> ועד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">30</annotation></semantics></math></span> כולל. כמה תת-בעיות שונות יש?",
+       "explainHtml": "הפרמטר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> מקבל כל ערך שלם מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> ועד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">30</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>31</mn></mrow><annotation encoding=\"application/x-tex\">31</annotation></semantics></math></span> ערכים. זה מספר תאי הטבלה, והוא קטן בהרבה ממספר הדרכים לבחור ריבועים."
+      },
+      "recap": "מספר תת-הבעיות הוא מספר הערכים האפשריים של הפרמטרים.",
+      "recapHtml": "מספר תת-הבעיות הוא מספר הערכים האפשריים של הפרמטרים."
+     },
+     {
+      "id": "C01-Q4",
+      "question": "רוצים את אורך תת-הסדרה הפולינדרומית הארוכה ביותר של $s_1\\dots s_n$. מגדירים $P(i)$ כאורך תת-הסדרה הפולינדרומית הארוכה ביותר של הרישא $s_1\\dots s_i$. איזו טענה נכונה?",
+      "options": [
+       {
+        "id": "a",
+        "value": "ההגדרה על רישא לא מספיקה: ל-$ab$ ול-$ba$ אותו ערך, אבל אחרי הוספת $a$ ל-$aba$ ול-$baa$ ערכים שונים",
+        "type": "text",
+        "html": "ההגדרה על רישא לא מספיקה: ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">ab</annotation></semantics></math></span> ול-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">ba</annotation></semantics></math></span> אותו ערך, אבל אחרי הוספת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">aba</annotation></semantics></math></span> ול-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi><mi>a</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">baa</annotation></semantics></math></span> ערכים שונים"
+       },
+       {
+        "id": "b",
+        "value": "ההגדרה מספיקה: $P(i)=P(i-1)+1$ בכל פעם שהתו $s_i$ כבר הופיע קודם",
+        "type": "text",
+        "html": "ההגדרה מספיקה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">P(i)=P(i-1)+1</annotation></semantics></math></span> בכל פעם שהתו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>s</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">s_i</annotation></semantics></math></span> כבר הופיע קודם"
+       },
+       {
+        "id": "c",
+        "value": "ההגדרה מספיקה: $P(i)=\\max(P(i-1),1)$",
+        "type": "text",
+        "html": "ההגדרה מספיקה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>max</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i)=\\max(P(i-1),1)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "ההגדרה מספיקה: $P(i)=P(i-1)+1$ כאשר $s_i=s_1$",
+        "type": "text",
+        "html": "ההגדרה מספיקה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">P(i)=P(i-1)+1</annotation></semantics></math></span> כאשר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>s</mi><mi>i</mi></msub><mo>=</mo><msub><mi>s</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">s_i=s_1</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "הערך על הרישא $ab$ שווה לערך על $ba$ (שניהם $1$), אבל כשמוסיפים את $a$ מקבלים $aba$ עם ערך $3$ ו-$baa$ עם ערך $2$, ולכן אי אפשר לחשב את הערך הבא מהערך הקודם ומהתו החדש בלבד. לכן מגדירים על קטע, עם שני פרמטרים. שלוש הנוסחאות האחרות נכשלות: ב-$abca$ התו $a$ כבר הופיע, אבל הערך עובר מ-$1$ ל-$3$; הנוסחה עם המקסימום נותנת $1$ ל-$aba$ במקום $3$; והנוסחה עם $s_1$ נותנת $2$ ל-$aba$ במקום $3$.",
+      "recap": "אם הצעד האחרון משאיר קטע באמצע ולא רישא, צריך שני פרמטרים: קצה שמאל וקצה ימין.",
+      "questionHtml": "רוצים את אורך תת-הסדרה הפולינדרומית הארוכה ביותר של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>s</mi><mn>1</mn></msub><mo>…</mo><msub><mi>s</mi><mi>n</mi></msub></mrow><annotation encoding=\"application/x-tex\">s_1\\dots s_n</annotation></semantics></math></span>. מגדירים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i)</annotation></semantics></math></span> כאורך תת-הסדרה הפולינדרומית הארוכה ביותר של הרישא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>s</mi><mn>1</mn></msub><mo>…</mo><msub><mi>s</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">s_1\\dots s_i</annotation></semantics></math></span>. איזו טענה נכונה?",
+      "explanationHtml": "הערך על הרישא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">ab</annotation></semantics></math></span> שווה לערך על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">ba</annotation></semantics></math></span> (שניהם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>), אבל כשמוסיפים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">aba</annotation></semantics></math></span> עם ערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi><mi>a</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">baa</annotation></semantics></math></span> עם ערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>, ולכן אי אפשר לחשב את הערך הבא מהערך הקודם ומהתו החדש בלבד. לכן מגדירים על קטע, עם שני פרמטרים. שלוש הנוסחאות האחרות נכשלות: ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>c</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">abca</annotation></semantics></math></span> התו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> כבר הופיע, אבל הערך עובר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span>; הנוסחה עם המקסימום נותנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">aba</annotation></semantics></math></span> במקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span>; והנוסחה עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>s</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">s_1</annotation></semantics></math></span> נותנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">aba</annotation></semantics></math></span> במקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span>.",
+      "recapHtml": "אם הצעד האחרון משאיר קטע באמצע ולא רישא, צריך שני פרמטרים: קצה שמאל וקצה ימין."
+     },
+     {
+      "id": "C01-Q5",
+      "question": "אחרי שהוגדר ש-$L(i,j)$ הוא אורך ה-LCS של הרישא $X[1..i]$ ושל הרישא $Y[1..j]$, איפה נמצאת התשובה לבעיה, כלומר אורך ה-LCS של $X$ ושל $Y$ המלאות באורכים $n$ ו-$m$?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$L(n,m)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(n,m)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$L(n,m-1)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(n,m-1)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$L(n-1,m-1)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>m</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(n-1,m-1)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$L(1,1)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(1,1)</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "הרישא באורך $n$ של $X$ היא $X$ כולה, והרישא באורך $m$ של $Y$ היא $Y$ כולה, ולכן התשובה היא $L(n,m)$. שלושת האחרים מתייחסים לרישות קצרות יותר ויכולים לתת מספר קטן יותר: ל-$X=Y=abc$ מתקבל $L(3,3)=3$ אבל $L(3,2)=2$, $L(2,2)=2$ ו-$L(1,1)=1$.",
+      "recap": "התשובה היא הערך על הרישות המלאות: $L(n,m)$.",
+      "questionHtml": "אחרי שהוגדר ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j)</annotation></semantics></math></span> הוא אורך ה-LCS של הרישא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">X[1..i]</annotation></semantics></math></span> ושל הרישא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">Y[1..j]</annotation></semantics></math></span>, איפה נמצאת התשובה לבעיה, כלומר אורך ה-LCS של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> ושל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span> המלאות באורכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span>?",
+      "explanationHtml": "הרישא באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> כולה, והרישא באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span> היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span> כולה, ולכן התשובה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(n,m)</annotation></semantics></math></span>. שלושת האחרים מתייחסים לרישות קצרות יותר ויכולים לתת מספר קטן יותר: ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>Y</mi><mo>=</mo><mi>a</mi><mi>b</mi><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">X=Y=abc</annotation></semantics></math></span> מתקבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">L(3,3)=3</annotation></semantics></math></span> אבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">L(3,2)=2</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">L(2,2)=2</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(1,1)=1</annotation></semantics></math></span>.",
+      "recapHtml": "התשובה היא הערך על הרישות המלאות: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(n,m)</annotation></semantics></math></span>."
+     }
+    ]
+   },
+   {
+    "id": "C02",
+    "order": 2,
+    "icon": "🔁",
+    "title": "נוסחת נסיגה ומקרי בסיס",
+    "goal": "לגזור נוסחה רקורסיבית מהצעד האחרון, לבחור בין מינימום, מקסימום וסכום, ולכתוב מקרי בסיס נכונים.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<h3>שלב 2: הצעד האחרון נותן את הנוסחה</h3>\n<p>לוקחים פתרון אופטימלי לקלט שבגודל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> ושואלים מה ההחלטה <b>האחרונה</b> בו. לכל החלטה אפשרית יש מקרה אחד בנוסחה. ההחלטה האחרונה משאירה תת-בעיה קטנה יותר, ושאר הפתרון חייב להיות פתרון אופטימלי שלה: אם היה פתרון טוב יותר לתת-הבעיה, אפשר היה להחליף אותו ולשפר את הפתרון כולו, וזה סותר את האופטימליות.</p>\n<div class=\"lesson-ex\">ריבועים: בפתרון אופטימלי של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> הריבוע האחרון הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>j</mi><mn>2</mn></msup></mrow><annotation encoding=\"application/x-tex\">j^2</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>≤</mo><mi>j</mi><mo>≤</mo><msqrt><mi>i</mi></msqrt></mrow><annotation encoding=\"application/x-tex\">1\\le j\\le\\sqrt i</annotation></semantics></math></span>. נשאר סכום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>−</mo><msup><mi>j</mi><mn>2</mn></msup></mrow><annotation encoding=\"application/x-tex\">i-j^2</annotation></semantics></math></span>, ולכן\n<span class=\"math-block\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><munder><mrow><mi>min</mi><mo>⁡</mo></mrow><mrow><mn>1</mn><mo>≤</mo><mi>j</mi><mo>≤</mo><msqrt><mi>i</mi></msqrt></mrow></munder><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><msup><mi>j</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mspace width=\"2em\"/><mi>F</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0.</mn></mrow><annotation encoding=\"application/x-tex\">F(i)=1+\\min_{1\\le j\\le\\sqrt i}F(i-j^2),\\qquad F(0)=0.</annotation></semantics></math></span>\nכך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">F(1)=1</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">F(2)=2</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">F(3)=3</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">F(4)=1</annotation></semantics></math></span> (כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">F(0)+1</annotation></semantics></math></span>), <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>5</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">F(5)=2</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">4+1</annotation></semantics></math></span>), <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>8</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">F(8)=2</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn><mo>+</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4+4</annotation></semantics></math></span>).</div>\n<h3>מינימום, מקסימום, סכום או OR</h3>\n<ul>\n<li>בעיית מינימום: לוקחים מינימום על המקרים, ומוסיפים את מחיר ההחלטה האחרונה (כאן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>).</li>\n<li>בעיית מקסימום: לוקחים מקסימום על המקרים.</li>\n<li>בעיית ספירה: המקרים זרים זה לזה, ולכן <b>מחברים</b> את מספר הפתרונות בכל מקרה.</li>\n<li>בעיית כן או לא: מחברים את המקרים ב-OR.</li>\n</ul>\n<div class=\"lesson-ex\">מטבעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{1,3,4\\}</annotation></semantics></math></span>, מינימום מטבעות לסכום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><msub><mrow><mi>min</mi><mo>⁡</mo></mrow><mrow><mi>c</mi><mo>∈</mo><mo stretchy=\"false\">{</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">}</mo><mo separator=\"true\">,</mo><mtext> </mtext><mi>c</mi><mo>≤</mo><mi>i</mi></mrow></msub><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mi>c</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">M(i)=1+\\min_{c\\in\\{1,3,4\\},\\,c\\le i}M(i-c)</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">M(0)=0</annotation></semantics></math></span>. האלגוריתם החמדן \"תמיד לוקחים את המטבע הגדול ביותר\" נכשל כאן: את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span> הוא מפרק ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">4+1+1</annotation></semantics></math></span> (שלושה מטבעות), בעוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo>+</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3+3</annotation></semantics></math></span> הם שניים.</div>\n<h3>מקרי בסיס</h3>\n<p>מקרה בסיס הוא קלט קטן או ריק שהנוסחה לא יכולה להמשיך ממנו, והוא מוגדר ישירות. שני כללים: כל קריאה רקורסיבית חייבת להקטין לפחות פרמטר אחד, וכל קלט שהקריאות מגיעות אליו חייב להיות מכוסה בנוסחה או בבסיס.</p>\n<div class=\"lesson-ex\">ספירת מופעים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i,j)</annotation></semantics></math></span> הוא מספר הדרכים ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..j]</annotation></semantics></math></span> מופיעה כתת-סדרה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[1..i]</annotation></semantics></math></span>. כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">j=0</annotation></semantics></math></span> המחרוזת הריקה מופיעה בדרך אחת בדיוק (לא לוקחים אף תו), ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">C(i,0)=1</annotation></semantics></math></span>. כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[i]\\ne P[j]</annotation></semantics></math></span> מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i-1,j)</annotation></semantics></math></span>. כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[i]=P[j]</annotation></semantics></math></span> מחברים שתי קבוצות זרות: פתרונות שמשתמשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[i]</annotation></semantics></math></span> כהתאמה האחרונה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i-1,j-1)</annotation></semantics></math></span>) ופתרונות שלא (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i-1,j)</annotation></semantics></math></span>).</div>\n<div class=\"lesson-trap\">⚠️ שלוש טעויות נפוצות: לשכוח את ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">+1</annotation></semantics></math></span> של ההחלטה האחרונה, לכתוב מקסימום כשהבעיה סופרת, ולכתוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> בבסיס של ספירה (אז כל הטבלה מתאפסת).</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C02-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "לפי הנוסחה $F(i)=1+\\min_{1\\le j\\le\\sqrt i}F(i-j^2)$ עם $F(0)=0$: מהו $F(12)$, המספר המינימלי של ריבועים שלמים חיוביים שסכומם $12$?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "$F(12)=1+\\min\\bigl(F(11),F(8),F(3)\\bigr)=1+\\min(3,2,3)=3$. למשל $12=4+4+4$. אין פירוק לשני ריבועים, כי $12-1$, $12-4$ ו-$12-9$ הם $11$, $8$ ו-$3$, ואף אחד מהם אינו ריבוע.",
+       "promptHtml": "לפי הנוסחה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><msub><mrow><mi>min</mi><mo>⁡</mo></mrow><mrow><mn>1</mn><mo>≤</mo><mi>j</mi><mo>≤</mo><msqrt><mi>i</mi></msqrt></mrow></msub><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><msup><mi>j</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)=1+\\min_{1\\le j\\le\\sqrt i}F(i-j^2)</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">F(0)=0</annotation></semantics></math></span>: מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>12</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(12)</annotation></semantics></math></span>, המספר המינימלי של ריבועים שלמים חיוביים שסכומם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">12</annotation></semantics></math></span>?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>12</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>F</mi><mo stretchy=\"false\">(</mo><mn>11</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>F</mi><mo stretchy=\"false\">(</mo><mn>8</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>F</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">F(12)=1+\\min\\bigl(F(11),F(8),F(3)\\bigr)=1+\\min(3,2,3)=3</annotation></semantics></math></span>. למשל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn><mo>=</mo><mn>4</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">12=4+4+4</annotation></semantics></math></span>. אין פירוק לשני ריבועים, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">12-1</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn><mo>−</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">12-4</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn><mo>−</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">12-9</annotation></semantics></math></span> הם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>11</mn></mrow><annotation encoding=\"application/x-tex\">11</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span>, ואף אחד מהם אינו ריבוע."
+      },
+      "recap": "מחשבים מהקטן לגדול: $F(i)$ משתמש בערכים קטנים יותר.",
+      "recapHtml": "מחשבים מהקטן לגדול: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)</annotation></semantics></math></span> משתמש בערכים קטנים יותר."
+     },
+     {
+      "id": "C02-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "ומהו $F(13)$?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "$F(13)=1+\\min\\bigl(F(12),F(9),F(4)\\bigr)=1+\\min(3,1,1)=2$, כלומר $13=9+4$.",
+       "promptHtml": "ומהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>13</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(13)</annotation></semantics></math></span>?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>13</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>F</mi><mo stretchy=\"false\">(</mo><mn>12</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>F</mi><mo stretchy=\"false\">(</mo><mn>9</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>F</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">F(13)=1+\\min\\bigl(F(12),F(9),F(4)\\bigr)=1+\\min(3,1,1)=2</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>13</mn><mo>=</mo><mn>9</mn><mo>+</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">13=9+4</annotation></semantics></math></span>."
+      },
+      "recap": "המינימום נלקח על כל הבחירות האפשריות של הריבוע האחרון.",
+      "recapHtml": "המינימום נלקח על כל הבחירות האפשריות של הריבוע האחרון."
+     },
+     {
+      "id": "C02-Q3",
+      "question": "מטבעות בערכים $1,3,4$, ו-$M(i)$ הוא המספר המינימלי של מטבעות שסכומם בדיוק $i$ ($M(0)=0$). איזו נוסחה נכונה לכל $i\\ge1$?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$M(i)=1+\\min\\{M(i-c)\\;:\\;c\\in\\{1,3,4\\},\\ c\\le i\\}$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">{</mo><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mi>c</mi><mo stretchy=\"false\">)</mo><mtext>  </mtext><mo>:</mo><mtext>  </mtext><mi>c</mi><mo>∈</mo><mo stretchy=\"false\">{</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">}</mo><mo separator=\"true\">,</mo><mtext> </mtext><mi>c</mi><mo>≤</mo><mi>i</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">M(i)=1+\\min\\{M(i-c)\\;:\\;c\\in\\{1,3,4\\},\\ c\\le i\\}</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$M(i)=1+M(i-4)$ כש-$i\\ge4$, ו-$M(i)=1+M(i-1)$ אחרת",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>4</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">M(i)=1+M(i-4)</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>≥</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">i\\ge4</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">M(i)=1+M(i-1)</annotation></semantics></math></span> אחרת"
+       },
+       {
+        "id": "c",
+        "value": "$M(i)=\\min\\{M(i-c)\\;:\\;c\\in\\{1,3,4\\},\\ c\\le i\\}$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">{</mo><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mi>c</mi><mo stretchy=\"false\">)</mo><mtext>  </mtext><mo>:</mo><mtext>  </mtext><mi>c</mi><mo>∈</mo><mo stretchy=\"false\">{</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">}</mo><mo separator=\"true\">,</mo><mtext> </mtext><mi>c</mi><mo>≤</mo><mi>i</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">M(i)=\\min\\{M(i-c)\\;:\\;c\\in\\{1,3,4\\},\\ c\\le i\\}</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$M(i)=\\sum_{c\\in\\{1,3,4\\},\\,c\\le i}M(i-c)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><msub><mo>∑</mo><mrow><mi>c</mi><mo>∈</mo><mo stretchy=\"false\">{</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">}</mo><mo separator=\"true\">,</mo><mtext> </mtext><mi>c</mi><mo>≤</mo><mi>i</mi></mrow></msub><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mi>c</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">M(i)=\\sum_{c\\in\\{1,3,4\\},\\,c\\le i}M(i-c)</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "המטבע האחרון הוא $1$, $3$ או $4$, וכל בחירה עולה מטבע אחד ומשאירה $M(i-c)$, ולכן $M(i)=1+\\min$. הנוסחה עם הבחירה החמדנית נותנת $M(6)=3$ ($4+1+1$) במקום $2$. הנוסחה בלי ה-$+1$ לא סופרת את המטבע האחרון, והיא נותנת $0$ לכל $i$. הסכום הוא נוסחה לספירת דרכים ולא למינימום.",
+      "recap": "בעיית מינימום: $1+\\min$ על כל הבחירות של ההחלטה האחרונה.",
+      "questionHtml": "מטבעות בערכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">1,3,4</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">M(i)</annotation></semantics></math></span> הוא המספר המינימלי של מטבעות שסכומם בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">M(0)=0</annotation></semantics></math></span>). איזו נוסחה נכונה לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>≥</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">i\\ge1</annotation></semantics></math></span>?",
+      "explanationHtml": "המטבע האחרון הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span>, וכל בחירה עולה מטבע אחד ומשאירה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mi>c</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">M(i-c)</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo></mrow><annotation encoding=\"application/x-tex\">M(i)=1+\\min</annotation></semantics></math></span>. הנוסחה עם הבחירה החמדנית נותנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>6</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">M(6)=3</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">4+1+1</annotation></semantics></math></span>) במקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>. הנוסחה בלי ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">+1</annotation></semantics></math></span> לא סופרת את המטבע האחרון, והיא נותנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>. הסכום הוא נוסחה לספירת דרכים ולא למינימום.",
+      "recapHtml": "בעיית מינימום: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo></mrow><annotation encoding=\"application/x-tex\">1+\\min</annotation></semantics></math></span> על כל הבחירות של ההחלטה האחרונה."
+     },
+     {
+      "id": "C02-Q4",
+      "step": {
+       "type": "numeric",
+       "prompt": "במטבעות $1,3,4$ מחשבים לפי הנוסחה $M(i)=1+\\min M(i-c)$ עם $M(0)=0$. מהו $M(6)$?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "$M(1)=1$, $M(2)=2$, $M(3)=1$, $M(4)=1$, $M(5)=2$ ו-$M(6)=1+\\min\\bigl(M(5),M(3),M(2)\\bigr)=1+\\min(2,1,2)=2$. זה $3+3$.",
+       "promptHtml": "במטבעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">1,3,4</annotation></semantics></math></span> מחשבים לפי הנוסחה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo><mi>M</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mi>c</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">M(i)=1+\\min M(i-c)</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">M(0)=0</annotation></semantics></math></span>. מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>6</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">M(6)</annotation></semantics></math></span>?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">M(1)=1</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">M(2)=2</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">M(3)=1</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">M(4)=1</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>5</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">M(5)=2</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>M</mi><mo stretchy=\"false\">(</mo><mn>6</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>M</mi><mo stretchy=\"false\">(</mo><mn>5</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>M</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>M</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">M(6)=1+\\min\\bigl(M(5),M(3),M(2)\\bigr)=1+\\min(2,1,2)=2</annotation></semantics></math></span>. זה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo>+</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3+3</annotation></semantics></math></span>."
+      },
+      "recap": "החמדן היה נותן $3$; הנוסחה בודקת את כל המטבעות ונותנת $2$.",
+      "recapHtml": "החמדן היה נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span>; הנוסחה בודקת את כל המטבעות ונותנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>."
+     },
+     {
+      "id": "C02-Q5",
+      "question": "ב-$C(i,j)$, מספר הדרכים ש-$P[1..j]$ מופיעה כתת-סדרה של $T[1..i]$, מהו הערך הנכון של מקרה הבסיס $C(i,0)$ לכל $i\\ge0$?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$0$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$i$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$2^i$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mn>2</mn><mi>i</mi></msup></mrow><annotation encoding=\"application/x-tex\">2^i</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "המחרוזת הריקה מופיעה כתת-סדרה בדרך אחת: בוחרים קבוצה ריקה של מקומות. לכן $C(i,0)=1$. אם כותבים $0$, כל הטבלה מתאפסת, כי כל התאים נבנים מחיבור של תאים קודמים. $i$ ו-$2^i$ סופרים משהו אחר (מקומות בודדים או תתי-קבוצות של מקומות).",
+      "recap": "בבסיס של ספירה, התאמה של מחרוזת ריקה נספרת פעם אחת.",
+      "questionHtml": "ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i,j)</annotation></semantics></math></span>, מספר הדרכים ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..j]</annotation></semantics></math></span> מופיעה כתת-סדרה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[1..i]</annotation></semantics></math></span>, מהו הערך הנכון של מקרה הבסיס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i,0)</annotation></semantics></math></span> לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>≥</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">i\\ge0</annotation></semantics></math></span>?",
+      "explanationHtml": "המחרוזת הריקה מופיעה כתת-סדרה בדרך אחת: בוחרים קבוצה ריקה של מקומות. לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">C(i,0)=1</annotation></semantics></math></span>. אם כותבים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>, כל הטבלה מתאפסת, כי כל התאים נבנים מחיבור של תאים קודמים. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mn>2</mn><mi>i</mi></msup></mrow><annotation encoding=\"application/x-tex\">2^i</annotation></semantics></math></span> סופרים משהו אחר (מקומות בודדים או תתי-קבוצות של מקומות).",
+      "recapHtml": "בבסיס של ספירה, התאמה של מחרוזת ריקה נספרת פעם אחת."
+     },
+     {
+      "id": "C02-Q6",
+      "step": {
+       "type": "order",
+       "prompt": "סדרו את הנימוק לנוסחה של בעיית הריבועים.",
+       "lines": [
+        "נתבונן בריבוע האחרון בפתרון אופטימלי של $i$, ויהי $j^2$ ערכו, כאשר $1\\le j\\le\\sqrt i$",
+        "שאר הריבועים סכומם $i-j^2$ ומספרם מינימלי, אחרת אפשר להחליף אותם בפתרון טוב יותר וזה סותר את האופטימליות",
+        "לכן עבור הבחירה $j$ מספר הריבועים הוא $1+F(i-j^2)$",
+        "$j$ לא ידוע, ולכן $F(i)=1+\\min_j F(i-j^2)$, עם הבסיס $F(0)=0$"
+       ],
+       "explain": "הנימוק הולך מההחלטה האחרונה, דרך האופטימליות של השאר, אל מחיר הבחירה, ורק אחרי כן אל המינימום על כל הבחירות, כי כל שלב משתמש בקודמו.",
+       "promptHtml": "סדרו את הנימוק לנוסחה של בעיית הריבועים.",
+       "explainHtml": "הנימוק הולך מההחלטה האחרונה, דרך האופטימליות של השאר, אל מחיר הבחירה, ורק אחרי כן אל המינימום על כל הבחירות, כי כל שלב משתמש בקודמו.",
+       "linesHtml": [
+        "נתבונן בריבוע האחרון בפתרון אופטימלי של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>, ויהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>j</mi><mn>2</mn></msup></mrow><annotation encoding=\"application/x-tex\">j^2</annotation></semantics></math></span> ערכו, כאשר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>≤</mo><mi>j</mi><mo>≤</mo><msqrt><mi>i</mi></msqrt></mrow><annotation encoding=\"application/x-tex\">1\\le j\\le\\sqrt i</annotation></semantics></math></span>",
+        "שאר הריבועים סכומם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>−</mo><msup><mi>j</mi><mn>2</mn></msup></mrow><annotation encoding=\"application/x-tex\">i-j^2</annotation></semantics></math></span> ומספרם מינימלי, אחרת אפשר להחליף אותם בפתרון טוב יותר וזה סותר את האופטימליות",
+        "לכן עבור הבחירה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> מספר הריבועים הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><msup><mi>j</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">1+F(i-j^2)</annotation></semantics></math></span>",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> לא ידוע, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><msub><mrow><mi>min</mi><mo>⁡</mo></mrow><mi>j</mi></msub><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><msup><mi>j</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)=1+\\min_j F(i-j^2)</annotation></semantics></math></span>, עם הבסיס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">F(0)=0</annotation></semantics></math></span>"
+       ]
+      },
+      "recap": "הצעד האחרון, אופטימליות של השאר, מינימום על הבחירות, בסיס.",
+      "recapHtml": "הצעד האחרון, אופטימליות של השאר, מינימום על הבחירות, בסיס."
+     }
+    ]
+   },
+   {
+    "id": "C03",
+    "order": 3,
+    "icon": "📐",
+    "title": "צורת הטבלה וסדר המילוי",
+    "goal": "לקבוע את גודל הטבלה, את מיקום התשובה ואת סדר המילוי שבו כל תא תלוי רק בתאים שכבר חושבו.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<h3>שלב 3: מה בטבלה ובאיזה סדר</h3>\n<p>אחרי שיש נוסחה, צריך לענות על ארבע שאלות: <b>גודל הטבלה</b> (כמה ערכים יש לכל פרמטר), <b>מה בכל תא</b> (הערך שההגדרה במילים מחזירה), <b>סדר המילוי</b>, ו<b>איפה התשובה</b>.</p>\n<h3>גודל הטבלה</h3>\n<p>לכל פרמטר סופרים את הערכים האפשריים, כולל ערך הבסיס. LCS על מחרוזות באורכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> משתמשת ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>∈</mo><mo stretchy=\"false\">{</mo><mn>0</mn><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><mi>n</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">i\\in\\{0,\\dots,n\\}</annotation></semantics></math></span> וב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>∈</mo><mo stretchy=\"false\">{</mo><mn>0</mn><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">j\\in\\{0,\\dots,m\\}</annotation></semantics></math></span>, כלומר ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>n</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">(</mo><mi>m</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(n+1)(m+1)</annotation></semantics></math></span> תאים. בשלוש סדרות יש שלושה אינדקסים ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><msub><mi>n</mi><mn>1</mn></msub><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">(</mo><msub><mi>n</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">(</mo><msub><mi>n</mi><mn>3</mn></msub><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(n_1+1)(n_2+1)(n_3+1)</annotation></semantics></math></span> תאים. לפעמים רק חלק מהמלבן בשימוש: ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)</annotation></semantics></math></span> של תת-סדרה פולינדרומית רק התאים עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>≤</mo><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">i\\le j</annotation></semantics></math></span> שייכים לבעיה (משולש).</p>\n<h3>סדר המילוי</h3>\n<p>כל תא תלוי בתאים אחרים (אלה שהנוסחה קוראת). סדר מילוי חוקי הוא סדר שבו, כשמגיעים לתא, כל התאים שהוא קורא כבר מולאו. כדי למצוא אותו מציירים חיצים מכל תא אל התאים שהוא קורא:</p>\n<ul>\n<li>ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j)</annotation></semantics></math></span> התא קורא את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i-1,j-1)</annotation></semantics></math></span>, את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i-1,j)</annotation></semantics></math></span> ואת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j-1)</annotation></semantics></math></span>. לכן ממלאים שורה אחרי שורה, ובכל שורה משמאל לימין.</li>\n<li>ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)</annotation></semantics></math></span> התא קורא ערכים קטנים יותר של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>, ולכן ממלאים מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">i=0</annotation></semantics></math></span> כלפי מעלה.</li>\n<li>ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)</annotation></semantics></math></span> התא קורא את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i+1,j-1)</annotation></semantics></math></span>, את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i+1,j)</annotation></semantics></math></span> ואת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j-1)</annotation></semantics></math></span>: כל אלה קטעים קצרים יותר. לכן ממלאים לפי <b>אורך הקטע</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>−</mo><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">j-i</annotation></semantics></math></span>, מהקטן לגדול.</li>\n</ul>\n<div class=\"lesson-rule\">🔑 סדר חוקי תמיד קיים כשהנוסחה לא מעגלית: ממלאים את התאים שתלויים רק בבסיס, ואז את אלה שתלויים בהם. קריאה לתא שעוד לא מולא היא הטעות הקלאסית.</div>\n<div class=\"lesson-ex\">אלגוריתם מילוי ל-LCS: מגדירים טבלה בגודל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>n</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>×</mo><mo stretchy=\"false\">(</mo><mi>m</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(n+1)\\times(m+1)</annotation></semantics></math></span>, ממלאים אפסים בשורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> ובעמודה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>, עוברים על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>1..</mn><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">i=1..n</annotation></semantics></math></span> ובתוך כל שורה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>1..</mn><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">j=1..m</annotation></semantics></math></span> ומחשבים כל תא לפי הנוסחה, ובסוף מחזירים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">[</mo><mi>n</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">L[n][m]</annotation></semantics></math></span>.</div>\n<h3>איפה התשובה</h3>\n<p>זה נקבע מההגדרה במילים: התא שמתאים לקלט המלא, למשל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(n,m)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>N</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(N)</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(1,n)</annotation></semantics></math></span>.</p>\n"
+    },
+    "questions": [
+     {
+      "id": "C03-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "מחשבים LCS של מחרוזת באורך $5$ ומחרוזת באורך $7$ עם טבלה $L(i,j)$, כולל השורה והעמודה של $i=0$ ו-$j=0$. כמה תאים יש בטבלה?",
+       "answer": 48,
+       "tol": 0,
+       "explain": "יש $6$ ערכים של $i$ (מ-$0$ עד $5$) ו-$8$ ערכים של $j$ (מ-$0$ עד $7$), ולכן $6\\cdot8=48$ תאים.",
+       "promptHtml": "מחשבים LCS של מחרוזת באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">5</annotation></semantics></math></span> ומחרוזת באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">7</annotation></semantics></math></span> עם טבלה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j)</annotation></semantics></math></span>, כולל השורה והעמודה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">i=0</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">j=0</annotation></semantics></math></span>. כמה תאים יש בטבלה?",
+       "explainHtml": "יש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span> ערכים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> (מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">5</annotation></semantics></math></span>) ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span> ערכים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> (מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">7</annotation></semantics></math></span>), ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn><mo>⋅</mo><mn>8</mn><mo>=</mo><mn>48</mn></mrow><annotation encoding=\"application/x-tex\">6\\cdot8=48</annotation></semantics></math></span> תאים."
+      },
+      "recap": "מספר התאים: כל פרמטר מוסיף אחד לאורך, בגלל ערך הבסיס.",
+      "recapHtml": "מספר התאים: כל פרמטר מוסיף אחד לאורך, בגלל ערך הבסיס."
+     },
+     {
+      "id": "C03-Q2",
+      "question": "ב-$P(i,j)$ (תת-סדרה פולינדרומית) כל תא עם $i<j$ קורא את התאים $(i+1,j-1)$, $(i+1,j)$ ו-$(i,j-1)$, ותאים עם $i\\ge j$ הם בסיס שמולא מראש. איזה סדר מילוי של התאים עם $i<j$ חוקי?",
+      "options": [
+       {
+        "id": "a",
+        "value": "לפי אורך הקטע $j-i$, מהקטן לגדול",
+        "type": "text",
+        "html": "לפי אורך הקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>−</mo><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">j-i</annotation></semantics></math></span>, מהקטן לגדול"
+       },
+       {
+        "id": "b",
+        "value": "$i$ עולה מ-$1$ עד $n$, ובכל שורה $j$ עולה מ-$i+1$ עד $n$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> עולה מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span>, ובכל שורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> עולה מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">i+1</annotation></semantics></math></span> עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$i$ יורד מ-$n$ עד $1$, ובכל שורה $j$ יורד מ-$n$ עד $i+1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> יורד מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>, ובכל שורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> יורד מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">i+1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$j$ יורד מ-$n$ עד $2$, ובכל עמודה $i$ עולה מ-$1$ עד $j-1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> יורד מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>, ובכל עמודה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> עולה מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">j-1</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "בסדר לפי אורך הקטע, כל שלושת התאים הנקראים הם קטעים קצרים יותר ולכן כבר מולאו. בסדר שבו $i$ עולה, התא $(i,j)$ קורא את $(i+1,j)$ מהשורה הבאה, שעוד לא מולאה. כש-$j$ יורד בתוך שורה, התא $(i,j)$ קורא את $(i,j-1)$ שמולא אחריו. כש-$j$ יורד בין עמודות, התא $(i,j)$ קורא את $(i,j-1)$ מהעמודה הבאה בסדר, שעוד לא מולאה.",
+      "recap": "בודקים שכל תא קורא רק תאים שכבר מולאו; בקטעים ממלאים לפי אורך.",
+      "questionHtml": "ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)</annotation></semantics></math></span> (תת-סדרה פולינדרומית) כל תא עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>&lt;</mo><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">i&lt;j</annotation></semantics></math></span> קורא את התאים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i+1,j-1)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i+1,j)</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j-1)</annotation></semantics></math></span>, ותאים עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>≥</mo><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">i\\ge j</annotation></semantics></math></span> הם בסיס שמולא מראש. איזה סדר מילוי של התאים עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>&lt;</mo><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">i&lt;j</annotation></semantics></math></span> חוקי?",
+      "explanationHtml": "בסדר לפי אורך הקטע, כל שלושת התאים הנקראים הם קטעים קצרים יותר ולכן כבר מולאו. בסדר שבו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> עולה, התא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)</annotation></semantics></math></span> קורא את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i+1,j)</annotation></semantics></math></span> מהשורה הבאה, שעוד לא מולאה. כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> יורד בתוך שורה, התא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)</annotation></semantics></math></span> קורא את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j-1)</annotation></semantics></math></span> שמולא אחריו. כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> יורד בין עמודות, התא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)</annotation></semantics></math></span> קורא את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j-1)</annotation></semantics></math></span> מהעמודה הבאה בסדר, שעוד לא מולאה.",
+      "recapHtml": "בודקים שכל תא קורא רק תאים שכבר מולאו; בקטעים ממלאים לפי אורך."
+     },
+     {
+      "id": "C03-Q3",
+      "step": {
+       "type": "order",
+       "prompt": "סדרו את אלגוריתם המילוי של טבלת ה-LCS.",
+       "lines": [
+        "מגדירים טבלה $L$ בגודל $(n+1)\\times(m+1)$",
+        "ממלאים את שורה $0$ ואת עמודה $0$ באפסים (מקרי הבסיס)",
+        "עוברים על $i=1..n$ ובתוך כל שורה על $j=1..m$, ומחשבים כל תא לפי הנוסחה",
+        "מחזירים את $L[n][m]$"
+       ],
+       "explain": "קודם צריך טבלה, אחר כך הבסיס שהנוסחה נשענת עליו, אחר כך המילוי שקורא את הבסיס, ורק בסוף קוראים את התשובה.",
+       "promptHtml": "סדרו את אלגוריתם המילוי של טבלת ה-LCS.",
+       "explainHtml": "קודם צריך טבלה, אחר כך הבסיס שהנוסחה נשענת עליו, אחר כך המילוי שקורא את הבסיס, ורק בסוף קוראים את התשובה.",
+       "linesHtml": [
+        "מגדירים טבלה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi></mrow><annotation encoding=\"application/x-tex\">L</annotation></semantics></math></span> בגודל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>n</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>×</mo><mo stretchy=\"false\">(</mo><mi>m</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(n+1)\\times(m+1)</annotation></semantics></math></span>",
+        "ממלאים את שורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> ואת עמודה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> באפסים (מקרי הבסיס)",
+        "עוברים על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>1..</mn><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">i=1..n</annotation></semantics></math></span> ובתוך כל שורה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>1..</mn><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">j=1..m</annotation></semantics></math></span>, ומחשבים כל תא לפי הנוסחה",
+        "מחזירים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">[</mo><mi>n</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">L[n][m]</annotation></semantics></math></span>"
+       ]
+      },
+      "recap": "טבלה, בסיס, מילוי בסדר חוקי, ואז קריאת התשובה.",
+      "recapHtml": "טבלה, בסיס, מילוי בסדר חוקי, ואז קריאת התשובה."
+     },
+     {
+      "id": "C03-Q4",
+      "step": {
+       "type": "numeric",
+       "prompt": "LCS של שלוש סדרות באורכים $4$, $5$ ו-$6$ משתמשת בטבלה $L(i,j,l)$ עם כל ערכי הבסיס. כמה תאים יש בטבלה?",
+       "answer": 210,
+       "tol": 0,
+       "explain": "$(4+1)(5+1)(6+1)=5\\cdot6\\cdot7=210$.",
+       "promptHtml": "LCS של שלוש סדרות באורכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">5</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span> משתמשת בטבלה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo separator=\"true\">,</mo><mi>l</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j,l)</annotation></semantics></math></span> עם כל ערכי הבסיס. כמה תאים יש בטבלה?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>4</mn><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">(</mo><mn>5</mn><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">(</mo><mn>6</mn><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>5</mn><mo>⋅</mo><mn>6</mn><mo>⋅</mo><mn>7</mn><mo>=</mo><mn>210</mn></mrow><annotation encoding=\"application/x-tex\">(4+1)(5+1)(6+1)=5\\cdot6\\cdot7=210</annotation></semantics></math></span>."
+      },
+      "recap": "שלוש סדרות, שלושה אינדקסים: מכפילים את אורכי הטווחים.",
+      "recapHtml": "שלוש סדרות, שלושה אינדקסים: מכפילים את אורכי הטווחים."
+     },
+     {
+      "id": "C03-Q5",
+      "step": {
+       "type": "numeric",
+       "prompt": "בנוסחה $F(i)=1+\\min_{1\\le j\\le\\sqrt i}F(i-j^2)$, כמה תאים אחרים של הטבלה קורא החישוב של התא $F(12)$?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "$\\lfloor\\sqrt{12}\\rfloor=3$, ולכן $j=1,2,3$ והתא קורא את $F(11)$, את $F(8)$ ואת $F(3)$. כולם מופיעים לפני $F(12)$, וזה מה שמאפשר למלא מ-$i=0$ כלפי מעלה.",
+       "promptHtml": "בנוסחה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><msub><mrow><mi>min</mi><mo>⁡</mo></mrow><mrow><mn>1</mn><mo>≤</mo><mi>j</mi><mo>≤</mo><msqrt><mi>i</mi></msqrt></mrow></msub><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><msup><mi>j</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)=1+\\min_{1\\le j\\le\\sqrt i}F(i-j^2)</annotation></semantics></math></span>, כמה תאים אחרים של הטבלה קורא החישוב של התא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>12</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(12)</annotation></semantics></math></span>?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">⌊</mo><msqrt><mn>12</mn></msqrt><mo stretchy=\"false\">⌋</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\lfloor\\sqrt{12}\\rfloor=3</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">j=1,2,3</annotation></semantics></math></span> והתא קורא את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>11</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(11)</annotation></semantics></math></span>, את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>8</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(8)</annotation></semantics></math></span> ואת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(3)</annotation></semantics></math></span>. כולם מופיעים לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>12</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(12)</annotation></semantics></math></span>, וזה מה שמאפשר למלא מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">i=0</annotation></semantics></math></span> כלפי מעלה."
+      },
+      "recap": "מספר הקריאות לתא הוא מספר הבחירות של ההחלטה האחרונה.",
+      "recapHtml": "מספר הקריאות לתא הוא מספר הבחירות של ההחלטה האחרונה."
+     },
+     {
+      "id": "C03-Q6",
+      "step": {
+       "type": "numeric",
+       "prompt": "בתת-סדרה פולינדרומית של מחרוזת באורך $6$ רק התאים $P(i,j)$ עם $1\\le i\\le j\\le6$ שייכים לבעיה. כמה תאים כאלה יש?",
+       "answer": 21,
+       "tol": 0,
+       "explain": "לכל $i$ יש $6-i+1$ ערכי $j$ אפשריים: $6+5+4+3+2+1=21$. זה בערך חצי מ-$6\\cdot6=36$.",
+       "promptHtml": "בתת-סדרה פולינדרומית של מחרוזת באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span> רק התאים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">P(i,j)</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>≤</mo><mi>i</mi><mo>≤</mo><mi>j</mi><mo>≤</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">1\\le i\\le j\\le6</annotation></semantics></math></span> שייכים לבעיה. כמה תאים כאלה יש?",
+       "explainHtml": "לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> יש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn><mo>−</mo><mi>i</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">6-i+1</annotation></semantics></math></span> ערכי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> אפשריים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn><mo>+</mo><mn>5</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>2</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>21</mn></mrow><annotation encoding=\"application/x-tex\">6+5+4+3+2+1=21</annotation></semantics></math></span>. זה בערך חצי מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn><mo>⋅</mo><mn>6</mn><mo>=</mo><mn>36</mn></mrow><annotation encoding=\"application/x-tex\">6\\cdot6=36</annotation></semantics></math></span>."
+      },
+      "recap": "משולש עליון: $n(n+1)/2$ תאים.",
+      "recapHtml": "משולש עליון: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mi mathvariant=\"normal\">/</mi><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">n(n+1)/2</annotation></semantics></math></span> תאים."
+     }
+    ]
+   },
+   {
+    "id": "C04",
+    "order": 4,
+    "icon": "✍️",
+    "title": "ממלאים טבלה ביד",
+    "goal": "למלא טבלה קטנה ביד לפי הנוסחה, בשלושה מבנים: LCS, מרחק עריכה וספירת מופעים.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<h3>שלב 4: מילוי ביד</h3>\n<p>במבחן מבקשים כמעט תמיד \"הראו הרצה על דוגמה\". מציירים טבלה, כותבים את הבסיס, וממלאים תא אחרי תא לפי סדר חוקי. בכל תא קודם קובעים <b>איזה מקרה בנוסחה חל</b> ואחר כך מציבים.</p>\n<h3>שלושה מבנים נפוצים</h3>\n<p><b>LCS</b> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> ושל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span> (שורות לפי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span>, עמודות לפי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span>):</p>\n<p><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">L(i,j)=0</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">i=0</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">j=0</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(i,j)=L(i-1,j-1)+1</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mi>i</mi></msub><mo>=</mo><msub><mi>Y</mi><mi>j</mi></msub></mrow><annotation encoding=\"application/x-tex\">X_i=Y_j</annotation></semantics></math></span>; אחרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>max</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i,j)=\\max\\bigl(L(i-1,j),L(i,j-1)\\bigr)</annotation></semantics></math></span>.</p>\n<p><b>מרחק עריכה</b> (מינימום פעולות הוספה, מחיקה והחלפה של תו) בין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span>:</p>\n<p><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">D(i,0)=i</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">D(0,j)=j</annotation></semantics></math></span>; כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mi>i</mi></msub><mo>=</mo><msub><mi>Y</mi><mi>j</mi></msub></mrow><annotation encoding=\"application/x-tex\">X_i=Y_j</annotation></semantics></math></span> מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>D</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">D(i,j)=D(i-1,j-1)</annotation></semantics></math></span>; אחרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>D</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>D</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>D</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo></mrow><annotation encoding=\"application/x-tex\">D(i,j)=1+\\min\\bigl(D(i-1,j-1),D(i-1,j),D(i,j-1)\\bigr)</annotation></semantics></math></span>.</p>\n<p><b>ספירת מופעים</b> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> כתת-סדרה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> (מהרמה הקודמת):</p>\n<p><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">C(i,0)=1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">C(0,j)=0</annotation></semantics></math></span> עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">j&gt;0</annotation></semantics></math></span>; כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[i]\\ne P[j]</annotation></semantics></math></span> מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i,j)=C(i-1,j)</annotation></semantics></math></span>; כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[i]=P[j]</annotation></semantics></math></span> מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i,j)=C(i-1,j-1)+C(i-1,j)</annotation></semantics></math></span>.</p>\n<div class=\"lesson-ex\">LCS של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>A</mi><mi>B</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">X=ABC</annotation></semantics></math></span> ושל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>A</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">Y=AC</annotation></semantics></math></span>. שורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> ועמודה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> הן אפסים. בשורה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>: מול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> התווים שווים ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(1,1)=L(0,0)+1=1</annotation></semantics></math></span>, ומול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> התווים שונים ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>max</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(1,2)=\\max(L(0,2),L(1,1))=1</annotation></semantics></math></span>. בשורה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> אין התאמות, והערכים מועתקים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1,1</annotation></semantics></math></span>. בשורה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>max</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(3,1)=\\max(L(2,1),L(3,0))=1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">L(3,2)=L(2,1)+1=2</annotation></semantics></math></span>. התשובה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">L(3,2)=2</annotation></semantics></math></span>.\n<table>\n<tr><th></th><th>∅</th><th>A</th><th>C</th></tr>\n<tr><th>∅</th><td>0</td><td>0</td><td>0</td></tr>\n<tr><th>A</th><td>0</td><td>1</td><td>1</td></tr>\n<tr><th>B</th><td>0</td><td>1</td><td>1</td></tr>\n<tr><th>C</th><td>0</td><td>1</td><td>2</td></tr>\n</table></div>\n<div class=\"lesson-trap\">⚠️ בהתאמה ב-LCS הולכים אל האלכסון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i-1,j-1)</annotation></semantics></math></span> ולא אל השכן שמעל. ובמרחק עריכה בתווים שווים לא מוסיפים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C04-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "ממלאים טבלת LCS לשורות $X=ACBAB$ ולעמודות $Y=ABCB$. מהו $L(3,2)$, כלומר ה-LCS של $ACB$ ו-$AB$?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "$X_3=B=Y_2$, ולכן $L(3,2)=L(2,1)+1$. ה-LCS של $AC$ ו-$A$ הוא $1$, ולכן התוצאה $2$ (התת-סדרה $AB$).",
+       "promptHtml": "ממלאים טבלת LCS לשורות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>A</mi><mi>C</mi><mi>B</mi><mi>A</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">X=ACBAB</annotation></semantics></math></span> ולעמודות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>A</mi><mi>B</mi><mi>C</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">Y=ABCB</annotation></semantics></math></span>. מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(3,2)</annotation></semantics></math></span>, כלומר ה-LCS של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mi>C</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">ACB</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">AB</annotation></semantics></math></span>?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mn>3</mn></msub><mo>=</mo><mi>B</mi><mo>=</mo><msub><mi>Y</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">X_3=B=Y_2</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(3,2)=L(2,1)+1</annotation></semantics></math></span>. ה-LCS של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">AC</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>, ולכן התוצאה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span> (התת-סדרה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">AB</annotation></semantics></math></span>)."
+      },
+      "recap": "תווים שווים: אלכסון ועוד אחד.",
+      "recapHtml": "תווים שווים: אלכסון ועוד אחד."
+     },
+     {
+      "id": "C04-Q2",
+      "question": "באותה טבלה ($X=ACBAB$ בשורות, $Y=ABCB$ בעמודות) מחשבים את $L(3,2)$. איזה חישוב נכון?",
+      "options": [
+       {
+        "id": "a",
+        "value": "התווים שווים ($B=B$), ולכן $L(3,2)=L(2,1)+1=2$",
+        "type": "text",
+        "html": "התווים שווים (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B=B</annotation></semantics></math></span>), ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">L(3,2)=L(2,1)+1=2</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "התווים שונים, ולכן $L(3,2)=\\max\\bigl(L(2,2),L(3,1)\\bigr)=1$",
+        "type": "text",
+        "html": "התווים שונים, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>max</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(3,2)=\\max\\bigl(L(2,2),L(3,1)\\bigr)=1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "התווים שווים, ולכן $L(3,2)=\\max\\bigl(L(2,2),L(3,1)\\bigr)=1$",
+        "type": "text",
+        "html": "התווים שווים, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>max</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(3,2)=\\max\\bigl(L(2,2),L(3,1)\\bigr)=1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "התווים שווים, ולכן $L(3,2)=L(2,1)=1$ בלי להוסיף",
+        "type": "text",
+        "html": "התווים שווים, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(3,2)=L(2,1)=1</annotation></semantics></math></span> בלי להוסיף"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "התווים $X_3$ ו-$Y_2$ שניהם $B$, ולכן חל מקרה ההתאמה: אלכסון ועוד אחד, $L(2,1)+1=2$. מי שאומר שהתווים שונים טועה בקריאת הקלט. מי שמשתמש במקסימום נותן $1$ ומפספס את ההתאמה. מי שלא מוסיף אחד מפספס את התו המשותף.",
+      "recap": "קודם קובעים שווה או שונה, ורק אחר כך מציבים.",
+      "questionHtml": "באותה טבלה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>A</mi><mi>C</mi><mi>B</mi><mi>A</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">X=ACBAB</annotation></semantics></math></span> בשורות, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>A</mi><mi>B</mi><mi>C</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">Y=ABCB</annotation></semantics></math></span> בעמודות) מחשבים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(3,2)</annotation></semantics></math></span>. איזה חישוב נכון?",
+      "explanationHtml": "התווים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mn>3</mn></msub></mrow><annotation encoding=\"application/x-tex\">X_3</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>Y</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">Y_2</annotation></semantics></math></span> שניהם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span>, ולכן חל מקרה ההתאמה: אלכסון ועוד אחד, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">L(2,1)+1=2</annotation></semantics></math></span>. מי שאומר שהתווים שונים טועה בקריאת הקלט. מי שמשתמש במקסימום נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> ומפספס את ההתאמה. מי שלא מוסיף אחד מפספס את התו המשותף.",
+      "recapHtml": "קודם קובעים שווה או שונה, ורק אחר כך מציבים."
+     },
+     {
+      "id": "C04-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "בהמשך אותה טבלה ($X=ACBAB$, $Y=ABCB$): מהו $L(5,4)$, אורך ה-LCS של שתי המחרוזות המלאות?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "השורות של הטבלה (עמודות $j=0..4$) הן: $0,0,0,0,0$; $0,1,1,1,1$; $0,1,1,2,2$; $0,1,2,2,3$; $0,1,2,2,3$; ובשורה האחרונה $0,1,2,2,3$. התשובה $L(5,4)=3$, למשל $ACB$ או $ABB$.",
+       "promptHtml": "בהמשך אותה טבלה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>A</mi><mi>C</mi><mi>B</mi><mi>A</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">X=ACBAB</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>A</mi><mi>B</mi><mi>C</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">Y=ABCB</annotation></semantics></math></span>): מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(5,4)</annotation></semantics></math></span>, אורך ה-LCS של שתי המחרוזות המלאות?",
+       "explainHtml": "השורות של הטבלה (עמודות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>0..4</mn></mrow><annotation encoding=\"application/x-tex\">j=0..4</annotation></semantics></math></span>) הן: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0,0,0,0,0</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">0,1,1,1,1</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">0,1,1,2,2</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,1,2,2,3</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,1,2,2,3</annotation></semantics></math></span>; ובשורה האחרונה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,1,2,2,3</annotation></semantics></math></span>. התשובה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">L(5,4)=3</annotation></semantics></math></span>, למשל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mi>C</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">ACB</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mi>B</mi><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">ABB</annotation></semantics></math></span>."
+      },
+      "recap": "התשובה נמצאת בפינה הימנית התחתונה.",
+      "recapHtml": "התשובה נמצאת בפינה הימנית התחתונה."
+     },
+     {
+      "id": "C04-Q4",
+      "step": {
+       "type": "numeric",
+       "prompt": "מרחק עריכה בין $X=ABC$ ל-$Y=BCD$ (הוספה, מחיקה והחלפה של תו, כל אחת עולה $1$) לפי הנוסחה מהשיעור. מהו $D(3,3)$?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "השורות של הטבלה: $0,1,2,3$; $1,1,2,3$; $2,1,2,3$; $3,2,1,2$. התשובה $D(3,3)=2$: מוחקים את $A$ ומוסיפים את $D$.",
+       "promptHtml": "מרחק עריכה בין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>A</mi><mi>B</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">X=ABC</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>B</mi><mi>C</mi><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">Y=BCD</annotation></semantics></math></span> (הוספה, מחיקה והחלפה של תו, כל אחת עולה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>) לפי הנוסחה מהשיעור. מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">D(3,3)</annotation></semantics></math></span>?",
+       "explainHtml": "השורות של הטבלה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,1,2,3</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">1,1,2,3</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">2,1,2,3</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">3,2,1,2</annotation></semantics></math></span>. התשובה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">D(3,3)=2</annotation></semantics></math></span>: מוחקים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> ומוסיפים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span>."
+      },
+      "recap": "מרחק עריכה: בתווים שווים אלכסון, אחרת $1+\\min$ משלושה שכנים.",
+      "recapHtml": "מרחק עריכה: בתווים שווים אלכסון, אחרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mi>min</mi><mo>⁡</mo></mrow><annotation encoding=\"application/x-tex\">1+\\min</annotation></semantics></math></span> משלושה שכנים."
+     },
+     {
+      "id": "C04-Q5",
+      "step": {
+       "type": "numeric",
+       "prompt": "כמה פעמים $P=ab$ מופיעה כתת-סדרה של $T=aabab$? מלאו את טבלת הספירה $C(i,j)$ ומצאו את $C(5,2)$.",
+       "answer": 5,
+       "tol": 0,
+       "explain": "העמודה $j=1$ סופרת את ה-$a$-ים עד כה: $1,2,2,3,3$. העמודה $j=2$: $C(i,2)=C(i-1,2)$ כש-$T[i]=a$, ו-$C(i,2)=C(i-1,2)+C(i-1,1)$ כש-$T[i]=b$. מתקבל $0,0,2,2,5$. לכן $C(5,2)=5$.",
+       "promptHtml": "כמה פעמים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo><mi>a</mi><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">P=ab</annotation></semantics></math></span> מופיעה כתת-סדרה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo><mi>a</mi><mi>a</mi><mi>b</mi><mi>a</mi><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">T=aabab</annotation></semantics></math></span>? מלאו את טבלת הספירה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i,j)</annotation></semantics></math></span> ומצאו את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(5,2)</annotation></semantics></math></span>.",
+       "explainHtml": "העמודה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">j=1</annotation></semantics></math></span> סופרת את ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span>-ים עד כה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">1,2,2,3,3</annotation></semantics></math></span>. העמודה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">j=2</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i,2)=C(i-1,2)</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">T[i]=a</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i,2)=C(i-1,2)+C(i-1,1)</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">T[i]=b</annotation></semantics></math></span>. מתקבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">0,0,2,2,5</annotation></semantics></math></span>. לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">C(5,2)=5</annotation></semantics></math></span>."
+      },
+      "recap": "ספירה: מחברים את שתי הקבוצות הזרות כשהתווים שווים.",
+      "recapHtml": "ספירה: מחברים את שתי הקבוצות הזרות כשהתווים שווים."
+     },
+     {
+      "bankId": "22B-A-Q4c",
+      "recap": "ממלאים את טבלת הספירה תא אחרי תא, ובכל תא קובעים שווה או שונה.",
+      "recapHtml": "ממלאים את טבלת הספירה תא אחרי תא, ובכל תא קובעים שווה או שונה."
+     }
+    ]
+   },
+   {
+    "id": "C05",
+    "order": 5,
+    "icon": "🧭",
+    "title": "שחזור הפתרון לאחור",
+    "goal": "לשחזר מהטבלה את הפתרון עצמו (לא רק את ערכו) בהליכה לאחור, ולזהות שחזור שגוי.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<h3>שלב 5: מערך ערכים הוא לא פתרון</h3>\n<p>הטבלה נותנת את <b>ערך</b> הפתרון האופטימלי (למשל אורך ה-LCS). כשמבקשים את הפתרון עצמו (את התת-סדרה, את היישור, את החיתוך) משחזרים אותו: מתחילים בתא התשובה ושואלים בכל תא <b>איזה מקרה בנוסחה יצר אותו</b>.</p>\n<h3>שחזור LCS</h3>\n<p>מתחילים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j)=(n,m)</annotation></semantics></math></span> ועד ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">i=0</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">j=0</annotation></semantics></math></span>:</p>\n<ul>\n<li>אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mi>i</mi></msub><mo>=</mo><msub><mi>Y</mi><mi>j</mi></msub></mrow><annotation encoding=\"application/x-tex\">X_i=Y_j</annotation></semantics></math></span>: התו שייך לתת-הסדרה. שומרים אותו והולכים לאלכסון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i-1,j-1)</annotation></semantics></math></span>.</li>\n<li>אחרת עוברים לשכן שערכו גדול יותר: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i-1,j)</annotation></semantics></math></span> אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>≥</mo><mi>L</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(i-1,j)\\ge L(i,j-1)</annotation></semantics></math></span>, ואחרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(i,j-1)</annotation></semantics></math></span>.</li>\n</ul>\n<p>התווים נאספים מהסוף להתחלה, ולכן בסוף <b>הופכים</b> את הסדר.</p>\n<div class=\"lesson-ex\">בטבלה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>A</mi><mi>B</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">X=ABC</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>A</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">Y=AC</annotation></semantics></math></span> מהרמה הקודמת: מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(3,2)</annotation></semantics></math></span> התווים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo>=</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C=C</annotation></semantics></math></span>, שומרים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> והולכים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,1)</annotation></semantics></math></span>. שם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo mathvariant=\"normal\">≠</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">B\\ne A</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">L(1,1)=1</annotation></semantics></math></span> גדול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">L(2,0)=0</annotation></semantics></math></span>, ולכן עולים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(1,1)</annotation></semantics></math></span>. שם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A=A</annotation></semantics></math></span>, שומרים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> ויורדים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(0,0)</annotation></semantics></math></span>. נאסף <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">CA</annotation></semantics></math></span>, ובהיפוך מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">AC</annotation></semantics></math></span>.</div>\n<h3>שוויון בין שכנים</h3>\n<p>כשהתווים שונים ושני השכנים שווים בערכם, <b>כל בחירה בסדר</b>: הערך של התא הוא הערך של כל אחד משני השכנים, ולכן שניהם מובילים לתת-סדרה משותפת באורך מלא. ייתכנו כמה תשובות נכונות שונות, וכל אחת מהן תקינה.</p>\n<div class=\"lesson-rule\">🔑 שחזור לוקח לכל היותר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mo>+</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">n+m</annotation></semantics></math></span> צעדים, אבל הוא צריך את הטבלה כולה, כי הוא קורא תאים מכל השורות.</div>\n<div class=\"lesson-trap\">⚠️ שוכחים להפוך את התווים בסוף, או שוכחים להזיז את שני האינדקסים בהתאמה.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C05-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "טבלת LCS של $X=ACBBC$ (שורות) ו-$Y=ABCA$ (עמודות):\n```\n      -  A  B  C  A\n  -   0  0  0  0  0\n  A   0  1  1  1  1\n  C   0  1  1  2  2\n  B   0  1  2  2  2\n  B   0  1  2  2  2\n  C   0  1  2  3  3\n```\nהשחזור מתחיל ב-$(5,4)$. שם $X_5=C$ ו-$Y_4=A$ שונים. לאיזה תא עוברים, ומהו ה-$j$ שלו (האינדקס בעמודות)?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "התווים שונים, ולכן עוברים לשכן עם הערך הגדול: $L(4,4)=2$ ו-$L(5,3)=3$. עוברים ל-$(5,3)$, ולכן $j=3$.",
+       "promptHtml": "טבלת LCS של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>A</mi><mi>C</mi><mi>B</mi><mi>B</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">X=ACBBC</annotation></semantics></math></span> (שורות) ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>A</mi><mi>B</mi><mi>C</mi><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">Y=ABCA</annotation></semantics></math></span> (עמודות):<pre class=\"code-block\" dir=\"ltr\"><code>      -  A  B  C  A\n  -   0  0  0  0  0\n  A   0  1  1  1  1\n  C   0  1  1  2  2\n  B   0  1  2  2  2\n  B   0  1  2  2  2\n  C   0  1  2  3  3</code></pre>השחזור מתחיל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(5,4)</annotation></semantics></math></span>. שם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mn>5</mn></msub><mo>=</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">X_5=C</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>Y</mi><mn>4</mn></msub><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">Y_4=A</annotation></semantics></math></span> שונים. לאיזה תא עוברים, ומהו ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> שלו (האינדקס בעמודות)?",
+       "explainHtml": "התווים שונים, ולכן עוברים לשכן עם הערך הגדול: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">L(4,4)=2</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">L(5,3)=3</annotation></semantics></math></span>. עוברים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(5,3)</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">j=3</annotation></semantics></math></span>."
+      },
+      "recap": "כשהתווים שונים, הולכים לשכן שערכו גדול יותר.",
+      "recapHtml": "כשהתווים שונים, הולכים לשכן שערכו גדול יותר."
+     },
+     {
+      "id": "C05-Q2",
+      "step": {
+       "type": "text",
+       "prompt": "באותה טבלה ממשיכים את השחזור עד הסוף. התווים נאספים לפי הסדר שבו פוגשים אותם (מהסוף להתחלה), לפני ההיפוך. איזו מחרוזת נאספת? (באותיות לטיניות גדולות)",
+       "accept": [
+        "CBA"
+       ],
+       "normalize": "lower",
+       "explain": "מ-$(5,3)$ התווים $C=C$, שומרים $C$ ועוברים ל-$(4,2)$. שם $B=B$, שומרים $B$ ועוברים ל-$(3,1)$. שם $B\\ne A$ ועולים ל-$(2,1)$ ואחר כך ל-$(1,1)$, שם $A=A$ ושומרים $A$. נאסף $CBA$, ובהיפוך התת-סדרה המשותפת היא $ABC$. היא יחידה, ולכן לא תלויה בבחירות בשוויון.",
+       "promptHtml": "באותה טבלה ממשיכים את השחזור עד הסוף. התווים נאספים לפי הסדר שבו פוגשים אותם (מהסוף להתחלה), לפני ההיפוך. איזו מחרוזת נאספת? (באותיות לטיניות גדולות)",
+       "explainHtml": "מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(5,3)</annotation></semantics></math></span> התווים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo>=</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C=C</annotation></semantics></math></span>, שומרים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> ועוברים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(4,2)</annotation></semantics></math></span>. שם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B=B</annotation></semantics></math></span>, שומרים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> ועוברים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(3,1)</annotation></semantics></math></span>. שם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo mathvariant=\"normal\">≠</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">B\\ne A</annotation></semantics></math></span> ועולים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,1)</annotation></semantics></math></span> ואחר כך ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(1,1)</annotation></semantics></math></span>, שם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A=A</annotation></semantics></math></span> ושומרים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>. נאסף <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mi>B</mi><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">CBA</annotation></semantics></math></span>, ובהיפוך התת-סדרה המשותפת היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mi>B</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">ABC</annotation></semantics></math></span>. היא יחידה, ולכן לא תלויה בבחירות בשוויון."
+      },
+      "recap": "התווים נאספים מהסוף להתחלה, ולכן הופכים.",
+      "recapHtml": "התווים נאספים מהסוף להתחלה, ולכן הופכים."
+     },
+     {
+      "id": "C05-Q3",
+      "question": "באותה טבלה בתא $(4,3)$ מתקיים $X_4=B$ ו-$Y_3=C$, והשכנים שווים: $L(3,3)=2$ ו-$L(4,2)=2$. מה עושים בשחזור?",
+      "options": [
+       {
+        "id": "a",
+        "value": "אפשר לעבור לכל אחד משני השכנים: שניהם מובילים לתת-סדרה משותפת באורך מלא",
+        "type": "text",
+        "html": "אפשר לעבור לכל אחד משני השכנים: שניהם מובילים לתת-סדרה משותפת באורך מלא"
+       },
+       {
+        "id": "b",
+        "value": "חובה לעבור לשכן שמעל, אחרת התוצאה אינה תת-סדרה משותפת ארוכה ביותר",
+        "type": "text",
+        "html": "חובה לעבור לשכן שמעל, אחרת התוצאה אינה תת-סדרה משותפת ארוכה ביותר"
+       },
+       {
+        "id": "c",
+        "value": "חובה לעבור לשכן שמשמאל, אחרת התוצאה אינה תת-סדרה משותפת ארוכה ביותר",
+        "type": "text",
+        "html": "חובה לעבור לשכן שמשמאל, אחרת התוצאה אינה תת-סדרה משותפת ארוכה ביותר"
+       },
+       {
+        "id": "d",
+        "value": "אי אפשר להמשיך, ויש לחשב את הטבלה מחדש",
+        "type": "text",
+        "html": "אי אפשר להמשיך, ויש לחשב את הטבלה מחדש"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "הערך $L(4,3)$ שווה לערך של כל אחד מהשכנים, כי הוא המקסימום שלהם. לכן כל מעבר שומר על האורך המלא של מה שנשאר, והתוצאה היא תת-סדרה משותפת ארוכה ביותר בכל מקרה. בדוגמה הזאת שתי הבחירות נותנות את אותה מחרוזת $ABC$, ובדוגמאות אחרות הן נותנות מחרוזות שונות, שתיהן נכונות. אין צורך לחשב את הטבלה מחדש.",
+      "recap": "בשוויון בין שכנים כל בחירה חוקית.",
+      "questionHtml": "באותה טבלה בתא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(4,3)</annotation></semantics></math></span> מתקיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>X</mi><mn>4</mn></msub><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">X_4=B</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>Y</mi><mn>3</mn></msub><mo>=</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">Y_3=C</annotation></semantics></math></span>, והשכנים שווים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">L(3,3)=2</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">L(4,2)=2</annotation></semantics></math></span>. מה עושים בשחזור?",
+      "explanationHtml": "הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>L</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">L(4,3)</annotation></semantics></math></span> שווה לערך של כל אחד מהשכנים, כי הוא המקסימום שלהם. לכן כל מעבר שומר על האורך המלא של מה שנשאר, והתוצאה היא תת-סדרה משותפת ארוכה ביותר בכל מקרה. בדוגמה הזאת שתי הבחירות נותנות את אותה מחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mi>B</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">ABC</annotation></semantics></math></span>, ובדוגמאות אחרות הן נותנות מחרוזות שונות, שתיהן נכונות. אין צורך לחשב את הטבלה מחדש.",
+      "recapHtml": "בשוויון בין שכנים כל בחירה חוקית."
+     },
+     {
+      "id": "C05-Q4",
+      "step": {
+       "type": "findbug",
+       "code": true,
+       "prompt": "פונקציית השחזור הבאה מקבלת את $X$, את $Y$ ואת טבלת ה-LCS. בגרסה הזאת שורה אחת שונתה והפונקציה מחזירה תוצאה שגויה. מצאו אותה.",
+       "lines": [
+        "def recon(X, Y, L):",
+        "    i, j, out = len(X), len(Y), []",
+        "    while i > 0 and j > 0:",
+        "        if X[i-1] == Y[j-1]:",
+        "            out.append(X[i-1]); i -= 1",
+        "        elif L[i-1][j] >= L[i][j-1]:",
+        "            i -= 1",
+        "        else:",
+        "            j -= 1",
+        "    return ''.join(reversed(out))"
+       ],
+       "bugIndex": 4,
+       "explain": "בהתאמה צריך להזיז את שני האינדקסים, $i$ ו-$j$, אל האלכסון. כאן מוזז רק $i$, ולכן אותו תו של $Y$ יכול להיאסף שוב ושוב והתוצאה מכילה תווים עודפים.",
+       "promptHtml": "פונקציית השחזור הבאה מקבלת את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span>, את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span> ואת טבלת ה-LCS. בגרסה הזאת שורה אחת שונתה והפונקציה מחזירה תוצאה שגויה. מצאו אותה.",
+       "explainHtml": "בהתאמה צריך להזיז את שני האינדקסים, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span>, אל האלכסון. כאן מוזז רק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>, ולכן אותו תו של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span> יכול להיאסף שוב ושוב והתוצאה מכילה תווים עודפים.",
+       "linesHtml": [
+        "def recon(X, Y, L):",
+        "    i, j, out = len(X), len(Y), []",
+        "    while i &gt; 0 and j &gt; 0:",
+        "        if X[i-1] == Y[j-1]:",
+        "            out.append(X[i-1]); i -= 1",
+        "        elif L[i-1][j] &gt;= L[i][j-1]:",
+        "            i -= 1",
+        "        else:",
+        "            j -= 1",
+        "    return ''.join(reversed(out))"
+       ]
+      },
+      "recap": "התאמה: שומרים את התו ויורדים באלכסון, כלומר מקטינים גם $i$ וגם $j$.",
+      "recapHtml": "התאמה: שומרים את התו ויורדים באלכסון, כלומר מקטינים גם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> וגם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span>."
+     },
+     {
+      "id": "C05-Q5",
+      "step": {
+       "type": "numeric",
+       "prompt": "באותה טבלה ($X=ACBBC$, $Y=ABCA$) מתחילים את השחזור ב-$(5,4)$ ועוצרים כש-$i=0$ או $j=0$. כמה תאים של הטבלה מבקרים בהם בדרך, כולל תא ההתחלה ותא העצירה?",
+       "answer": 7,
+       "tol": 0,
+       "explain": "המסלול: $(5,4)$, $(5,3)$, $(4,2)$, $(3,1)$, $(2,1)$, $(1,1)$ ו-$(0,0)$. זה $7$ תאים, פחות מ-$n+m+1=10$.",
+       "promptHtml": "באותה טבלה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi><mo>=</mo><mi>A</mi><mi>C</mi><mi>B</mi><mi>B</mi><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">X=ACBBC</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi><mo>=</mo><mi>A</mi><mi>B</mi><mi>C</mi><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">Y=ABCA</annotation></semantics></math></span>) מתחילים את השחזור ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(5,4)</annotation></semantics></math></span> ועוצרים כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">i=0</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">j=0</annotation></semantics></math></span>. כמה תאים של הטבלה מבקרים בהם בדרך, כולל תא ההתחלה ותא העצירה?",
+       "explainHtml": "המסלול: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(5,4)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(5,3)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(4,2)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(3,1)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,1)</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(1,1)</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(0,0)</annotation></semantics></math></span>. זה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">7</annotation></semantics></math></span> תאים, פחות מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mo>+</mo><mi>m</mi><mo>+</mo><mn>1</mn><mo>=</mo><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">n+m+1=10</annotation></semantics></math></span>."
+      },
+      "recap": "השחזור הולך תא אחד בכל צעד, ולכן זמנו לינארי בגודל הקלט.",
+      "recapHtml": "השחזור הולך תא אחד בכל צעד, ולכן זמנו לינארי בגודל הקלט."
+     }
+    ]
+   },
+   {
+    "id": "C06",
+    "order": 6,
+    "icon": "⏱️",
+    "title": "סיבוכיות זמן ומקום",
+    "goal": "לחשב זמן ומקום של אלגוריתם תכנות דינמי: מספר התאים כפול העבודה לתא, וחיסכון במקום כשלא משחזרים.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<h3>שלב 6: כמה זה עולה</h3>\n<p>במבחן שואלים כמעט תמיד על זמן ומקום, ומצפים לנימוק קצר ולא לפירוט האלגוריתם. הנוסחה לזמן:</p>\n<div class=\"lesson-formula\">זמן = (מספר התאים בטבלה) × (העבודה לחישוב תא אחד)</div>\n<ul>\n<li>LCS של שתי מחרוזות: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">nm</annotation></semantics></math></span> תאים, חישוב תא ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(1)</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(nm)</annotation></semantics></math></span>. בשלוש סדרות באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> זה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><msup><mi>n</mi><mn>3</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n^3)</annotation></semantics></math></span>.</li>\n<li>חיתוך מחרוזת באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> למילים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> תאים, וכל תא בודק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n)</annotation></semantics></math></span> נקודות חיתוך אפשריות, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n^2)</annotation></semantics></math></span>.</li>\n<li>בעיית הריבועים: תא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)</annotation></semantics></math></span> בודק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">⌊</mo><msqrt><mi>i</mi></msqrt><mo stretchy=\"false\">⌋</mo></mrow><annotation encoding=\"application/x-tex\">\\lfloor\\sqrt i\\rfloor</annotation></semantics></math></span> בחירות, ולכן הזמן הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><msqrt><mi>i</mi></msqrt><mo>=</mo><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>N</mi><msqrt><mi>N</mi></msqrt><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\sum_i\\sqrt i=\\Theta(N\\sqrt N)</annotation></semantics></math></span>.</li>\n</ul>\n<h3>מקום</h3>\n<p>מקום = גודל הטבלה, אלא אם חוסכים. כשצריך רק את <b>הערך</b> ולא את הפתרון, אפשר לשמור רק את השורות שהנוסחה קוראת. ב-LCS כל שורה תלויה בשורה שלפניה בלבד, ולכן מספיקות שתי שורות באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">m+1</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(m)</annotation></semantics></math></span> (או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mi>n</mi><mo separator=\"true\">,</mo><mi>m</mi><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(\\min(n,m))</annotation></semantics></math></span> אם בוחרים את הצד הקצר). אבל <b>שחזור</b> של הפתרון צריך את הטבלה כולה.</p>\n<h3>למה הרקורסיה בלי טבלה גרועה</h3>\n<p>רקורסיה נאיבית פותרת את אותה תת-בעיה שוב ושוב. ב-LCS כשהתווים שונים כל קריאה פותחת שתי קריאות, ולכן מספר הקריאות הוא אקספוננציאלי. הטבלה (או שמירת תוצאות, memoization) פותרת כל תת-בעיה פעם אחת.</p>\n<div class=\"lesson-ex\">נסמן ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">c(i,j)</annotation></semantics></math></span> את מספר הקריאות (כולל הקריאה עצמה) של רקורסיה נאיבית כשאף זוג תווים אינו שווה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">c(i,j)=1</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">i=0</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">j=0</annotation></semantics></math></span>, ואחרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>c</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>c</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">c(i,j)=1+c(i-1,j)+c(i,j-1)</annotation></semantics></math></span>. לדוגמה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>11</mn></mrow><annotation encoding=\"application/x-tex\">c(2,2)=11</annotation></semantics></math></span>.</div>\n<div class=\"lesson-trap\">⚠️ כשכתוב \"במקרה הגרוע\" ומכפילים תאים בעבודה לתא, מוודאים שהעבודה לתא באמת קבועה. בחיתוך למילים היא לינארית.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C06-Q1",
+      "step": {
+       "type": "text",
+       "prompt": "מהי סיבוכיות הזמן של אלגוריתם תכנות דינמי ל-LCS של שלוש סדרות באורך $n$ כל אחת, כשחישוב תא לוקח זמן קבוע? (למשל O(n))",
+       "accept": [
+        "O(n^3)"
+       ],
+       "normalize": "complexity",
+       "explain": "יש $(n+1)^3$ תאים וחישוב כל תא הוא $O(1)$, ולכן $O(n^3)$.",
+       "promptHtml": "מהי סיבוכיות הזמן של אלגוריתם תכנות דינמי ל-LCS של שלוש סדרות באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> כל אחת, כשחישוב תא לוקח זמן קבוע? (למשל O(n))",
+       "explainHtml": "יש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>n</mi><mo>+</mo><mn>1</mn><msup><mo stretchy=\"false\">)</mo><mn>3</mn></msup></mrow><annotation encoding=\"application/x-tex\">(n+1)^3</annotation></semantics></math></span> תאים וחישוב כל תא הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(1)</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><msup><mi>n</mi><mn>3</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n^3)</annotation></semantics></math></span>."
+      },
+      "recap": "זמן = תאים × עבודה לתא.",
+      "recapHtml": "זמן = תאים × עבודה לתא."
+     },
+     {
+      "id": "C06-Q2",
+      "step": {
+       "type": "text",
+       "prompt": "מחרוזת $S$ באורך $n$ נחתכת למילים חוקיות במינימום חלקים לפי $C(i)=\\min_{0\\le j<i}\\bigl(C(j)+\\tau(j+1,i)\\bigr)$, כשבדיקת $\\tau$ לוקחת זמן קבוע. מהי סיבוכיות הזמן? (למשל O(n))",
+       "accept": [
+        "O(n^2)"
+       ],
+       "normalize": "complexity",
+       "explain": "יש $n+1$ תאים, וכל תא עובר על עד $n$ ערכי $j$ ובודק כל אחד בזמן קבוע. סך הכול $\\sum_{i}i=\\Theta(n^2)$.",
+       "promptHtml": "מחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">S</annotation></semantics></math></span> באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> נחתכת למילים חוקיות במינימום חלקים לפי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><msub><mrow><mi>min</mi><mo>⁡</mo></mrow><mrow><mn>0</mn><mo>≤</mo><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow></msub><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>τ</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i)=\\min_{0\\le j&lt;i}\\bigl(C(j)+\\tau(j+1,i)\\bigr)</annotation></semantics></math></span>, כשבדיקת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>τ</mi></mrow><annotation encoding=\"application/x-tex\">\\tau</annotation></semantics></math></span> לוקחת זמן קבוע. מהי סיבוכיות הזמן? (למשל O(n))",
+       "explainHtml": "יש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">n+1</annotation></semantics></math></span> תאים, וכל תא עובר על עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> ערכי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> ובודק כל אחד בזמן קבוע. סך הכול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><mi>i</mi><mo>=</mo><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\sum_{i}i=\\Theta(n^2)</annotation></semantics></math></span>."
+      },
+      "recap": "תא אחד בחיתוך עולה $O(n)$, ולכן הזמן ריבועי.",
+      "recapHtml": "תא אחד בחיתוך עולה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n)</annotation></semantics></math></span>, ולכן הזמן ריבועי."
+     },
+     {
+      "id": "C06-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "מחשבים רק את ערך ה-LCS של $X$ באורך $6$ ושל $Y$ באורך $9$, ושומרים רק שתי שורות של הטבלה (שורה לפי $i$, כל שורה באורך $|Y|+1$). כמה תאים נשמרים בזיכרון בכל רגע?",
+       "answer": 20,
+       "tol": 0,
+       "explain": "כל שורה היא $9+1=10$ תאים, ושתי שורות הן $20$ תאים, לעומת $7\\cdot10=70$ בטבלה המלאה.",
+       "promptHtml": "מחשבים רק את ערך ה-LCS של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>X</mi></mrow><annotation encoding=\"application/x-tex\">X</annotation></semantics></math></span> באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span> ושל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Y</mi></mrow><annotation encoding=\"application/x-tex\">Y</annotation></semantics></math></span> באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">9</annotation></semantics></math></span>, ושומרים רק שתי שורות של הטבלה (שורה לפי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>, כל שורה באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>Y</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|Y|+1</annotation></semantics></math></span>). כמה תאים נשמרים בזיכרון בכל רגע?",
+       "explainHtml": "כל שורה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">9+1=10</annotation></semantics></math></span> תאים, ושתי שורות הן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>20</mn></mrow><annotation encoding=\"application/x-tex\">20</annotation></semantics></math></span> תאים, לעומת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn><mo>⋅</mo><mn>10</mn><mo>=</mo><mn>70</mn></mrow><annotation encoding=\"application/x-tex\">7\\cdot10=70</annotation></semantics></math></span> בטבלה המלאה."
+      },
+      "recap": "בלי שחזור מספיקות שתי שורות: מקום $O(m)$.",
+      "recapHtml": "בלי שחזור מספיקות שתי שורות: מקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(m)</annotation></semantics></math></span>."
+     },
+     {
+      "id": "C06-Q4",
+      "step": {
+       "type": "numeric",
+       "prompt": "רקורסיה נאיבית ל-LCS על שתי מחרוזות באורך $3$ שאין בהן אף זוג תווים שווים. $c(i,j)=1$ כש-$i=0$ או $j=0$, ואחרת $c(i,j)=1+c(i-1,j)+c(i,j-1)$. כמה קריאות כוללות מתבצעות בחישוב $c(3,3)$ (כולל הקריאה הראשונה)?",
+       "answer": 39,
+       "tol": 0,
+       "explain": "מתקבל $c(1,1)=3$, $c(1,2)=c(2,1)=5$, $c(2,2)=11$, $c(1,3)=c(3,1)=7$, $c(2,3)=c(3,2)=19$ ו-$c(3,3)=1+19+19=39$. לעומת זאת הטבלה מחשבת רק $16$ תאים.",
+       "promptHtml": "רקורסיה נאיבית ל-LCS על שתי מחרוזות באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> שאין בהן אף זוג תווים שווים. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">c(i,j)=1</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">i=0</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">j=0</annotation></semantics></math></span>, ואחרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mi>c</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>c</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">c(i,j)=1+c(i-1,j)+c(i,j-1)</annotation></semantics></math></span>. כמה קריאות כוללות מתבצעות בחישוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">c(3,3)</annotation></semantics></math></span> (כולל הקריאה הראשונה)?",
+       "explainHtml": "מתקבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">c(1,1)=3</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>c</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">c(1,2)=c(2,1)=5</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>11</mn></mrow><annotation encoding=\"application/x-tex\">c(2,2)=11</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>c</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">c(1,3)=c(3,1)=7</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>c</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>19</mn></mrow><annotation encoding=\"application/x-tex\">c(2,3)=c(3,2)=19</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><mn>19</mn><mo>+</mo><mn>19</mn><mo>=</mo><mn>39</mn></mrow><annotation encoding=\"application/x-tex\">c(3,3)=1+19+19=39</annotation></semantics></math></span>. לעומת זאת הטבלה מחשבת רק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>16</mn></mrow><annotation encoding=\"application/x-tex\">16</annotation></semantics></math></span> תאים."
+      },
+      "recap": "רקורסיה בלי טבלה חוזרת על אותן תת-בעיות ומתפוצצת.",
+      "recapHtml": "רקורסיה בלי טבלה חוזרת על אותן תת-בעיות ומתפוצצת."
+     },
+     {
+      "id": "C06-Q5",
+      "question": "בבעיית הריבועים מחשבים $F(i)=1+\\min_{1\\le j\\le\\sqrt i}F(i-j^2)$ לכל $1\\le i\\le N$ בטבלה אחת. מהי סיבוכיות הזמן המדויקת, בסימון $\\Theta$?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$\\Theta(N\\sqrt N)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>N</mi><msqrt><mi>N</mi></msqrt><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(N\\sqrt N)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$\\Theta(N)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>N</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(N)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$\\Theta(N^2)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><msup><mi>N</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(N^2)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$\\Theta(N\\log N)$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>N</mi><mi>log</mi><mo>⁡</mo><mi>N</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(N\\log N)</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "יש $N$ תאים ותא $F(i)$ עובר על $\\lfloor\\sqrt i\\rfloor$ בחירות, כלומר $\\sum_{i\\le N}\\sqrt i=\\Theta(N\\sqrt N)$. הערך $\\Theta(N)$ שוכח שכל תא עובר על יותר מבחירה אחת. $\\Theta(N^2)$ מניח $N$ בחירות לתא, וזה גבוה מדי כי הבחירות הן רק עד $\\sqrt i$.",
+      "recap": "זמן = תאים × מספר הבחירות לתא.",
+      "questionHtml": "בבעיית הריבועים מחשבים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo>+</mo><msub><mrow><mi>min</mi><mo>⁡</mo></mrow><mrow><mn>1</mn><mo>≤</mo><mi>j</mi><mo>≤</mo><msqrt><mi>i</mi></msqrt></mrow></msub><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><msup><mi>j</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)=1+\\min_{1\\le j\\le\\sqrt i}F(i-j^2)</annotation></semantics></math></span> לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>≤</mo><mi>i</mi><mo>≤</mo><mi>N</mi></mrow><annotation encoding=\"application/x-tex\">1\\le i\\le N</annotation></semantics></math></span> בטבלה אחת. מהי סיבוכיות הזמן המדויקת, בסימון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi></mrow><annotation encoding=\"application/x-tex\">\\Theta</annotation></semantics></math></span>?",
+      "explanationHtml": "יש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi></mrow><annotation encoding=\"application/x-tex\">N</annotation></semantics></math></span> תאים ותא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(i)</annotation></semantics></math></span> עובר על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">⌊</mo><msqrt><mi>i</mi></msqrt><mo stretchy=\"false\">⌋</mo></mrow><annotation encoding=\"application/x-tex\">\\lfloor\\sqrt i\\rfloor</annotation></semantics></math></span> בחירות, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mo>∑</mo><mrow><mi>i</mi><mo>≤</mo><mi>N</mi></mrow></msub><msqrt><mi>i</mi></msqrt><mo>=</mo><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>N</mi><msqrt><mi>N</mi></msqrt><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\sum_{i\\le N}\\sqrt i=\\Theta(N\\sqrt N)</annotation></semantics></math></span>. הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>N</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(N)</annotation></semantics></math></span> שוכח שכל תא עובר על יותר מבחירה אחת. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><msup><mi>N</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(N^2)</annotation></semantics></math></span> מניח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi></mrow><annotation encoding=\"application/x-tex\">N</annotation></semantics></math></span> בחירות לתא, וזה גבוה מדי כי הבחירות הן רק עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msqrt><mi>i</mi></msqrt></mrow><annotation encoding=\"application/x-tex\">\\sqrt i</annotation></semantics></math></span>.",
+      "recapHtml": "זמן = תאים × מספר הבחירות לתא."
+     },
+     {
+      "bankId": "25A-A-Q2c",
+      "recap": "בטבלה ריבועית זמן ומקום ריבועיים; בלי שחזור אפשר לשמור שורה אחת בלבד.",
+      "recapHtml": "בטבלה ריבועית זמן ומקום ריבועיים; בלי שחזור אפשר לשמור שורה אחת בלבד."
+     }
+    ]
+   },
+   {
+    "id": "C07",
+    "order": 7,
+    "icon": "✂️",
+    "title": "חיתוך ופיצול, וספירה",
+    "goal": "לפתור בעיות חיתוך מחרוזת לחלקים, ובעיות ספירה, עם נוסחה שבה הצעד האחרון הוא החלק האחרון.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<h3>צורת מבחן: חיתוך (פיצול)</h3>\n<p>נתונה מחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">S</annotation></semantics></math></span> באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span>, ורוצים לחתוך אותה לחלקים רצופים שכל אחד מהם \"חוקי\" (מילה במילון, פולינדרום וכדומה), עם מספר חלקים מינימלי. כאן הפרמטר אחד: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i)</annotation></semantics></math></span> הוא מספר החלקים המינימלי בחיתוך חוקי של הרישא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[1..i]</annotation></semantics></math></span>.</p>\n<p>הצעד האחרון: החלק האחרון הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo>+</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[j+1..i]</annotation></semantics></math></span> עבור איזשהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo>≤</mo><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">0\\le j&lt;i</annotation></semantics></math></span>, והשאר הוא חיתוך של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>j</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[1..j]</annotation></semantics></math></span>. נסמן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>τ</mi><mo stretchy=\"false\">(</mo><mi>a</mi><mo separator=\"true\">,</mo><mi>b</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\tau(a,b)=1</annotation></semantics></math></span> אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mi>a</mi><mi mathvariant=\"normal\">.</mi><mi mathvariant=\"normal\">.</mi><mi>b</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[a..b]</annotation></semantics></math></span> חוקי, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∞</mi></mrow><annotation encoding=\"application/x-tex\">\\infty</annotation></semantics></math></span> אם לא:\n<span class=\"math-block\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mspace width=\"2em\"/><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><munder><mrow><mi>min</mi><mo>⁡</mo></mrow><mrow><mn>0</mn><mo>≤</mo><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow></munder><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>τ</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo><mi mathvariant=\"normal\">.</mi></mrow><annotation encoding=\"application/x-tex\">C(0)=0,\\qquad C(i)=\\min_{0\\le j&lt;i}\\bigl(C(j)+\\tau(j+1,i)\\bigr).</annotation></semantics></math></span>\nהתשובה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(n)</annotation></semantics></math></span>.</p>\n<div class=\"lesson-rule\">🔑 ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∞</mi></mrow><annotation encoding=\"application/x-tex\">\\infty</annotation></semantics></math></span> הוא האיבר הנייטרלי של מינימום: ערך שאף חיתוך אמיתי לא מפסיד לו. רישא שאי אפשר לחתוך מקבלת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∞</mi></mrow><annotation encoding=\"application/x-tex\">\\infty</annotation></semantics></math></span>, ולכן המינימום מתעלם ממנה. אם היו שומרים שם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">-1</annotation></semantics></math></span>, רישא שאי אפשר לחתוך הייתה \"מנצחת\" ומשבשת את התשובה.</div>\n<div class=\"lesson-ex\">מילון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mi>a</mi><mi>b</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>c</mi><mi>d</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>a</mi><mi>b</mi><mi>c</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{ab,\\ cd,\\ abc\\}</annotation></semantics></math></span> והמחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>c</mi><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">abcd</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">C(2)=1</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">ab</annotation></semantics></math></span>), <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">C(3)=1</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">abc</annotation></semantics></math></span>), <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>min</mi><mo>⁡</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mn>2</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mi>τ</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mtext> </mtext><mi>C</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mi>τ</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo><mo>=</mo><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mtext> </mtext><mn>1</mn><mo>+</mo><mi mathvariant=\"normal\">∞</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">C(4)=\\min\\bigl(C(2)+\\tau(3,4),\\,C(3)+\\tau(4,4)\\bigr)=\\min(1+1,\\,1+\\infty)=2</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mtext> </mtext><mi>c</mi><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">ab\\,cd</annotation></semantics></math></span>.</div>\n<p>אותו שלד עובד לפולינדרומים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>τ</mi><mo stretchy=\"false\">(</mo><mi>a</mi><mo separator=\"true\">,</mo><mi>b</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\tau(a,b)=1</annotation></semantics></math></span> אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mi>a</mi><mi mathvariant=\"normal\">.</mi><mi mathvariant=\"normal\">.</mi><mi>b</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[a..b]</annotation></semantics></math></span> פולינדרום. הוא עובד גם לבעיות אחרות שבהן הצעד האחרון הוא חלק אחרון.</p>\n<h3>צורת מבחן: ספירה</h3>\n<p>כשסופרים כמה חיתוכים חוקיים יש, המקרים זרים, ולכן <b>מחברים</b> במקום לקחת מינימום. נסמן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">N(i)</annotation></semantics></math></span> את מספר החיתוכים החוקיים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[1..i]</annotation></semantics></math></span>:\n<span class=\"math-block\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"block\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn><mo separator=\"true\">,</mo><mspace width=\"2em\"/><mi>N</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><munder><mo>∑</mo><mrow><mn>0</mn><mo>≤</mo><mi>j</mi><mo>&lt;</mo><mi>i</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>τ</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow></munder><mi>N</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mi mathvariant=\"normal\">.</mi></mrow><annotation encoding=\"application/x-tex\">N(0)=1,\\qquad N(i)=\\sum_{0\\le j&lt;i,\\ \\tau(j+1,i)=1}N(j).</annotation></semantics></math></span>\nהבסיס הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>: יש חיתוך אחד של המחרוזת הריקה (לא חותכים כלום).</p>\n<p>בספירת מופעים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> כתת-סדרה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> משתמשים בנוסחה מהרמה השנייה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">C(i,0)=1</annotation></semantics></math></span>, ובהתאמה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo><mo>+</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i,j)=C(i-1,j-1)+C(i-1,j)</annotation></semantics></math></span>.</p>\n<div class=\"lesson-trap\">⚠️ מבלבלים בין \"מינימום חלקים\" ל\"מספר חיתוכים\". הראשון משתמש ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>min</mi><mo>⁡</mo></mrow><annotation encoding=\"application/x-tex\">\\min</annotation></semantics></math></span> וב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">+1</annotation></semantics></math></span>, השני ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>∑</mo></mrow><annotation encoding=\"application/x-tex\">\\sum</annotation></semantics></math></span> ובלי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">+1</annotation></semantics></math></span>.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C07-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "המילון הוא $\\{cat,\\ cats,\\ and,\\ sand,\\ dog,\\ catsand\\}$ והמחרוזת $S=catsanddog$. מהו מספר החלקים המינימלי בחיתוך חוקי?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "$catsand\\,dog$ הוא חיתוך לשני חלקים. אין חיתוך לחלק אחד, כי $S$ עצמה אינה במילון. לכן $C(10)=2$.",
+       "promptHtml": "המילון הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mi>c</mi><mi>a</mi><mi>t</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>c</mi><mi>a</mi><mi>t</mi><mi>s</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>a</mi><mi>n</mi><mi>d</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>s</mi><mi>a</mi><mi>n</mi><mi>d</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>d</mi><mi>o</mi><mi>g</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>c</mi><mi>a</mi><mi>t</mi><mi>s</mi><mi>a</mi><mi>n</mi><mi>d</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{cat,\\ cats,\\ and,\\ sand,\\ dog,\\ catsand\\}</annotation></semantics></math></span> והמחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo>=</mo><mi>c</mi><mi>a</mi><mi>t</mi><mi>s</mi><mi>a</mi><mi>n</mi><mi>d</mi><mi>d</mi><mi>o</mi><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">S=catsanddog</annotation></semantics></math></span>. מהו מספר החלקים המינימלי בחיתוך חוקי?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mi>a</mi><mi>t</mi><mi>s</mi><mi>a</mi><mi>n</mi><mi>d</mi><mtext> </mtext><mi>d</mi><mi>o</mi><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">catsand\\,dog</annotation></semantics></math></span> הוא חיתוך לשני חלקים. אין חיתוך לחלק אחד, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">S</annotation></semantics></math></span> עצמה אינה במילון. לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mn>10</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">C(10)=2</annotation></semantics></math></span>."
+      },
+      "recap": "מינימום חלקים: $C(i)=\\min(C(j)+1)$ על כל החלק האחרון החוקי.",
+      "recapHtml": "מינימום חלקים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i)=\\min(C(j)+1)</annotation></semantics></math></span> על כל החלק האחרון החוקי."
+     },
+     {
+      "id": "C07-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "עם אותו מילון ואותה מחרוזת $catsanddog$: כמה חיתוכים חוקיים שונים יש?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "המילה היחידה שמסתיימת במקום העשירי היא $dog$, ולכן $N(10)=N(7)$. את $catsand$ אפשר לחתוך בשלוש דרכים: $cat\\,sand$ (החלק האחרון $sand$ אחרי $N(3)=1$), $cats\\,and$ (החלק האחרון $and$ אחרי $N(4)=1$) ו-$catsand$ (אחרי $N(0)=1$). לכן יש $3$ חיתוכים.",
+       "promptHtml": "עם אותו מילון ואותה מחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mi>a</mi><mi>t</mi><mi>s</mi><mi>a</mi><mi>n</mi><mi>d</mi><mi>d</mi><mi>o</mi><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">catsanddog</annotation></semantics></math></span>: כמה חיתוכים חוקיים שונים יש?",
+       "explainHtml": "המילה היחידה שמסתיימת במקום העשירי היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mi>o</mi><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">dog</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>10</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mi>N</mi><mo stretchy=\"false\">(</mo><mn>7</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">N(10)=N(7)</annotation></semantics></math></span>. את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mi>a</mi><mi>t</mi><mi>s</mi><mi>a</mi><mi>n</mi><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">catsand</annotation></semantics></math></span> אפשר לחתוך בשלוש דרכים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mi>a</mi><mi>t</mi><mtext> </mtext><mi>s</mi><mi>a</mi><mi>n</mi><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">cat\\,sand</annotation></semantics></math></span> (החלק האחרון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi><mi>a</mi><mi>n</mi><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">sand</annotation></semantics></math></span> אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>3</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">N(3)=1</annotation></semantics></math></span>), <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mi>a</mi><mi>t</mi><mi>s</mi><mtext> </mtext><mi>a</mi><mi>n</mi><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">cats\\,and</annotation></semantics></math></span> (החלק האחרון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>n</mi><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">and</annotation></semantics></math></span> אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">N(4)=1</annotation></semantics></math></span>) ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mi>a</mi><mi>t</mi><mi>s</mi><mi>a</mi><mi>n</mi><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">catsand</annotation></semantics></math></span> (אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">N(0)=1</annotation></semantics></math></span>). לכן יש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> חיתוכים."
+      },
+      "recap": "ספירה: מחברים את מספר החיתוכים של כל אפשרות לחלק האחרון.",
+      "recapHtml": "ספירה: מחברים את מספר החיתוכים של כל אפשרות לחלק האחרון."
+     },
+     {
+      "id": "C07-Q3",
+      "question": "$N(i)$ הוא מספר החיתוכים החוקיים של $S[1..i]$ למילים. איזו נוסחה נכונה ל-$N(i)$ עבור $i\\ge1$?",
+      "options": [
+       {
+        "id": "a",
+        "value": "סכום של $N(j)$ על כל $j<i$ ש-$S[j+1..i]$ מילה חוקית, עם $N(0)=1$",
+        "type": "text",
+        "html": "סכום של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">N(j)</annotation></semantics></math></span> על כל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">j&lt;i</annotation></semantics></math></span> ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo>+</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[j+1..i]</annotation></semantics></math></span> מילה חוקית, עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">N(0)=1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "מקסימום של $N(j)$ על כל $j<i$ ש-$S[j+1..i]$ מילה חוקית, עם $N(0)=1$",
+        "type": "text",
+        "html": "מקסימום של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">N(j)</annotation></semantics></math></span> על כל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">j&lt;i</annotation></semantics></math></span> ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo>+</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[j+1..i]</annotation></semantics></math></span> מילה חוקית, עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">N(0)=1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "סכום של $N(j)$ על כל $j<i$ ש-$S[j+1..i]$ מילה חוקית, עם $N(0)=0$",
+        "type": "text",
+        "html": "סכום של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">N(j)</annotation></semantics></math></span> על כל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">j&lt;i</annotation></semantics></math></span> ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo>+</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[j+1..i]</annotation></semantics></math></span> מילה חוקית, עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">N(0)=0</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "מינימום של $N(j)+1$ על כל $j<i$ ש-$S[j+1..i]$ מילה חוקית, עם $N(0)=0$",
+        "type": "text",
+        "html": "מינימום של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">N(j)+1</annotation></semantics></math></span> על כל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">j&lt;i</annotation></semantics></math></span> ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo>+</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[j+1..i]</annotation></semantics></math></span> מילה חוקית, עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">N(0)=0</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "כל חיתוך מתחיל בבחירת החלק האחרון, ושני חיתוכים עם חלק אחרון שונה הם שונים, ולכן סוכמים. הבסיס $N(0)=1$ סופר את החיתוך הריק. עם מקסימום מקבלים רק את הקבוצה הגדולה ביותר ולא את כולן. עם בסיס $0$ כל הטבלה מתאפסת. הנוסחה עם מינימום ו-$+1$ היא נוסחת המינימום, לא הספירה.",
+      "recap": "ספירה: סכום, ובסיס $1$.",
+      "questionHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">N(i)</annotation></semantics></math></span> הוא מספר החיתוכים החוקיים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">S[1..i]</annotation></semantics></math></span> למילים. איזו נוסחה נכונה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">N(i)</annotation></semantics></math></span> עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>≥</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">i\\ge1</annotation></semantics></math></span>?",
+      "explanationHtml": "כל חיתוך מתחיל בבחירת החלק האחרון, ושני חיתוכים עם חלק אחרון שונה הם שונים, ולכן סוכמים. הבסיס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>N</mi><mo stretchy=\"false\">(</mo><mn>0</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">N(0)=1</annotation></semantics></math></span> סופר את החיתוך הריק. עם מקסימום מקבלים רק את הקבוצה הגדולה ביותר ולא את כולן. עם בסיס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> כל הטבלה מתאפסת. הנוסחה עם מינימום ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">+1</annotation></semantics></math></span> היא נוסחת המינימום, לא הספירה.",
+      "recapHtml": "ספירה: סכום, ובסיס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>."
+     },
+     {
+      "id": "C07-Q4",
+      "step": {
+       "type": "numeric",
+       "prompt": "המחרוזת $S=abacdc$ נחתכת לפולינדרומים (חלק הוא חוקי אם הוא נקרא אותו דבר משני הכיוונים). מהו מספר הפולינדרומים המינימלי בחיתוך?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "$aba\\,cdc$ הוא חיתוך לשני פולינדרומים. אין חיתוך לאחד, כי $abacdc$ אינה פולינדרום. לכן התשובה $2$.",
+       "promptHtml": "המחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo>=</mo><mi>a</mi><mi>b</mi><mi>a</mi><mi>c</mi><mi>d</mi><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">S=abacdc</annotation></semantics></math></span> נחתכת לפולינדרומים (חלק הוא חוקי אם הוא נקרא אותו דבר משני הכיוונים). מהו מספר הפולינדרומים המינימלי בחיתוך?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>a</mi><mtext> </mtext><mi>c</mi><mi>d</mi><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">aba\\,cdc</annotation></semantics></math></span> הוא חיתוך לשני פולינדרומים. אין חיתוך לאחד, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mi>b</mi><mi>a</mi><mi>c</mi><mi>d</mi><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">abacdc</annotation></semantics></math></span> אינה פולינדרום. לכן התשובה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>."
+      },
+      "recap": "אותו שלד חיתוך: מחליפים רק את הבדיקה של חלק חוקי.",
+      "recapHtml": "אותו שלד חיתוך: מחליפים רק את הבדיקה של חלק חוקי."
+     },
+     {
+      "id": "C07-Q5",
+      "question": "ב-$C(i)=\\min_{0\\le j<i}\\bigl(C(j)+\\tau(j+1,i)\\bigr)$ רישא שאי אפשר לחתוך צריכה לקבל ערך שהמינימום מתעלם ממנו. איזה ערך נכון?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$\\infty$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∞</mi></mrow><annotation encoding=\"application/x-tex\">\\infty</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$0$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$-1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">-1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "רק $\\infty$ גדול או שווה לכל ערך אמיתי, ולכן $\\min(\\infty,v)=v$ לכל ערך אמיתי $v$. עם $0$ או $-1$ הרישא הבלתי חוקית הייתה מנצחת בכל מינימום. עם $1$ היא הייתה מנצחת בכל חיתוך שגדול משני חלקים.",
+      "recap": "רישא בלתי אפשרית מקבלת $\\infty$ במינימום.",
+      "questionHtml": "ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo>=</mo><msub><mrow><mi>min</mi><mo>⁡</mo></mrow><mrow><mn>0</mn><mo>≤</mo><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow></msub><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">(</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>τ</mi><mo stretchy=\"false\">(</mo><mi>j</mi><mo>+</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>i</mi><mo stretchy=\"false\">)</mo><mo fence=\"true\" stretchy=\"true\" minsize=\"1.2em\" maxsize=\"1.2em\">)</mo></mrow><annotation encoding=\"application/x-tex\">C(i)=\\min_{0\\le j&lt;i}\\bigl(C(j)+\\tau(j+1,i)\\bigr)</annotation></semantics></math></span> רישא שאי אפשר לחתוך צריכה לקבל ערך שהמינימום מתעלם ממנו. איזה ערך נכון?",
+      "explanationHtml": "רק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∞</mi></mrow><annotation encoding=\"application/x-tex\">\\infty</annotation></semantics></math></span> גדול או שווה לכל ערך אמיתי, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>min</mi><mo>⁡</mo><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∞</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">\\min(\\infty,v)=v</annotation></semantics></math></span> לכל ערך אמיתי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>. עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">-1</annotation></semantics></math></span> הרישא הבלתי חוקית הייתה מנצחת בכל מינימום. עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> היא הייתה מנצחת בכל חיתוך שגדול משני חלקים.",
+      "recapHtml": "רישא בלתי אפשרית מקבלת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∞</mi></mrow><annotation encoding=\"application/x-tex\">\\infty</annotation></semantics></math></span> במינימום."
+     },
+     {
+      "id": "C07-Q6",
+      "step": {
+       "type": "numeric",
+       "prompt": "כמה פעמים $P=rabbit$ מופיעה כתת-סדרה של $T=rabbbit$? (סופרים אוספי מקומות שונים)",
+       "answer": 3,
+       "tol": 0,
+       "explain": "האותיות $r,a,i,t$ מופיעות פעם אחת ב-$T$, ולכן ההבחנה היחידה היא איזו משלוש האותיות $b$ מדלגים עליה. $P$ צריכה שתי אותיות $b$, ויש $\\binom32=3$ דרכים לבחור אותן. אותה תשובה מתקבלת מהטבלה: $C(7,6)=3$.",
+       "promptHtml": "כמה פעמים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo><mi>r</mi><mi>a</mi><mi>b</mi><mi>b</mi><mi>i</mi><mi>t</mi></mrow><annotation encoding=\"application/x-tex\">P=rabbit</annotation></semantics></math></span> מופיעה כתת-סדרה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo><mi>r</mi><mi>a</mi><mi>b</mi><mi>b</mi><mi>b</mi><mi>i</mi><mi>t</mi></mrow><annotation encoding=\"application/x-tex\">T=rabbbit</annotation></semantics></math></span>? (סופרים אוספי מקומות שונים)",
+       "explainHtml": "האותיות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>r</mi><mo separator=\"true\">,</mo><mi>a</mi><mo separator=\"true\">,</mo><mi>i</mi><mo separator=\"true\">,</mo><mi>t</mi></mrow><annotation encoding=\"application/x-tex\">r,a,i,t</annotation></semantics></math></span> מופיעות פעם אחת ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span>, ולכן ההבחנה היחידה היא איזו משלוש האותיות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span> מדלגים עליה. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> צריכה שתי אותיות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span>, ויש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mrow><mo fence=\"true\">(</mo><mfrac linethickness=\"0px\"><mn>3</mn><mn>2</mn></mfrac><mo fence=\"true\">)</mo></mrow><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\binom32=3</annotation></semantics></math></span> דרכים לבחור אותן. אותה תשובה מתקבלת מהטבלה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo stretchy=\"false\">(</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">C(7,6)=3</annotation></semantics></math></span>."
+      },
+      "recap": "ספירת מופעים של תת-סדרה: סופרים אוספי מקומות, לא מחרוזות.",
+      "recapHtml": "ספירת מופעים של תת-סדרה: סופרים אוספי מקומות, לא מחרוזות."
+     }
+    ]
+   }
+  ]
+ },
+ "graph_search": {
+  "levels": [
+   {
+    "id": "C01",
+    "order": 1,
+    "icon": "🌊",
+    "title": "BFS: תור, שכבות ומרחקים",
+    "goal": "להריץ BFS בעיפרון: סדר הגילוי, השכבה של כל קודקוד והאב שלו.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>גרף <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi><mo>=</mo><mo stretchy=\"false\">(</mo><mi>V</mi><mo separator=\"true\">,</mo><mi>E</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">G=(V,E)</annotation></semantics></math></span> נשמר בבחינה כ<b>רשימת סמיכויות</b>: לכל קודקוד רשימה של שכניו. היא תופסת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(|V|+|E|)</annotation></semantics></math></span> מקום, ומעבר על שכני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> לוקח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>deg</mi><mo>⁡</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(\\deg v)</annotation></semantics></math></span>. החלופה, <b>מטריצת סמיכויות</b>, תופסת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><msup><mi mathvariant=\"normal\">∣</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(|V|^2)</annotation></semantics></math></span> ומאפשרת לבדוק אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo><mo>∈</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">(u,v)\\in E</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(1)</annotation></semantics></math></span>.</p>\n<h3>BFS: חיפוש לרוחב</h3>\n<p>BFS מתחיל בקודקוד מקור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> וסורק את הגרף <b>שכבה אחר שכבה</b>. הוא מחזיק <b>תור</b> (נכנס ראשון, יוצא ראשון). כל קודקוד הוא לבן (עוד לא התגלה), אפור (התגלה ונמצא בתור) או שחור (טופל).</p>\n<ul>\n<li>מכניסים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> לתור עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>s</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">d[s]=0</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>s</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mtext>NIL</mtext></mrow><annotation encoding=\"application/x-tex\">\\pi[s]=\\text{NIL}</annotation></semantics></math></span>.</li>\n<li>שולפים את הקודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> מראש התור. לכל שכן <b>לבן</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>, לפי סדר הרשימה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]=d[u]+1</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[v]=u</annotation></semantics></math></span>, ומכניסים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> לסוף התור.</li>\n<li>חוזרים עד שהתור ריק.</li>\n</ul>\n<div class=\"lesson-rule\">🔑 <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[v]</annotation></semantics></math></span> נקבע ברגע <b>הגילוי</b> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> (לא ברגע השליפה), והאב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[v]</annotation></semantics></math></span> הוא הקודקוד שגילה אותו ראשון. קודקוד מתגלה פעם אחת בלבד, ולכן יש לו אב אחד.</div>\n<p>בתרגילים כאן השכנים של כל קודקוד נסרקים <b>בסדר אלפביתי</b>, אלא אם כתוב אחרת.</p>\n<div class=\"lesson-ex\"><b>דוגמה.</b> הגרף הלא מכוון עם הצלעות A–C, A–D, B–C, C–E, D–E, E–F, F–G, ו-BFS מ-A. התור מתחיל ב-A. שולפים את A ומגלים את C ואת D (d=1). שולפים את C: שכניו A, B, E, ורק B ו-E לבנים, ולכן הם מתגלים (d=2). שולפים את D: שכניו A ו-E כבר התגלו. שולפים את B: אין חדש. שולפים את E ומגלים את F (d=3), ובסוף את G (d=4). לחצו על הכפתורים כדי לעבור על הריצה צעד אחר צעד.\n<div class=\"graph-fig\" data-graph='{\"directed\": false, \"algo\": \"bfs\", \"source\": \"A\", \"caption\": \"BFS מ-A\", \"nodes\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\"], \"edges\": [{\"u\": \"A\", \"v\": \"C\"}, {\"u\": \"A\", \"v\": \"D\"}, {\"u\": \"B\", \"v\": \"C\"}, {\"u\": \"C\", \"v\": \"E\"}, {\"u\": \"D\", \"v\": \"E\"}, {\"u\": \"E\", \"v\": \"F\"}, {\"u\": \"F\", \"v\": \"G\"}], \"expect\": {\"order\": [\"A\", \"C\", \"D\", \"B\", \"E\", \"F\", \"G\"], \"d\": {\"A\": 0, \"B\": 2, \"C\": 1, \"D\": 1, \"E\": 2, \"F\": 3, \"G\": 4}, \"pi\": {\"A\": null, \"B\": \"C\", \"C\": \"A\", \"D\": \"A\", \"E\": \"C\", \"F\": \"E\", \"G\": \"F\"}}}'></div>\n</div>\n<div class=\"lesson-trap\">⚠️ סדר הגילוי הוא סדר הכניסה לתור, לא סדר האותיות. B קטן מ-D אלפביתית, אבל D התגלה לפני B כי D הוא שכן של A (שכבה 1) ו-B רק שכן של C (שכבה 2).</div>\n<p><b>זמן הריצה:</b> כל קודקוד נכנס לתור פעם אחת וכל רשימת סמיכויות נסרקת פעם אחת, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(|V|+|E|)</annotation></semantics></math></span>.</p>\n"
+    },
+    "questions": [
+     {
+      "id": "C01-Q1",
+      "question": "גרף עם $n$ קודקודים ו-$m$ צלעות. כמה מקום תופסת רשימת סמיכויות, וכמה מטריצת סמיכויות?",
+      "options": [
+       {
+        "id": "a",
+        "value": "רשימה: $\\Theta(n+m)$, מטריצה: $\\Theta(n^2)$",
+        "type": "text",
+        "html": "רשימה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(n+m)</annotation></semantics></math></span>, מטריצה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(n^2)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "רשימה: $\\Theta(n^2)$, מטריצה: $\\Theta(n+m)$",
+        "type": "text",
+        "html": "רשימה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(n^2)</annotation></semantics></math></span>, מטריצה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(n+m)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "בשתיהן $\\Theta(n+m)$",
+        "type": "text",
+        "html": "בשתיהן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(n+m)</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "רשימה: $\\Theta(m)$ תמיד, מטריצה: $\\Theta(n)$",
+        "type": "text",
+        "html": "רשימה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(m)</annotation></semantics></math></span> תמיד, מטריצה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(n)</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "ברשימה יש כניסה לכל קודקוד ($n$) ופריט לכל קצה של צלע ($m$ או $2m$), כלומר $\\Theta(n+m)$. מטריצה שומרת תא לכל זוג קודקודים, $\\Theta(n^2)$, גם כשכמעט אין צלעות. ההיפוך שגוי. לכתוב $\\Theta(m)$ בלבד שגוי כי קודקוד מבודד עדיין תופס כניסה ברשימה (ו-$m$ יכול להיות 0), ומטריצה לעולם אינה לינארית ב-$n$.",
+      "recap": "רשימת סמיכויות: $\\Theta(|V|+|E|)$ · מטריצה: $\\Theta(|V|^2)$",
+      "questionHtml": "גרף עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> קודקודים ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> צלעות. כמה מקום תופסת רשימת סמיכויות, וכמה מטריצת סמיכויות?",
+      "explanationHtml": "ברשימה יש כניסה לכל קודקוד (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span>) ופריט לכל קצה של צלע (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">2m</annotation></semantics></math></span>), כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(n+m)</annotation></semantics></math></span>. מטריצה שומרת תא לכל זוג קודקודים, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(n^2)</annotation></semantics></math></span>, גם כשכמעט אין צלעות. ההיפוך שגוי. לכתוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(m)</annotation></semantics></math></span> בלבד שגוי כי קודקוד מבודד עדיין תופס כניסה ברשימה (ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> יכול להיות 0), ומטריצה לעולם אינה לינארית ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span>.",
+      "recapHtml": "רשימת סמיכויות: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(|V|+|E|)</annotation></semantics></math></span> · מטריצה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><msup><mi mathvariant=\"normal\">∣</mi><mn>2</mn></msup><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(|V|^2)</annotation></semantics></math></span>"
+     },
+     {
+      "id": "C01-Q2",
+      "step": {
+       "type": "text",
+       "normalize": "lower",
+       "prompt": "בגרף הלא מכוון עם הצלעות $A\\!-\\!C,\\ A\\!-\\!D,\\ B\\!-\\!C,\\ C\\!-\\!E,\\ D\\!-\\!E,\\ E\\!-\\!F,\\ F\\!-\\!G$ מריצים BFS מהקודקוד $A$ (שכנים בסדר אלפביתי). מהו סדר הגילוי של הקודקודים? כתבו את האותיות מופרדות בפסיקים.",
+       "accept": [
+        "A, C, D, B, E, F, G",
+        "A,C,D,B,E,F,G",
+        "A C D B E F G"
+       ],
+       "key": "order",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F",
+         "G"
+        ],
+        "directed": false,
+        "algo": "bfs",
+        "source": "A",
+        "edges": [
+         {
+          "u": "A",
+          "v": "C"
+         },
+         {
+          "u": "A",
+          "v": "D"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "C",
+          "v": "E"
+         },
+         {
+          "u": "D",
+          "v": "E"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         },
+         {
+          "u": "F",
+          "v": "G"
+         }
+        ]
+       },
+       "explain": "A מגלה את C ואת D. C מגלה את B ואת E. D לא מגלה אף אחד חדש. B לא מגלה. E מגלה את F, ו-F מגלה את G. הסדר: A, C, D, B, E, F, G.",
+       "promptHtml": "בגרף הלא מכוון עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>C</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>F</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>F</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">A\\!-\\!C,\\ A\\!-\\!D,\\ B\\!-\\!C,\\ C\\!-\\!E,\\ D\\!-\\!E,\\ E\\!-\\!F,\\ F\\!-\\!G</annotation></semantics></math></span> מריצים BFS מהקודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> (שכנים בסדר אלפביתי). מהו סדר הגילוי של הקודקודים? כתבו את האותיות מופרדות בפסיקים.",
+       "explainHtml": "A מגלה את C ואת D. C מגלה את B ואת E. D לא מגלה אף אחד חדש. B לא מגלה. E מגלה את F, ו-F מגלה את G. הסדר: A, C, D, B, E, F, G."
+      },
+      "recap": "סדר הגילוי = סדר הכניסה לתור, שכבה אחר שכבה",
+      "recapHtml": "סדר הגילוי = סדר הכניסה לתור, שכבה אחר שכבה"
+     },
+     {
+      "id": "C01-Q3",
+      "step": {
+       "type": "numeric",
+       "answer": 4,
+       "tol": 0,
+       "key": "d.G",
+       "prompt": "באותו גרף ובאותה ריצה (BFS מ-$A$): מהו $d[G]$?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F",
+         "G"
+        ],
+        "directed": false,
+        "algo": "bfs",
+        "source": "A",
+        "edges": [
+         {
+          "u": "A",
+          "v": "C"
+         },
+         {
+          "u": "A",
+          "v": "D"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "C",
+          "v": "E"
+         },
+         {
+          "u": "D",
+          "v": "E"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         },
+         {
+          "u": "F",
+          "v": "G"
+         }
+        ]
+       },
+       "explain": "המסלול הקצר ביותר מ-$A$ ל-$G$ הוא $A,C,E,F,G$ (או דרך $D$), ארבע צלעות. $G$ מתגלה בשכבה הרביעית.",
+       "promptHtml": "באותו גרף ובאותה ריצה (BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>): מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>G</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[G]</annotation></semantics></math></span>?",
+       "explainHtml": "המסלול הקצר ביותר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>E</mi><mo separator=\"true\">,</mo><mi>F</mi><mo separator=\"true\">,</mo><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">A,C,E,F,G</annotation></semantics></math></span> (או דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span>), ארבע צלעות. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> מתגלה בשכבה הרביעית."
+      },
+      "recap": "d[v] = מספר הצלעות במסלול הקצר ביותר מהמקור",
+      "recapHtml": "d[v] = מספר הצלעות במסלול הקצר ביותר מהמקור"
+     },
+     {
+      "id": "C01-Q4",
+      "step": {
+       "type": "choice",
+       "correctId": "a",
+       "key": "pi.E",
+       "prompt": "באותו גרף ובאותה ריצה: מי האב $\\pi[E]$ של $E$ בעץ ה-BFS?",
+       "options": [
+        {
+         "id": "a",
+         "value": "C",
+         "type": "text",
+         "html": "C"
+        },
+        {
+         "id": "b",
+         "value": "D",
+         "type": "text",
+         "html": "D"
+        },
+        {
+         "id": "c",
+         "value": "F",
+         "type": "text",
+         "html": "F"
+        },
+        {
+         "id": "d",
+         "value": "A",
+         "type": "text",
+         "html": "A"
+        }
+       ],
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F",
+         "G"
+        ],
+        "directed": false,
+        "algo": "bfs",
+        "source": "A",
+        "edges": [
+         {
+          "u": "A",
+          "v": "C"
+         },
+         {
+          "u": "A",
+          "v": "D"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "C",
+          "v": "E"
+         },
+         {
+          "u": "D",
+          "v": "E"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         },
+         {
+          "u": "F",
+          "v": "G"
+         }
+        ]
+       },
+       "explain": "גם $C$ וגם $D$ שכנים של $E$, אבל $C$ נשלף מהתור לפני $D$ (הוא התגלה קודם, כי $C$ קודם ל-$D$ ברשימה של $A$), ולכן $C$ מגלה את $E$ ראשון. $D$ מוצא את $E$ כבר אפור. $F$ מתגלה רק אחרי $E$, ו-$A$ אינו שכן של $E$.",
+       "promptHtml": "באותו גרף ובאותה ריצה: מי האב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>E</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[E]</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> בעץ ה-BFS?",
+       "explainHtml": "גם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> וגם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> שכנים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span>, אבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> נשלף מהתור לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> (הוא התגלה קודם, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> קודם ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> ברשימה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>), ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> מגלה את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> ראשון. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> מוצא את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> כבר אפור. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> מתגלה רק אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> אינו שכן של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span>."
+      },
+      "recap": "האב הוא מי שנשלף ראשון מבין השכנים וגילה אותו",
+      "recapHtml": "האב הוא מי שנשלף ראשון מבין השכנים וגילה אותו"
+     },
+     {
+      "id": "C01-Q5",
+      "question": "באותו גרף ובאותה ריצה (BFS מ-$A$, שכנים בסדר אלפביתי): אחרי ששלפנו מהתור את $A$ ואחר כך את $C$ (ולפני ששלפנו קודקוד נוסף), מה תוכן התור, מראש התור ועד סופו?",
+      "options": [
+       {
+        "id": "a",
+        "value": "D, B, E",
+        "type": "text",
+        "html": "D, B, E"
+       },
+       {
+        "id": "b",
+        "value": "B, D, E",
+        "type": "text",
+        "html": "B, D, E"
+       },
+       {
+        "id": "c",
+        "value": "D, E",
+        "type": "text",
+        "html": "D, E"
+       },
+       {
+        "id": "d",
+        "value": "C, D, B, E",
+        "type": "text",
+        "html": "C, D, B, E"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "אחרי שליפת $A$ התור הוא $C,D$. שליפת $C$ מוציאה אותו ומוסיפה בסוף את הלבנים $B$ ו-$E$ (בסדר אלפביתי), לכן התור הוא $D,B,E$. הסדר $B,D,E$ שגוי כי $D$ נכנס לתור קודם ל-$B$. התוכן $D,E$ שוכח את $B$ (שכן לבן של $C$). בתוכן עם $C$ הקודקוד כבר נשלף ולא נמצא בתור.",
+      "recap": "שולפים מהראש, מכניסים את הלבנים בסוף",
+      "graph": {
+       "nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+       ],
+       "directed": false,
+       "edges": [
+        {
+         "u": "A",
+         "v": "C"
+        },
+        {
+         "u": "A",
+         "v": "D"
+        },
+        {
+         "u": "B",
+         "v": "C"
+        },
+        {
+         "u": "C",
+         "v": "E"
+        },
+        {
+         "u": "D",
+         "v": "E"
+        },
+        {
+         "u": "E",
+         "v": "F"
+        },
+        {
+         "u": "F",
+         "v": "G"
+        }
+       ]
+      },
+      "questionHtml": "באותו גרף ובאותה ריצה (BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>, שכנים בסדר אלפביתי): אחרי ששלפנו מהתור את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> ואחר כך את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> (ולפני ששלפנו קודקוד נוסף), מה תוכן התור, מראש התור ועד סופו?",
+      "explanationHtml": "אחרי שליפת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> התור הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo separator=\"true\">,</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">C,D</annotation></semantics></math></span>. שליפת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> מוציאה אותו ומוסיפה בסוף את הלבנים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> (בסדר אלפביתי), לכן התור הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">D,B,E</annotation></semantics></math></span>. הסדר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo separator=\"true\">,</mo><mi>D</mi><mo separator=\"true\">,</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">B,D,E</annotation></semantics></math></span> שגוי כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> נכנס לתור קודם ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span>. התוכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo separator=\"true\">,</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">D,E</annotation></semantics></math></span> שוכח את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> (שכן לבן של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span>). בתוכן עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> הקודקוד כבר נשלף ולא נמצא בתור.",
+      "recapHtml": "שולפים מהראש, מכניסים את הלבנים בסוף"
+     },
+     {
+      "bankId": "25A-B-Q5b",
+      "recap": "ברשימת סמיכויות רגילה ספירת השכנים עוברת על הרשימה: $O(\\deg v)$, לא $O(1)$",
+      "recapHtml": "ברשימת סמיכויות רגילה ספירת השכנים עוברת על הרשימה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>deg</mi><mo>⁡</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(\\deg v)</annotation></semantics></math></span>, לא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(1)</annotation></semantics></math></span>"
+     }
+    ]
+   },
+   {
+    "id": "C02",
+    "order": 2,
+    "icon": "🧭",
+    "title": "BFS בפעולה: מרחק, קשירות וטיולים",
+    "goal": "להשתמש ב-BFS כדי לענות על שאלות: מי ישיג, כמה רכיבי קשירות, מסלול קצר דרך קודקוד, צומת הפרדה ודו-צדדיות.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>ב-BFS מהמקור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> מתקיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>s</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">d[v]=\\delta(s,v)</annotation></semantics></math></span>, המרחק (מספר הצלעות) במסלול הקצר ביותר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>, בגרף <b>לא ממושקל</b>. קודקוד שלא התגלה אינו ישיג מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span>, והמרחק אליו הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∞</mi></mrow><annotation encoding=\"application/x-tex\">\\infty</annotation></semantics></math></span>. מכאן כמה שימושים, כולם ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(|V|+|E|)</annotation></semantics></math></span>.</p>\n<h3>קשירות ורכיבים</h3>\n<p>גרף לא מכוון <b>קשיר</b> אם מכל קודקוד אפשר להגיע לכל קודקוד. מריצים BFS מקודקוד אחד: הגרף קשיר אם ורק אם <b>כל</b> הקודקודים התגלו (התור מתרוקן תמיד, גם בגרף לא קשיר). <b>רכיב קשירות</b> הוא תת-גרף קשיר מקסימלי, כלומר אי אפשר להוסיף לו עוד קודקוד ועדיין להישאר קשיר. מספר הרכיבים: מריצים BFS מכל קודקוד שעוד לבן, ומונים כמה פעמים התחלנו.</p>\n<h3>טיול ומסלול</h3>\n<p><b>טיול</b> רשאי לחזור על קודקודים ועל צלעות, <b>מסלול</b> לא. קיים טיול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">y</annotation></semantics></math></span> שעובר דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span> אם ורק אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span> ישיג מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">y</annotation></semantics></math></span> ישיג מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span>. בגרף לא מכוון זה אומר ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">y</annotation></semantics></math></span> ברכיב של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span>, ומספיק BFS אחד מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span>.</p>\n<p>מסלול <b>קצר ביותר</b> מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">y</annotation></semantics></math></span> שעובר דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span> קיים אם ורק אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>z</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>z</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\delta(x,z)+\\delta(z,y)=\\delta(x,y)</annotation></semantics></math></span>. מריצים BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ו-BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">y</annotation></semantics></math></span>, ובגרף לא מכוון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>z</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>y</mi><mo separator=\"true\">,</mo><mi>z</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\delta(z,y)=\\delta(y,z)</annotation></semantics></math></span>.</p>\n<div class=\"lesson-ex\"><b>דוגמה.</b> בגרף שלמטה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>P</mi><mo separator=\"true\">,</mo><mi>V</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\delta(P,V)=3</annotation></semantics></math></span>. הקודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">S</annotation></semantics></math></span> על מסלול קצר: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>P</mi><mo separator=\"true\">,</mo><mi>S</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>S</mi><mo separator=\"true\">,</mo><mi>V</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\delta(P,S)+\\delta(S,V)=2+1=3</annotation></semantics></math></span>. הקודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> לא: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>P</mi><mo separator=\"true\">,</mo><mi>T</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>T</mi><mo separator=\"true\">,</mo><mi>V</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>2</mn><mo>+</mo><mn>2</mn><mo>=</mo><mn>4</mn><mo mathvariant=\"normal\">≠</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\delta(P,T)+\\delta(T,V)=2+2=4\\ne3</annotation></semantics></math></span>.\n<div class=\"graph-fig\" data-graph='{\"directed\": false, \"algo\": \"bfs\", \"source\": \"P\", \"caption\": \"BFS מ-P\", \"nodes\": [\"P\", \"Q\", \"R\", \"S\", \"T\", \"U\", \"V\"], \"edges\": [{\"u\": \"P\", \"v\": \"Q\"}, {\"u\": \"P\", \"v\": \"R\"}, {\"u\": \"Q\", \"v\": \"S\"}, {\"u\": \"R\", \"v\": \"S\"}, {\"u\": \"S\", \"v\": \"V\"}, {\"u\": \"R\", \"v\": \"T\"}, {\"u\": \"T\", \"v\": \"U\"}, {\"u\": \"U\", \"v\": \"V\"}], \"expect\": {\"d\": {\"P\": 0, \"Q\": 1, \"R\": 1, \"S\": 2, \"T\": 2, \"U\": 3, \"V\": 3}, \"order\": [\"P\", \"Q\", \"R\", \"S\", \"T\", \"V\", \"U\"]}}'></div>\n</div>\n<h3>צומת הפרדה</h3>\n<p>קודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> הוא <b>צומת הפרדה</b> אם הסרתו (הגרף <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi><mo>−</mo><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">G-x</annotation></semantics></math></span>) מגדילה את מספר רכיבי הקשירות. אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>deg</mi><mo>⁡</mo><mi>x</mi><mo>≤</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\deg x\\le1</annotation></semantics></math></span> הוא אינו כזה. אחרת בוחרים שכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ומריצים BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi><mo>−</mo><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">G-x</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> הוא צומת הפרדה אם ורק אם <b>אחד משכני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> לא התגלה</b>. זמן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(|V|+|E|)</annotation></semantics></math></span>.</p>\n<h3>דו-צדדיות</h3>\n<p>גרף הוא <b>דו-צדדי</b> אם אפשר לחלק את הקודקודים לשני צדדים כך שאין צלע בתוך צד. צובעים כל קודקוד לפי הזוגיות של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">d</annotation></semantics></math></span> (ב-BFS מכל רכיב). אם יש צלע ששני קצותיה באותו צבע, יש מעגל באורך אי-זוגי והגרף אינו דו-צדדי. אחרת הצביעה היא החלוקה. זה מתבצע ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(|V|+|E|)</annotation></semantics></math></span>, כלומר בזמן פולינומי.</p>\n<div class=\"lesson-trap\">⚠️ \"BFS מגיע לכל הקודקודים\" אינו נכון בגרף לא קשיר: הוא מבקר רק ברכיב של המקור. וכן, הטענה \"אין מסלול קצר דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span>\" אינה אומרת \"<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span> לא ישיג\": בודקים את הסכום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>z</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>z</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\delta(x,z)+\\delta(z,y)</annotation></semantics></math></span>, לא רק ישיגות.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C02-Q1",
+      "step": {
+       "type": "numeric",
+       "answer": 4,
+       "tol": 0,
+       "prompt": "גרף לא מכוון על הקודקודים $A,B,C,D,E,F,G,H,I$ עם הצלעות $A\\!-\\!B,\\ B\\!-\\!C,\\ A\\!-\\!C,\\ D\\!-\\!E,\\ F\\!-\\!G,\\ G\\!-\\!H$. כמה רכיבי קשירות יש בו?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F",
+         "G",
+         "H",
+         "I"
+        ],
+        "directed": false,
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "A",
+          "v": "C"
+         },
+         {
+          "u": "D",
+          "v": "E"
+         },
+         {
+          "u": "F",
+          "v": "G"
+         },
+         {
+          "u": "G",
+          "v": "H"
+         }
+        ]
+       },
+       "explain": "הרכיבים: $\\{A,B,C\\}$, $\\{D,E\\}$, $\\{F,G,H\\}$ ו-$\\{I\\}$. הקודקוד המבודד $I$ הוא רכיב בפני עצמו. מריצים BFS מ-$A$, אחר כך מהלבן הראשון $D$, אחר כך מ-$F$, ולבסוף מ-$I$: ארבע התחלות.",
+       "promptHtml": "גרף לא מכוון על הקודקודים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>D</mi><mo separator=\"true\">,</mo><mi>E</mi><mo separator=\"true\">,</mo><mi>F</mi><mo separator=\"true\">,</mo><mi>G</mi><mo separator=\"true\">,</mo><mi>H</mi><mo separator=\"true\">,</mo><mi>I</mi></mrow><annotation encoding=\"application/x-tex\">A,B,C,D,E,F,G,H,I</annotation></semantics></math></span> עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>F</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>G</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>G</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>H</mi></mrow><annotation encoding=\"application/x-tex\">A\\!-\\!B,\\ B\\!-\\!C,\\ A\\!-\\!C,\\ D\\!-\\!E,\\ F\\!-\\!G,\\ G\\!-\\!H</annotation></semantics></math></span>. כמה רכיבי קשירות יש בו?",
+       "explainHtml": "הרכיבים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{A,B,C\\}</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mi>D</mi><mo separator=\"true\">,</mo><mi>E</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{D,E\\}</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mi>F</mi><mo separator=\"true\">,</mo><mi>G</mi><mo separator=\"true\">,</mo><mi>H</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{F,G,H\\}</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mi>I</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{I\\}</annotation></semantics></math></span>. הקודקוד המבודד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>I</mi></mrow><annotation encoding=\"application/x-tex\">I</annotation></semantics></math></span> הוא רכיב בפני עצמו. מריצים BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>, אחר כך מהלבן הראשון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span>, אחר כך מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span>, ולבסוף מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>I</mi></mrow><annotation encoding=\"application/x-tex\">I</annotation></semantics></math></span>: ארבע התחלות."
+      },
+      "recap": "מספר הרכיבים = כמה פעמים מתחילים BFS מקודקוד לבן (מבודד נחשב)",
+      "recapHtml": "מספר הרכיבים = כמה פעמים מתחילים BFS מקודקוד לבן (מבודד נחשב)"
+     },
+     {
+      "id": "C02-Q2",
+      "question": "בגרף הלא מכוון עם הצלעות $P\\!-\\!Q,\\ P\\!-\\!R,\\ Q\\!-\\!S,\\ R\\!-\\!S,\\ S\\!-\\!V,\\ R\\!-\\!T,\\ T\\!-\\!U,\\ U\\!-\\!V$, מי מהקודקודים הבאים אינו נמצא על אף מסלול קצר ביותר מ-$P$ אל $V$?",
+      "options": [
+       {
+        "id": "a",
+        "value": "Q",
+        "type": "text",
+        "html": "Q"
+       },
+       {
+        "id": "b",
+        "value": "R",
+        "type": "text",
+        "html": "R"
+       },
+       {
+        "id": "c",
+        "value": "S",
+        "type": "text",
+        "html": "S"
+       },
+       {
+        "id": "d",
+        "value": "T",
+        "type": "text",
+        "html": "T"
+       }
+      ],
+      "correctId": "d",
+      "explanation": "$\\delta(P,V)=3$ (למשל $P,Q,S,V$). נבדוק $\\delta(P,z)+\\delta(z,V)$: עבור $Q$ זה $1+2=3$, עבור $R$ זה $1+2=3$, עבור $S$ זה $2+1=3$, ובכולם יש מסלול קצר דרכם. עבור $T$ זה $2+2=4\\ne3$, ולכן $T$ אינו על אף מסלול קצר.",
+      "recap": "$z$ על מסלול קצר $x\\to y$ אם ורק אם $\\delta(x,z)+\\delta(z,y)=\\delta(x,y)$",
+      "graph": {
+       "nodes": [
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V"
+       ],
+       "directed": false,
+       "edges": [
+        {
+         "u": "P",
+         "v": "Q"
+        },
+        {
+         "u": "P",
+         "v": "R"
+        },
+        {
+         "u": "Q",
+         "v": "S"
+        },
+        {
+         "u": "R",
+         "v": "S"
+        },
+        {
+         "u": "S",
+         "v": "V"
+        },
+        {
+         "u": "R",
+         "v": "T"
+        },
+        {
+         "u": "T",
+         "v": "U"
+        },
+        {
+         "u": "U",
+         "v": "V"
+        }
+       ]
+      },
+      "questionHtml": "בגרף הלא מכוון עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>Q</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>P</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>R</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>Q</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>S</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>R</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>S</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>S</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>V</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>R</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>T</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>T</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>U</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>U</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>V</mi></mrow><annotation encoding=\"application/x-tex\">P\\!-\\!Q,\\ P\\!-\\!R,\\ Q\\!-\\!S,\\ R\\!-\\!S,\\ S\\!-\\!V,\\ R\\!-\\!T,\\ T\\!-\\!U,\\ U\\!-\\!V</annotation></semantics></math></span>, מי מהקודקודים הבאים אינו נמצא על אף מסלול קצר ביותר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>V</mi></mrow><annotation encoding=\"application/x-tex\">V</annotation></semantics></math></span>?",
+      "explanationHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>P</mi><mo separator=\"true\">,</mo><mi>V</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\delta(P,V)=3</annotation></semantics></math></span> (למשל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo separator=\"true\">,</mo><mi>Q</mi><mo separator=\"true\">,</mo><mi>S</mi><mo separator=\"true\">,</mo><mi>V</mi></mrow><annotation encoding=\"application/x-tex\">P,Q,S,V</annotation></semantics></math></span>). נבדוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>P</mi><mo separator=\"true\">,</mo><mi>z</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>z</mi><mo separator=\"true\">,</mo><mi>V</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\delta(P,z)+\\delta(z,V)</annotation></semantics></math></span>: עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>Q</mi></mrow><annotation encoding=\"application/x-tex\">Q</annotation></semantics></math></span> זה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mn>2</mn><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">1+2=3</annotation></semantics></math></span>, עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>R</mi></mrow><annotation encoding=\"application/x-tex\">R</annotation></semantics></math></span> זה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mn>2</mn><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">1+2=3</annotation></semantics></math></span>, עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">S</annotation></semantics></math></span> זה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">2+1=3</annotation></semantics></math></span>, ובכולם יש מסלול קצר דרכם. עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> זה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo>+</mo><mn>2</mn><mo>=</mo><mn>4</mn><mo mathvariant=\"normal\">≠</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">2+2=4\\ne3</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> אינו על אף מסלול קצר.",
+      "recapHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span> על מסלול קצר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi><mo>→</mo><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">x\\to y</annotation></semantics></math></span> אם ורק אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>z</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>z</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\delta(x,z)+\\delta(z,y)=\\delta(x,y)</annotation></semantics></math></span>"
+     },
+     {
+      "id": "C02-Q3",
+      "step": {
+       "type": "numeric",
+       "answer": 3,
+       "tol": 0,
+       "prompt": "בגרף הלא מכוון עם הצלעות $A\\!-\\!B,\\ B\\!-\\!C,\\ B\\!-\\!D,\\ C\\!-\\!D,\\ D\\!-\\!E,\\ E\\!-\\!F,\\ E\\!-\\!G$, כמה קודקודים הם צמתי הפרדה?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F",
+         "G"
+        ],
+        "directed": false,
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "B",
+          "v": "D"
+         },
+         {
+          "u": "C",
+          "v": "D"
+         },
+         {
+          "u": "D",
+          "v": "E"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         },
+         {
+          "u": "E",
+          "v": "G"
+         }
+        ]
+       },
+       "explain": "הסרת $B$ מנתקת את $A$. הסרת $D$ מנתקת את $E,F,G$ מ-$B,C,A$. הסרת $E$ מנתקת את $F$ ואת $G$ זה מזה ומשאר הגרף. $A,F,G$ בדרגה 1, והסרת $C$ משאירה את שאר הגרף קשיר דרך $B-D$. לכן $B,D,E$: שלושה.",
+       "promptHtml": "בגרף הלא מכוון עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>C</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>F</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">A\\!-\\!B,\\ B\\!-\\!C,\\ B\\!-\\!D,\\ C\\!-\\!D,\\ D\\!-\\!E,\\ E\\!-\\!F,\\ E\\!-\\!G</annotation></semantics></math></span>, כמה קודקודים הם צמתי הפרדה?",
+       "explainHtml": "הסרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> מנתקת את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>. הסרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> מנתקת את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi><mo separator=\"true\">,</mo><mi>F</mi><mo separator=\"true\">,</mo><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">E,F,G</annotation></semantics></math></span> מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">B,C,A</annotation></semantics></math></span>. הסרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> מנתקת את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> ואת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> זה מזה ומשאר הגרף. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>F</mi><mo separator=\"true\">,</mo><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">A,F,G</annotation></semantics></math></span> בדרגה 1, והסרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> משאירה את שאר הגרף קשיר דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo>−</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">B-D</annotation></semantics></math></span>. לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo separator=\"true\">,</mo><mi>D</mi><mo separator=\"true\">,</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">B,D,E</annotation></semantics></math></span>: שלושה."
+      },
+      "recap": "צומת הפרדה: אחרי הסרתו אחד משכניו לא ישיג משכן אחר",
+      "recapHtml": "צומת הפרדה: אחרי הסרתו אחד משכניו לא ישיג משכן אחר"
+     },
+     {
+      "bankId": "25A-B-Q5c",
+      "recap": "BFS מקודקוד כלשהו: קשיר אם ורק אם כולם התגלו",
+      "recapHtml": "BFS מקודקוד כלשהו: קשיר אם ורק אם כולם התגלו"
+     },
+     {
+      "bankId": "25A-B-Q5a",
+      "recap": "צביעה לפי זוגיות המרחק: דו-צדדיות ב-$O(|V|+|E|)$, בזמן פולינומי",
+      "recapHtml": "צביעה לפי זוגיות המרחק: דו-צדדיות ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(|V|+|E|)</annotation></semantics></math></span>, בזמן פולינומי"
+     },
+     {
+      "bankId": "24A-A-Q1a",
+      "recap": "טיול דרך $z$: BFS אחד מ-$z$ ובדיקה ש-$x$ ו-$y$ התגלו",
+      "recapHtml": "טיול דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span>: BFS אחד מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span> ובדיקה ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">y</annotation></semantics></math></span> התגלו"
+     }
+    ]
+   },
+   {
+    "id": "C03",
+    "order": 3,
+    "icon": "🧗",
+    "title": "DFS: זמני גילוי וסיום",
+    "goal": "להריץ DFS בעיפרון ולרשום לכל קודקוד זמן גילוי, זמן סיום ואב, ולקרוא מהם את יער ה-DFS.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p><b>DFS</b> (חיפוש לעומק) הולך כמה שאפשר \"לעומק\": מקודקוד עוברים לשכן לבן, ממנו לשכן לבן שלו וכן הלאה, ורק כשנתקעים חוזרים אחורה. במקום תור יש <b>רקורסיה</b> (מחסנית).</p>\n<ul>\n<li>שעון משותף <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi></mrow><annotation encoding=\"application/x-tex\">time</annotation></semantics></math></span> מתחיל ב-0. כשמתגלה קודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mo>←</mo><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">time\\leftarrow time+1</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi></mrow><annotation encoding=\"application/x-tex\">d[u]=time</annotation></semantics></math></span>, והוא נצבע אפור.</li>\n<li>עוברים על שכני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>, ולכל שכן <b>לבן</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[v]=u</annotation></semantics></math></span> וקוראים רקורסיבית ל-DFS-Visit<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(v)</annotation></semantics></math></span>.</li>\n<li>כשמסיימים את כל השכנים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mo>←</mo><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">time\\leftarrow time+1</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi></mrow><annotation encoding=\"application/x-tex\">f[u]=time</annotation></semantics></math></span>, והקודקוד נצבע שחור.</li>\n<li>הלולאה החיצונית מפעילה DFS-Visit על כל קודקוד שעדיין לבן, ולכן מקבלים <b>יער</b> של עצי DFS.</li>\n</ul>\n<div class=\"lesson-rule\">🔑 לכל קודקוד שני זמנים, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[u]&lt;f[u]</annotation></semantics></math></span>, וכל הזמנים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><mn>2</mn><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">1,\\dots,2|V|</annotation></semantics></math></span> שונים זה מזה. שורש של עץ הוא קודקוד עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mtext>NIL</mtext></mrow><annotation encoding=\"application/x-tex\">\\pi=\\text{NIL}</annotation></semantics></math></span>. זמן הריצה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(|V|+|E|)</annotation></semantics></math></span>.</div>\n<div class=\"lesson-ex\"><b>דוגמה.</b> בגרף הלא מכוון עם הצלעות A–B, A–E, B–C, B–D, E–F, והקודקוד G מבודד (שכנים בסדר אלפביתי). A מתגלה בזמן 1, ממנו B (2), ממנו C (3). C מסתיים (4) וחוזרים ל-B, שמגלה את D (5), שמסתיים (6). B מסתיים (7), ו-A ממשיך אל E (8), F (9). F מסתיים (10), E (11) ו-A (12). אחר כך G הוא שורש חדש (13, 14). לחצו על הכפתורים למעבר על הריצה.\n<div class=\"graph-fig\" data-graph='{\"directed\": false, \"algo\": \"dfs\", \"caption\": \"DFS על גרף עם שני עצים\", \"nodes\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\"], \"edges\": [{\"u\": \"A\", \"v\": \"B\"}, {\"u\": \"A\", \"v\": \"E\"}, {\"u\": \"B\", \"v\": \"C\"}, {\"u\": \"B\", \"v\": \"D\"}, {\"u\": \"E\", \"v\": \"F\"}], \"expect\": {\"disc\": {\"A\": 1, \"B\": 2, \"C\": 3, \"D\": 5, \"E\": 8, \"F\": 9, \"G\": 13}, \"fin\": {\"C\": 4, \"D\": 6, \"B\": 7, \"F\": 10, \"E\": 11, \"A\": 12, \"G\": 14}}}'></div>\n</div>\n<h3>מה קוראים מהזמנים</h3>\n<ul>\n<li><b>משפט הסוגריים:</b> לכל שני קודקודים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">u,v</annotation></semantics></math></span> הקטעים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[d[u],f[u]]</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[d[v],f[v]]</annotation></semantics></math></span> או זרים או שאחד מוכל לגמרי בשני. הם <b>אף פעם</b> לא נחתכים חלקית. קטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> מוכל בקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> אם ורק אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> בעץ.</li>\n<li><b>עלה</b> ביער הוא קודקוד בלי צאצאים, כלומר בין הגילוי שלו לסיום לא התגלה אף קודקוד: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">f[v]=d[v]+1</annotation></semantics></math></span>.</li>\n<li>ביער עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|V|</annotation></semantics></math></span> קודקודים ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> עצים יש בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">|V|-k</annotation></semantics></math></span> צלעות עץ. מסמנים אותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>E</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow></msub></mrow><annotation encoding=\"application/x-tex\">E_{DFS}</annotation></semantics></math></span>, קבוצת צלעות העץ. מספר העצים הוא מספר השורשים, ובגרף לא מכוון זה מספר הרכיבים.</li>\n</ul>\n"
+    },
+    "questions": [
+     {
+      "id": "C03-Q1",
+      "step": {
+       "type": "numeric",
+       "answer": 8,
+       "tol": 0,
+       "key": "disc.E",
+       "prompt": "בגרף הלא מכוון עם הצלעות $A\\!-\\!B,\\ A\\!-\\!E,\\ B\\!-\\!C,\\ B\\!-\\!D,\\ E\\!-\\!F$ (והקודקוד $G$ מבודד) מריצים DFS, שכנים והלולאה החיצונית בסדר אלפביתי. מהו זמן הגילוי $d[E]$?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F",
+         "G"
+        ],
+        "directed": false,
+        "algo": "dfs",
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "E"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "B",
+          "v": "D"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         }
+        ]
+       },
+       "explain": "לפני $E$ מתגלים ומסתיימים $B,C,D$: $A$ בזמן 1, $B$ בזמן 2, $C$ בזמנים 3 ו-4, $D$ בזמנים 5 ו-6, $B$ מסתיים ב-7. אז $A$ מגלה את $E$ בזמן 8.",
+       "promptHtml": "בגרף הלא מכוון עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">A\\!-\\!B,\\ A\\!-\\!E,\\ B\\!-\\!C,\\ B\\!-\\!D,\\ E\\!-\\!F</annotation></semantics></math></span> (והקודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> מבודד) מריצים DFS, שכנים והלולאה החיצונית בסדר אלפביתי. מהו זמן הגילוי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>E</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[E]</annotation></semantics></math></span>?",
+       "explainHtml": "לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> מתגלים ומסתיימים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">B,C,D</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> בזמן 1, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> בזמן 2, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> בזמנים 3 ו-4, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> בזמנים 5 ו-6, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> מסתיים ב-7. אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> מגלה את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> בזמן 8."
+      },
+      "recap": "כל גילוי וכל סיום מקדמים את השעון ב-1",
+      "recapHtml": "כל גילוי וכל סיום מקדמים את השעון ב-1"
+     },
+     {
+      "id": "C03-Q2",
+      "step": {
+       "type": "numeric",
+       "answer": 12,
+       "tol": 0,
+       "key": "fin.A",
+       "prompt": "באותו גרף ובאותה ריצה: מהו זמן הסיום $f[A]$?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F",
+         "G"
+        ],
+        "directed": false,
+        "algo": "dfs",
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "E"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "B",
+          "v": "D"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         }
+        ]
+       },
+       "explain": "העץ של $A$ מכיל 6 קודקודים ($A,B,C,D,E,F$), וכל אחד מהם משתמש בשני ערכי שעון (גילוי וסיום). $A$ התחיל ב-1 ולכן מסיים ב-$2\\cdot6=12$. $G$ מתגלה אחר כך, ב-13.",
+       "promptHtml": "באותו גרף ובאותה ריצה: מהו זמן הסיום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>A</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">f[A]</annotation></semantics></math></span>?",
+       "explainHtml": "העץ של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> מכיל 6 קודקודים (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>D</mi><mo separator=\"true\">,</mo><mi>E</mi><mo separator=\"true\">,</mo><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">A,B,C,D,E,F</annotation></semantics></math></span>), וכל אחד מהם משתמש בשני ערכי שעון (גילוי וסיום). <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> התחיל ב-1 ולכן מסיים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo>⋅</mo><mn>6</mn><mo>=</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">2\\cdot6=12</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> מתגלה אחר כך, ב-13."
+      },
+      "recap": "שורש עץ בגודל $k$ מסתיים בזמן $2k$ אם הוא הראשון",
+      "recapHtml": "שורש עץ בגודל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> מסתיים בזמן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">2k</annotation></semantics></math></span> אם הוא הראשון"
+     },
+     {
+      "id": "C03-Q3",
+      "step": {
+       "type": "numeric",
+       "answer": 5,
+       "tol": 0,
+       "prompt": "באותו גרף ובאותה ריצה: כמה צלעות יש ביער ה-DFS, כלומר מהו $|E_{DFS}|$?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F",
+         "G"
+        ],
+        "directed": false,
+        "algo": "dfs",
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "E"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "B",
+          "v": "D"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         }
+        ]
+       },
+       "explain": "ביער יש 7 קודקודים ו-2 עצים (שורשים $A$ ו-$G$), ולכן $7-2=5$ צלעות עץ. $G$ מבודד ולא תורם צלע.",
+       "promptHtml": "באותו גרף ובאותה ריצה: כמה צלעות יש ביער ה-DFS, כלומר מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><msub><mi>E</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow></msub><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|E_{DFS}|</annotation></semantics></math></span>?",
+       "explainHtml": "ביער יש 7 קודקודים ו-2 עצים (שורשים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span>), ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn><mo>−</mo><mn>2</mn><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">7-2=5</annotation></semantics></math></span> צלעות עץ. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> מבודד ולא תורם צלע."
+      },
+      "recap": "$|E_{DFS}|=|V|-k$ כש-$k$ הוא מספר העצים",
+      "recapHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><msub><mi>E</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow></msub><mi mathvariant=\"normal\">∣</mi><mo>=</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">|E_{DFS}|=|V|-k</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> הוא מספר העצים"
+     },
+     {
+      "id": "C03-Q4",
+      "question": "בריצת DFS נמצא ש-$d[u]=2$, $f[u]=9$, $d[v]=4$, $f[v]=6$. מה בהכרח נכון?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$v$ צאצא של $u$ בעץ DFS",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> בעץ DFS"
+       },
+       {
+        "id": "b",
+        "value": "$u$ צאצא של $v$ בעץ DFS",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> בעץ DFS"
+       },
+       {
+        "id": "c",
+        "value": "$u$ ו-$v$ נמצאים בעצים שונים ביער",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> נמצאים בעצים שונים ביער"
+       },
+       {
+        "id": "d",
+        "value": "ריצה כזו אינה אפשרית",
+        "type": "text",
+        "html": "ריצה כזו אינה אפשרית"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "הקטע $[4,6]$ מוכל בקטע $[2,9]$, ולפי משפט הסוגריים זה אומר ש-$v$ צאצא של $u$. אם $u$ היה צאצא של $v$ הקטע $[2,9]$ היה צריך להיות מוכל ב-$[4,6]$. אם היו בעצים שונים הקטעים היו זרים. והרצה כזו אפשרית: קטעים מקוננים אינם סותרים את משפט הסוגריים.",
+      "recap": "קטע מוכל בקטע ← צאצא; קטעים זרים ← אין קשר אב-צאצא",
+      "questionHtml": "בריצת DFS נמצא ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">d[u]=2</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">f[u]=9</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">d[v]=4</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">f[v]=6</annotation></semantics></math></span>. מה בהכרח נכון?",
+      "explanationHtml": "הקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[4,6]</annotation></semantics></math></span> מוכל בקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[2,9]</annotation></semantics></math></span>, ולפי משפט הסוגריים זה אומר ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>. אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> היה צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> הקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[2,9]</annotation></semantics></math></span> היה צריך להיות מוכל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[4,6]</annotation></semantics></math></span>. אם היו בעצים שונים הקטעים היו זרים. והרצה כזו אפשרית: קטעים מקוננים אינם סותרים את משפט הסוגריים.",
+      "recapHtml": "קטע מוכל בקטע ← צאצא; קטעים זרים ← אין קשר אב-צאצא"
+     },
+     {
+      "bankId": "25A-A-Q5b",
+      "recap": "עלה ביער DFS: $F[v]=D[v]+1$, או קודקוד שאינו אב של איש; זיהוי ב-$O(|V|)$",
+      "recapHtml": "עלה ביער DFS: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>D</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">F[v]=D[v]+1</annotation></semantics></math></span>, או קודקוד שאינו אב של איש; זיהוי ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(|V|)</annotation></semantics></math></span>"
+     },
+     {
+      "bankId": "25A-A-Q5a",
+      "recap": "שורש הוא קודקוד עם $\\Pi[v]=NIL$; כדי לדעת מי שורש בודקים את כל $|V|$ הקודקודים",
+      "recapHtml": "שורש הוא קודקוד עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Π</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>N</mi><mi>I</mi><mi>L</mi></mrow><annotation encoding=\"application/x-tex\">\\Pi[v]=NIL</annotation></semantics></math></span>; כדי לדעת מי שורש בודקים את כל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|V|</annotation></semantics></math></span> הקודקודים"
+     }
+    ]
+   },
+   {
+    "id": "C04",
+    "order": 4,
+    "icon": "🏷️",
+    "title": "DFS: ארבעת סוגי הצלעות",
+    "goal": "לסווג כל צלע בריצת DFS לעץ, אחורה, קדימה או חוצה, ולהסיק מכך על מעגלים וצאצאים.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>כשהריצה בוחנת צלע מכוונת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(u,v)</annotation></semantics></math></span> מתוך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>, הצבע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> באותו רגע קובע את סוג הצלע:</p>\n<table>\n<thead><tr><th>צבע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span></th><th>סוג הצלע</th><th>המשמעות</th></tr></thead>\n<tbody>\n<tr><td>לבן</td><td><b>עץ</b></td><td><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> מתגלה כעת, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[v]=u</annotation></semantics></math></span></td></tr>\n<tr><td>אפור</td><td><b>אחורה</b></td><td><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> אב קדמון של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> (או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> עצמו)</td></tr>\n<tr><td>שחור, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[u]&lt;d[v]</annotation></semantics></math></span></td><td><b>קדימה</b></td><td><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> שכבר סיים</td></tr>\n<tr><td>שחור, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>&gt;</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[u]&gt;d[v]</annotation></semantics></math></span></td><td><b>חוצה</b></td><td><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> בעץ אחר או בענף אחר, והוא סיים לפני ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> התגלה</td></tr>\n</tbody></table>\n<p>מהזמנים: צלע חוצה מקיימת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">f[v]&lt;d[u]</annotation></semantics></math></span> (הקטעים זרים). צלע אחורה: הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> בתוך הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>. עץ וקדימה: הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> בתוך הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>.</p>\n<div class=\"lesson-ex\"><b>דוגמה.</b> בגרף המכוון עם הצלעות A→B, A→C, A→D, B→C, C→A, E→D, E→F (שכנים בסדר אלפביתי): A→B, B→C, A→D ו-E→F הן צלעות עץ. C→A היא <b>אחורה</b> (A אפור כש-C נבחן). A→C היא <b>קדימה</b> (C כבר שחור, ו-A התגלה קודם). E→D היא <b>חוצה</b> (D שחור בעץ אחר, והתגלה לפני E).\n<div class=\"graph-fig\" data-graph='{\"directed\": true, \"algo\": \"dfs\", \"caption\": \"ארבעה סוגי צלעות\", \"nodes\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"], \"edges\": [{\"u\": \"A\", \"v\": \"B\"}, {\"u\": \"A\", \"v\": \"C\"}, {\"u\": \"A\", \"v\": \"D\"}, {\"u\": \"B\", \"v\": \"C\"}, {\"u\": \"C\", \"v\": \"A\"}, {\"u\": \"E\", \"v\": \"D\"}, {\"u\": \"E\", \"v\": \"F\"}], \"expect\": {\"classes\": {\"A-B\": \"tree\", \"A-C\": \"forward\", \"A-D\": \"tree\", \"B-C\": \"tree\", \"C-A\": \"back\", \"E-D\": \"cross\", \"E-F\": \"tree\"}, \"disc\": {\"A\": 1, \"B\": 2, \"C\": 3, \"D\": 6, \"E\": 9, \"F\": 10}, \"fin\": {\"C\": 4, \"B\": 5, \"D\": 7, \"A\": 8, \"F\": 11, \"E\": 12}}}'></div>\n</div>\n<h3>מה זה נותן</h3>\n<div class=\"lesson-rule\">🔑 בגרף <b>מכוון</b> יש מעגל אם ורק אם DFS מוצא <b>צלע אחורה</b>. צלעות קדימה וחוצות לבדן לא יוצרות מעגל.</div>\n<div class=\"lesson-rule\">🔑 בגרף <b>לא מכוון</b> כל צלע היא עץ או אחורה בלבד, ללא קדימה וללא חוצה. צלע לא מכוונת נבחנת פעם אחת, בפעם הראשונה שפוגשים אותה. סיבה: אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> בענפים שונים, הראשון שהתגלה מביניהם היה פוגש את השני דרך הצלע ומגלה אותו כצאצא.</div>\n<div class=\"lesson-rule\">🔑 <b>משפט השביל הלבן:</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> אם ורק אם ברגע גילוי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> יש מסלול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> שכל קודקודיו לבנים.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C04-Q1",
+      "step": {
+       "type": "choice",
+       "correctId": "b",
+       "key": "class.C-A",
+       "prompt": "בגרף המכוון עם הצלעות $A\\to B,\\ A\\to C,\\ A\\to D,\\ B\\to C,\\ C\\to A,\\ E\\to D,\\ E\\to F$ מריצים DFS בסדר אלפביתי. מה סוג הצלע $C\\to A$?",
+       "options": [
+        {
+         "id": "a",
+         "value": "קשת עץ",
+         "type": "text",
+         "html": "קשת עץ"
+        },
+        {
+         "id": "b",
+         "value": "קשת אחורה",
+         "type": "text",
+         "html": "קשת אחורה"
+        },
+        {
+         "id": "c",
+         "value": "קשת קדימה",
+         "type": "text",
+         "html": "קשת קדימה"
+        },
+        {
+         "id": "d",
+         "value": "קשת חוצה",
+         "type": "text",
+         "html": "קשת חוצה"
+        }
+       ],
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F"
+        ],
+        "directed": true,
+        "algo": "dfs",
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "C"
+         },
+         {
+          "u": "A",
+          "v": "D"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "C",
+          "v": "A"
+         },
+         {
+          "u": "E",
+          "v": "D"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         }
+        ]
+       },
+       "explain": "כש-$C$ נבחן, $A$ עדיין אפור (בדרך $A,B,C$ מהשורש), כלומר $A$ אב קדמון של $C$. צלע אל אב קדמון אפור היא אחורה. היא לא עץ ($A$ לא לבן), לא קדימה וחוצה ($A$ לא שחור).",
+       "promptHtml": "בגרף המכוון עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>C</mi><mo>→</mo><mi>A</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mo>→</mo><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">A\\to B,\\ A\\to C,\\ A\\to D,\\ B\\to C,\\ C\\to A,\\ E\\to D,\\ E\\to F</annotation></semantics></math></span> מריצים DFS בסדר אלפביתי. מה סוג הצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo>→</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">C\\to A</annotation></semantics></math></span>?",
+       "explainHtml": "כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> נבחן, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> עדיין אפור (בדרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">A,B,C</annotation></semantics></math></span> מהשורש), כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> אב קדמון של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span>. צלע אל אב קדמון אפור היא אחורה. היא לא עץ (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> לא לבן), לא קדימה וחוצה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> לא שחור)."
+      },
+      "recap": "אפור ← צלע אחורה",
+      "recapHtml": "אפור ← צלע אחורה"
+     },
+     {
+      "id": "C04-Q2",
+      "step": {
+       "type": "choice",
+       "correctId": "c",
+       "key": "class.A-C",
+       "prompt": "באותו גרף ובאותה ריצה: מה סוג הצלע $A\\to C$?",
+       "options": [
+        {
+         "id": "a",
+         "value": "קשת עץ",
+         "type": "text",
+         "html": "קשת עץ"
+        },
+        {
+         "id": "b",
+         "value": "קשת אחורה",
+         "type": "text",
+         "html": "קשת אחורה"
+        },
+        {
+         "id": "c",
+         "value": "קשת קדימה",
+         "type": "text",
+         "html": "קשת קדימה"
+        },
+        {
+         "id": "d",
+         "value": "קשת חוצה",
+         "type": "text",
+         "html": "קשת חוצה"
+        }
+       ],
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F"
+        ],
+        "directed": true,
+        "algo": "dfs",
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "C"
+         },
+         {
+          "u": "A",
+          "v": "D"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "C",
+          "v": "A"
+         },
+         {
+          "u": "E",
+          "v": "D"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         }
+        ]
+       },
+       "explain": "$A$ בוחן קודם את $B$, ולכן $C$ כבר התגלה דרך $B$ והסתיים. כש-$A\\to C$ נבחן, $C$ שחור ו-$d[A]=1<d[C]=3$, כלומר $C$ צאצא של $A$. זו צלע קדימה. אם $C$ היה לבן היא הייתה צלע עץ, ואם $d[A]>d[C]$ היא הייתה חוצה.",
+       "promptHtml": "באותו גרף ובאותה ריצה: מה סוג הצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">A\\to C</annotation></semantics></math></span>?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> בוחן קודם את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> כבר התגלה דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> והסתיים. כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">A\\to C</annotation></semantics></math></span> נבחן, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> שחור ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>A</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn><mo>&lt;</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>C</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">d[A]=1&lt;d[C]=3</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>. זו צלע קדימה. אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> היה לבן היא הייתה צלע עץ, ואם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>A</mi><mo stretchy=\"false\">]</mo><mo>&gt;</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>C</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[A]&gt;d[C]</annotation></semantics></math></span> היא הייתה חוצה."
+      },
+      "recap": "שחור וצאצא ← קדימה",
+      "recapHtml": "שחור וצאצא ← קדימה"
+     },
+     {
+      "id": "C04-Q3",
+      "question": "בריצת DFS על גרף מכוון נבחנת הצלע $(u,v)$, כאשר $d[u]=7$, $f[u]=10$, $d[v]=2$, $f[v]=5$. מה סוג הצלע?",
+      "options": [
+       {
+        "id": "a",
+        "value": "קשת עץ",
+        "type": "text",
+        "html": "קשת עץ"
+       },
+       {
+        "id": "b",
+        "value": "קשת אחורה",
+        "type": "text",
+        "html": "קשת אחורה"
+       },
+       {
+        "id": "c",
+        "value": "קשת קדימה",
+        "type": "text",
+        "html": "קשת קדימה"
+       },
+       {
+        "id": "d",
+        "value": "קשת חוצה",
+        "type": "text",
+        "html": "קשת חוצה"
+       }
+      ],
+      "correctId": "d",
+      "explanation": "הקטעים $[7,10]$ ו-$[2,5]$ זרים, ו-$v$ סיים ($f[v]=5$) לפני ש-$u$ התגלה ($d[u]=7$). זו צלע חוצה. בקשת עץ או קדימה היה צריך שהקטע של $v$ יהיה בתוך הקטע של $u$, ובקשת אחורה הקטע של $u$ בתוך הקטע של $v$.",
+      "recap": "קטעים זרים ו-$f[v]<d[u]$ ← חוצה",
+      "questionHtml": "בריצת DFS על גרף מכוון נבחנת הצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(u,v)</annotation></semantics></math></span>, כאשר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">d[u]=7</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">f[u]=10</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">d[v]=2</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">f[v]=5</annotation></semantics></math></span>. מה סוג הצלע?",
+      "explanationHtml": "הקטעים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[7,10]</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[2,5]</annotation></semantics></math></span> זרים, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> סיים (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">f[v]=5</annotation></semantics></math></span>) לפני ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> התגלה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">d[u]=7</annotation></semantics></math></span>). זו צלע חוצה. בקשת עץ או קדימה היה צריך שהקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> יהיה בתוך הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>, ובקשת אחורה הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> בתוך הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>.",
+      "recapHtml": "קטעים זרים ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">f[v]&lt;d[u]</annotation></semantics></math></span> ← חוצה"
+     },
+     {
+      "id": "C04-Q4",
+      "question": "מריצים DFS על גרף **לא מכוון**. אילו סוגי צלעות יכולים להופיע?",
+      "options": [
+       {
+        "id": "a",
+        "value": "רק צלעות עץ וצלעות אחורה",
+        "type": "text",
+        "html": "רק צלעות עץ וצלעות אחורה"
+       },
+       {
+        "id": "b",
+        "value": "עץ, אחורה, קדימה וחוצה, כמו בגרף מכוון",
+        "type": "text",
+        "html": "עץ, אחורה, קדימה וחוצה, כמו בגרף מכוון"
+       },
+       {
+        "id": "c",
+        "value": "עץ, אחורה וחוצה, אבל לא קדימה",
+        "type": "text",
+        "html": "עץ, אחורה וחוצה, אבל לא קדימה"
+       },
+       {
+        "id": "d",
+        "value": "רק צלעות עץ",
+        "type": "text",
+        "html": "רק צלעות עץ"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "בגרף לא מכוון שני קצוות של צלע תמיד ביחס אב-צאצא: הראשון שהתגלה מהם עוד אפור כשהשני מתגלה, ולכן השני צאצא שלו. אין צלעות חוצות בין ענפים שונים. וכל צלע מסווגת פעם אחת, בבחינה הראשונה שלה: אם היא מגלה קודקוד לבן זו צלע עץ, ואם הצאצא בוחן אותה ומוצא את האב אפור זו צלע אחורה. לכן אין קדימה. בגרף עם מעגל יש צלעות אחורה, ולכן \"רק עץ\" שגוי.",
+      "recap": "גרף לא מכוון: עץ או אחורה, לא קדימה ולא חוצה",
+      "questionHtml": "מריצים DFS על גרף <strong>לא מכוון</strong>. אילו סוגי צלעות יכולים להופיע?",
+      "explanationHtml": "בגרף לא מכוון שני קצוות של צלע תמיד ביחס אב-צאצא: הראשון שהתגלה מהם עוד אפור כשהשני מתגלה, ולכן השני צאצא שלו. אין צלעות חוצות בין ענפים שונים. וכל צלע מסווגת פעם אחת, בבחינה הראשונה שלה: אם היא מגלה קודקוד לבן זו צלע עץ, ואם הצאצא בוחן אותה ומוצא את האב אפור זו צלע אחורה. לכן אין קדימה. בגרף עם מעגל יש צלעות אחורה, ולכן \"רק עץ\" שגוי.",
+      "recapHtml": "גרף לא מכוון: עץ או אחורה, לא קדימה ולא חוצה"
+     },
+     {
+      "id": "C04-Q5",
+      "question": "בגרף המכוון עם הצלעות $P\\to Q,\\ Q\\to R,\\ R\\to S,\\ P\\to S,\\ S\\to T,\\ T\\to R$ מריצים DFS מ-$P$. האם יש בגרף מעגל מכוון, ומה בריצה מעיד על כך?",
+      "options": [
+       {
+        "id": "a",
+        "value": "כן, והצלע $T\\to R$ היא צלע אחורה",
+        "type": "text",
+        "html": "כן, והצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>→</mo><mi>R</mi></mrow><annotation encoding=\"application/x-tex\">T\\to R</annotation></semantics></math></span> היא צלע אחורה"
+       },
+       {
+        "id": "b",
+        "value": "כן, והצלע $P\\to S$ היא צלע קדימה",
+        "type": "text",
+        "html": "כן, והצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>→</mo><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">P\\to S</annotation></semantics></math></span> היא צלע קדימה"
+       },
+       {
+        "id": "c",
+        "value": "לא, כי כל הצלעות הן עץ או קדימה",
+        "type": "text",
+        "html": "לא, כי כל הצלעות הן עץ או קדימה"
+       },
+       {
+        "id": "d",
+        "value": "לא, כי $P$ הוא שורש ואין צלע שנכנסת אליו",
+        "type": "text",
+        "html": "לא, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> הוא שורש ואין צלע שנכנסת אליו"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "הריצה: $P,Q,R,S,T$ בשרשרת עץ. כש-$T\\to R$ נבחנת $R$ אפור, ולכן היא אחורה, והמעגל הוא $R\\to S\\to T\\to R$. הצלע $P\\to S$ אכן קדימה ($S$ כבר שחור), אבל קדימה לבדה אינה מעידה על מעגל. מי שטוען שאין מעגל טועה: יש צלע אחורה. וקודקוד בלי צלעות נכנסות אינו מוכיח כלום על מעגל בחלק אחר של הגרף.",
+      "recap": "מעגל מכוון ⇔ צלע אחורה",
+      "graph": {
+       "nodes": [
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T"
+       ],
+       "directed": true,
+       "edges": [
+        {
+         "u": "P",
+         "v": "Q"
+        },
+        {
+         "u": "Q",
+         "v": "R"
+        },
+        {
+         "u": "R",
+         "v": "S"
+        },
+        {
+         "u": "P",
+         "v": "S"
+        },
+        {
+         "u": "S",
+         "v": "T"
+        },
+        {
+         "u": "T",
+         "v": "R"
+        }
+       ]
+      },
+      "questionHtml": "בגרף המכוון עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>→</mo><mi>Q</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>Q</mi><mo>→</mo><mi>R</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>R</mi><mo>→</mo><mi>S</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>P</mi><mo>→</mo><mi>S</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>S</mi><mo>→</mo><mi>T</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>T</mi><mo>→</mo><mi>R</mi></mrow><annotation encoding=\"application/x-tex\">P\\to Q,\\ Q\\to R,\\ R\\to S,\\ P\\to S,\\ S\\to T,\\ T\\to R</annotation></semantics></math></span> מריצים DFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span>. האם יש בגרף מעגל מכוון, ומה בריצה מעיד על כך?",
+      "explanationHtml": "הריצה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo separator=\"true\">,</mo><mi>Q</mi><mo separator=\"true\">,</mo><mi>R</mi><mo separator=\"true\">,</mo><mi>S</mi><mo separator=\"true\">,</mo><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">P,Q,R,S,T</annotation></semantics></math></span> בשרשרת עץ. כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>→</mo><mi>R</mi></mrow><annotation encoding=\"application/x-tex\">T\\to R</annotation></semantics></math></span> נבחנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>R</mi></mrow><annotation encoding=\"application/x-tex\">R</annotation></semantics></math></span> אפור, ולכן היא אחורה, והמעגל הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>R</mi><mo>→</mo><mi>S</mi><mo>→</mo><mi>T</mi><mo>→</mo><mi>R</mi></mrow><annotation encoding=\"application/x-tex\">R\\to S\\to T\\to R</annotation></semantics></math></span>. הצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>→</mo><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">P\\to S</annotation></semantics></math></span> אכן קדימה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">S</annotation></semantics></math></span> כבר שחור), אבל קדימה לבדה אינה מעידה על מעגל. מי שטוען שאין מעגל טועה: יש צלע אחורה. וקודקוד בלי צלעות נכנסות אינו מוכיח כלום על מעגל בחלק אחר של הגרף.",
+      "recapHtml": "מעגל מכוון ⇔ צלע אחורה"
+     },
+     {
+      "id": "C04-Q6",
+      "question": "בגרף המכוון עם הצלעות $A\\to B,\\ A\\to C,\\ A\\to D,\\ B\\to C,\\ C\\to A,\\ E\\to D,\\ E\\to F$ מריצים DFS ו-$A$ נבחר ראשון. מי מהקודקודים אינם צאצאים של $A$ ביער?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$E$ ו-$F$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$D$ ו-$F$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$E$ בלבד",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> בלבד"
+       },
+       {
+        "id": "d",
+        "value": "אין כאלה, כולם צאצאי A",
+        "type": "text",
+        "html": "אין כאלה, כולם צאצאי A"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "ברגע שבו $A$ מתגלה כל הקודקודים לבנים, לכן לפי משפט השביל הלבן צאצאי $A$ הם בדיוק הקודקודים הישיגים ממנו: $B,C,D$. אל $E$ ו-$F$ אין מסלול מ-$A$, ו-$E$ הוא שורש של עץ חדש ש-$F$ בנו. הצלע $E\\to D$ אינה מכניסה את $D$ לעץ של $E$, כי $D$ כבר היה שחור.",
+      "recap": "צאצאי השורש הראשון = כל הישיגים ממנו",
+      "questionHtml": "בגרף המכוון עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>C</mi><mo>→</mo><mi>A</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mo>→</mo><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">A\\to B,\\ A\\to C,\\ A\\to D,\\ B\\to C,\\ C\\to A,\\ E\\to D,\\ E\\to F</annotation></semantics></math></span> מריצים DFS ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> נבחר ראשון. מי מהקודקודים אינם צאצאים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> ביער?",
+      "explanationHtml": "ברגע שבו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> מתגלה כל הקודקודים לבנים, לכן לפי משפט השביל הלבן צאצאי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> הם בדיוק הקודקודים הישיגים ממנו: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">B,C,D</annotation></semantics></math></span>. אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> אין מסלול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> הוא שורש של עץ חדש ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> בנו. הצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi><mo>→</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">E\\to D</annotation></semantics></math></span> אינה מכניסה את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> לעץ של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span>, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> כבר היה שחור.",
+      "recapHtml": "צאצאי השורש הראשון = כל הישיגים ממנו"
+     }
+    ]
+   },
+   {
+    "id": "C05",
+    "order": 5,
+    "icon": "⛓️",
+    "title": "מיון טופולוגי ומעגלים",
+    "goal": "למיין גרף מכוון חסר מעגלים לפי זמני סיום, לבדוק אם סדר נתון תקין, ולזהות מתי אין מיון בכלל.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>גרף מכוון <b>חסר מעגלים</b> נקרא DAG. <b>מיון טופולוגי</b> של DAG הוא סידור של כל הקודקודים בשורה כך שלכל צלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(u,v)</annotation></semantics></math></span> הקודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> מופיע <b>לפני</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>. כך מתארים סדרי תלות: קורס לפני הקורס שדורש אותו, מוצר לפני מה שמורכב ממנו.</p>\n<h3>האלגוריתם</h3>\n<ol>\n<li>מריצים DFS על כל הגרף ורושמים זמני סיום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">f[v]</annotation></semantics></math></span>.</li>\n<li>מסדרים את הקודקודים לפי <b>זמן סיום יורד</b>: הקודקוד שסיים אחרון ראשון בשורה.</li>\n</ol>\n<p>הסיבה: לכל צלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(u,v)</annotation></semantics></math></span> ב-DAG מתקיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>&gt;</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">f[u]&gt;f[v]</annotation></semantics></math></span> (הצלע היא עץ, קדימה או חוצה, אף פעם לא אחורה), ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> מופיע לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>. זמן הריצה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(|V|+|E|)</annotation></semantics></math></span>.</p>\n<div class=\"lesson-ex\"><b>דוגמה.</b> ה-DAG עם הצלעות A→B, A→D, B→C, D→C, D→E, F→E. ריצת DFS אלפביתית נותנת זמני סיום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>C</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>4</mn><mo separator=\"true\">,</mo><mtext> </mtext><mi>f</mi><mo stretchy=\"false\">[</mo><mi>B</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>5</mn><mo separator=\"true\">,</mo><mtext> </mtext><mi>f</mi><mo stretchy=\"false\">[</mo><mi>E</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>8</mn><mo separator=\"true\">,</mo><mtext> </mtext><mi>f</mi><mo stretchy=\"false\">[</mo><mi>D</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>9</mn><mo separator=\"true\">,</mo><mtext> </mtext><mi>f</mi><mo stretchy=\"false\">[</mo><mi>A</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>10</mn><mo separator=\"true\">,</mo><mtext> </mtext><mi>f</mi><mo stretchy=\"false\">[</mo><mi>F</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">f[C]=4,\\ f[B]=5,\\ f[E]=8,\\ f[D]=9,\\ f[A]=10,\\ f[F]=12</annotation></semantics></math></span>. בסדר יורד: F, A, D, E, B, C.\n<div class=\"graph-fig\" data-graph='{\"directed\": true, \"algo\": \"topo\", \"caption\": \"מיון טופולוגי\", \"nodes\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"], \"edges\": [{\"u\": \"A\", \"v\": \"B\"}, {\"u\": \"A\", \"v\": \"D\"}, {\"u\": \"B\", \"v\": \"C\"}, {\"u\": \"D\", \"v\": \"C\"}, {\"u\": \"D\", \"v\": \"E\"}, {\"u\": \"F\", \"v\": \"E\"}], \"expect\": {\"topo\": [\"F\", \"A\", \"D\", \"E\", \"B\", \"C\"], \"fin\": {\"C\": 4, \"B\": 5, \"E\": 8, \"D\": 9, \"A\": 10, \"F\": 12}}}'></div>\n</div>\n<h3>מה חשוב לזכור</h3>\n<div class=\"lesson-rule\">🔑 המיון <b>אינו יחיד</b>. סדר שכנים אחר או סדר שורשים אחר נותן סדר אחר ותקין. כדי לבדוק סדר נתון בודקים כל צלע: ההתחלה שלה חייבת להופיע לפני הסוף.</div>\n<div class=\"lesson-rule\">🔑 לגרף מכוון יש מיון טופולוגי אם ורק אם הוא <b>חסר מעגלים</b>, כלומר אם ורק אם DFS לא מוצא בו צלע אחורה. מעגל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mo>→</mo><mi>b</mi><mo>→</mo><mi>c</mi><mo>→</mo><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a\\to b\\to c\\to a</annotation></semantics></math></span> דורש ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span> לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">c</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">c</annotation></semantics></math></span> לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span>, וזה בלתי אפשרי.</div>\n<div class=\"lesson-trap\">⚠️ מוסיפים צלע חדשה ל-DAG: היא יוצרת מעגל בדיוק כשכבר יש מסלול מסוף הצלע להתחלתה. הוספת צלע \"נגד הכיוון\" בין שני קודקודים שאין ביניהם מסלול לא יוצרת מעגל.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C05-Q1",
+      "step": {
+       "type": "text",
+       "normalize": "lower",
+       "key": "topo",
+       "prompt": "ב-DAG עם הצלעות $A\\to B,\\ A\\to D,\\ B\\to C,\\ D\\to C,\\ D\\to E,\\ F\\to E$ מריצים DFS (שכנים והלולאה החיצונית בסדר אלפביתי) ומסדרים לפי זמן סיום יורד. מהו המיון הטופולוגי המתקבל? כתבו את האותיות מופרדות בפסיקים.",
+       "accept": [
+        "F, A, D, E, B, C",
+        "F,A,D,E,B,C",
+        "F A D E B C"
+       ],
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F"
+        ],
+        "directed": true,
+        "algo": "topo",
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "D"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "D",
+          "v": "C"
+         },
+         {
+          "u": "D",
+          "v": "E"
+         },
+         {
+          "u": "F",
+          "v": "E"
+         }
+        ]
+       },
+       "explain": "DFS מ-$A$: $A,B,C$ (C מסתיים 4, B מסתיים 5), אחר כך $D$ מגלה את $E$ ($E$ מסתיים 8, $D$ מסתיים 9), ו-$A$ מסתיים 10. $F$ שורש חדש ומסתיים 12. הסדר היורד של זמני הסיום: $F(12),A(10),D(9),E(8),B(5),C(4)$.",
+       "promptHtml": "ב-DAG עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mo>→</mo><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>F</mi><mo>→</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">A\\to B,\\ A\\to D,\\ B\\to C,\\ D\\to C,\\ D\\to E,\\ F\\to E</annotation></semantics></math></span> מריצים DFS (שכנים והלולאה החיצונית בסדר אלפביתי) ומסדרים לפי זמן סיום יורד. מהו המיון הטופולוגי המתקבל? כתבו את האותיות מופרדות בפסיקים.",
+       "explainHtml": "DFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">A,B,C</annotation></semantics></math></span> (C מסתיים 4, B מסתיים 5), אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> מגלה את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> מסתיים 8, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> מסתיים 9), ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> מסתיים 10. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> שורש חדש ומסתיים 12. הסדר היורד של זמני הסיום: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo stretchy=\"false\">(</mo><mn>12</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>A</mi><mo stretchy=\"false\">(</mo><mn>10</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>D</mi><mo stretchy=\"false\">(</mo><mn>9</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>E</mi><mo stretchy=\"false\">(</mo><mn>8</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>B</mi><mo stretchy=\"false\">(</mo><mn>5</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mi>C</mi><mo stretchy=\"false\">(</mo><mn>4</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">F(12),A(10),D(9),E(8),B(5),C(4)</annotation></semantics></math></span>."
+      },
+      "recap": "מיון טופולוגי = זמן סיום יורד",
+      "recapHtml": "מיון טופולוגי = זמן סיום יורד"
+     },
+     {
+      "id": "C05-Q2",
+      "question": "ל-DAG עם הצלעות $A\\to B,\\ A\\to D,\\ B\\to C,\\ D\\to C,\\ D\\to E,\\ F\\to E$ מוצעים ארבעה סדרים. איזה מהם הוא מיון טופולוגי תקין?",
+      "options": [
+       {
+        "id": "a",
+        "value": "A, B, F, D, C, E",
+        "type": "text",
+        "html": "A, B, F, D, C, E"
+       },
+       {
+        "id": "b",
+        "value": "A, B, C, D, E, F",
+        "type": "text",
+        "html": "A, B, C, D, E, F"
+       },
+       {
+        "id": "c",
+        "value": "A, D, B, C, E, F",
+        "type": "text",
+        "html": "A, D, B, C, E, F"
+       },
+       {
+        "id": "d",
+        "value": "B, A, F, D, C, E",
+        "type": "text",
+        "html": "B, A, F, D, C, E"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "בסדר התקין כל צלע הולכת קדימה: $A$ לפני $B$ ו-$D$, $B$ ו-$D$ לפני $C$, $D$ ו-$F$ לפני $E$. הסדר שמתחיל ב-$A,B,C,D$ שובר את $D\\to C$ ($C$ לפני $D$). הסדר שמסיים ב-$E,F$ שובר את $F\\to E$. הסדר שמתחיל ב-$B,A$ שובר את $A\\to B$.",
+      "recap": "בודקים כל צלע: ההתחלה לפני הסוף",
+      "graph": {
+       "nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+       ],
+       "directed": true,
+       "edges": [
+        {
+         "u": "A",
+         "v": "B"
+        },
+        {
+         "u": "A",
+         "v": "D"
+        },
+        {
+         "u": "B",
+         "v": "C"
+        },
+        {
+         "u": "D",
+         "v": "C"
+        },
+        {
+         "u": "D",
+         "v": "E"
+        },
+        {
+         "u": "F",
+         "v": "E"
+        }
+       ]
+      },
+      "questionHtml": "ל-DAG עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mo>→</mo><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>F</mi><mo>→</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">A\\to B,\\ A\\to D,\\ B\\to C,\\ D\\to C,\\ D\\to E,\\ F\\to E</annotation></semantics></math></span> מוצעים ארבעה סדרים. איזה מהם הוא מיון טופולוגי תקין?",
+      "explanationHtml": "בסדר התקין כל צלע הולכת קדימה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span>. הסדר שמתחיל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">A,B,C,D</annotation></semantics></math></span> שובר את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo>→</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">D\\to C</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span>). הסדר שמסיים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi><mo separator=\"true\">,</mo><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">E,F</annotation></semantics></math></span> שובר את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo>→</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">F\\to E</annotation></semantics></math></span>. הסדר שמתחיל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo separator=\"true\">,</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">B,A</annotation></semantics></math></span> שובר את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">A\\to B</annotation></semantics></math></span>.",
+      "recapHtml": "בודקים כל צלע: ההתחלה לפני הסוף"
+     },
+     {
+      "id": "C05-Q3",
+      "step": {
+       "type": "numeric",
+       "answer": 9,
+       "tol": 0,
+       "key": "fin.D",
+       "prompt": "באותו DAG ובאותה ריצת DFS (סדר אלפביתי): מהו זמן הסיום $f[D]$?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F"
+        ],
+        "directed": true,
+        "algo": "topo",
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "D"
+         },
+         {
+          "u": "B",
+          "v": "C"
+         },
+         {
+          "u": "D",
+          "v": "C"
+         },
+         {
+          "u": "D",
+          "v": "E"
+         },
+         {
+          "u": "F",
+          "v": "E"
+         }
+        ]
+       },
+       "explain": "$A$ מתגלה ב-1, $B$ ב-2, $C$ ב-3 ומסתיים ב-4, $B$ מסתיים ב-5. $D$ מתגלה ב-6 (הצלע $D\\to C$ מוצאת את $C$ שחור), $E$ ב-7 ומסתיים ב-8, ו-$D$ מסתיים ב-9.",
+       "promptHtml": "באותו DAG ובאותה ריצת DFS (סדר אלפביתי): מהו זמן הסיום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>D</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">f[D]</annotation></semantics></math></span>?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> מתגלה ב-1, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> ב-2, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> ב-3 ומסתיים ב-4, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> מסתיים ב-5. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> מתגלה ב-6 (הצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi><mo>→</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">D\\to C</annotation></semantics></math></span> מוצאת את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> שחור), <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> ב-7 ומסתיים ב-8, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> מסתיים ב-9."
+      },
+      "recap": "זמני סיום: הפנימי מסיים לפני החיצוני",
+      "recapHtml": "זמני סיום: הפנימי מסיים לפני החיצוני"
+     },
+     {
+      "id": "C05-Q4",
+      "step": {
+       "type": "numeric",
+       "answer": 8,
+       "tol": 0,
+       "prompt": "כמה מיונים טופולוגיים שונים יש ל-DAG עם הצלעות $A\\to B,\\ A\\to C,\\ B\\to D,\\ C\\to D,\\ E\\to D$?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E"
+        ],
+        "directed": true,
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "C"
+         },
+         {
+          "u": "B",
+          "v": "D"
+         },
+         {
+          "u": "C",
+          "v": "D"
+         },
+         {
+          "u": "E",
+          "v": "D"
+         }
+        ]
+       },
+       "explain": "$D$ חייב להיות אחרון (כולם מובילים אליו). נשארים $A,B,C,E$ עם האילוץ ש-$A$ לפני $B$ ולפני $C$. מבין $4!=24$ הסידורים של $A,B,C,E$, ב-$A$ הוא הראשון מבין $A,B,C$ בשליש מהם: $24/3=8$.",
+       "promptHtml": "כמה מיונים טופולוגיים שונים יש ל-DAG עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>C</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mo>→</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">A\\to B,\\ A\\to C,\\ B\\to D,\\ C\\to D,\\ E\\to D</annotation></semantics></math></span>?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> חייב להיות אחרון (כולם מובילים אליו). נשארים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">A,B,C,E</annotation></semantics></math></span> עם האילוץ ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> ולפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span>. מבין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn><mo stretchy=\"false\">!</mo><mo>=</mo><mn>24</mn></mrow><annotation encoding=\"application/x-tex\">4!=24</annotation></semantics></math></span> הסידורים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">A,B,C,E</annotation></semantics></math></span>, ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> הוא הראשון מבין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">A,B,C</annotation></semantics></math></span> בשליש מהם: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>24</mn><mi mathvariant=\"normal\">/</mi><mn>3</mn><mo>=</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">24/3=8</annotation></semantics></math></span>."
+      },
+      "recap": "מיון טופולוגי אינו יחיד: סופרים סידורים שמכבדים את הצלעות",
+      "recapHtml": "מיון טופולוגי אינו יחיד: סופרים סידורים שמכבדים את הצלעות"
+     },
+     {
+      "id": "C05-Q5",
+      "question": "ל-DAG עם הצלעות $A\\to B,\\ A\\to D,\\ B\\to C,\\ D\\to C,\\ D\\to E,\\ F\\to E$ מוסיפים צלע אחת. איזו הוספה יוצרת מעגל, כך שלא יהיה עוד מיון טופולוגי?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$C\\to A$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo>→</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">C\\to A</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$B\\to D$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo>→</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">B\\to D</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$F\\to A$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo>→</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">F\\to A</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$E\\to B$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi><mo>→</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">E\\to B</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "$C\\to A$ סוגרת את המעגל $A\\to B\\to C\\to A$, כי כבר יש מסלול מ-$A$ אל $C$. $B\\to D$: אין מסלול מ-$D$ אל $B$, ולכן אין מעגל. $F\\to A$: אין מסלול מ-$A$ אל $F$. $E\\to B$: מ-$B$ אפשר להגיע רק אל $C$, ולא אל $E$.",
+      "recap": "צלע $u\\to v$ יוצרת מעגל אם ורק אם כבר יש מסלול מ-$v$ ל-$u$",
+      "graph": {
+       "nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+       ],
+       "directed": true,
+       "edges": [
+        {
+         "u": "A",
+         "v": "B"
+        },
+        {
+         "u": "A",
+         "v": "D"
+        },
+        {
+         "u": "B",
+         "v": "C"
+        },
+        {
+         "u": "D",
+         "v": "C"
+        },
+        {
+         "u": "D",
+         "v": "E"
+        },
+        {
+         "u": "F",
+         "v": "E"
+        }
+       ]
+      },
+      "questionHtml": "ל-DAG עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mo>→</mo><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mo>→</mo><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mo>→</mo><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>F</mi><mo>→</mo><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">A\\to B,\\ A\\to D,\\ B\\to C,\\ D\\to C,\\ D\\to E,\\ F\\to E</annotation></semantics></math></span> מוסיפים צלע אחת. איזו הוספה יוצרת מעגל, כך שלא יהיה עוד מיון טופולוגי?",
+      "explanationHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi><mo>→</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">C\\to A</annotation></semantics></math></span> סוגרת את המעגל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>→</mo><mi>B</mi><mo>→</mo><mi>C</mi><mo>→</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A\\to B\\to C\\to A</annotation></semantics></math></span>, כי כבר יש מסלול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo>→</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">B\\to D</annotation></semantics></math></span>: אין מסלול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span> אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span>, ולכן אין מעגל. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi><mo>→</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">F\\to A</annotation></semantics></math></span>: אין מסלול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi><mo>→</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">E\\to B</annotation></semantics></math></span>: מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> אפשר להגיע רק אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span>, ולא אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span>.",
+      "recapHtml": "צלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi><mo>→</mo><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">u\\to v</annotation></semantics></math></span> יוצרת מעגל אם ורק אם כבר יש מסלול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>"
+     },
+     {
+      "id": "C05-Q6",
+      "question": "ריצת DFS על גרף מכוון מצאה צלע אחורה. מה מסיקים?",
+      "options": [
+       {
+        "id": "a",
+        "value": "יש בגרף מעגל מכוון, ולכן אין לו מיון טופולוגי",
+        "type": "text",
+        "html": "יש בגרף מעגל מכוון, ולכן אין לו מיון טופולוגי"
+       },
+       {
+        "id": "b",
+        "value": "יש מיון טופולוגי, אבל הוא אינו יחיד",
+        "type": "text",
+        "html": "יש מיון טופולוגי, אבל הוא אינו יחיד"
+       },
+       {
+        "id": "c",
+        "value": "אפשר לתקן את המיון אם מתעלמים מהצלע האחורה, והסדר נשאר תקין",
+        "type": "text",
+        "html": "אפשר לתקן את המיון אם מתעלמים מהצלע האחורה, והסדר נשאר תקין"
+       },
+       {
+        "id": "d",
+        "value": "הגרף אינו קשיר",
+        "type": "text",
+        "html": "הגרף אינו קשיר"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "צלע אחורה $(u,v)$ מחברת את $u$ לאב קדמון $v$, ויחד עם מסלול העץ מ-$v$ אל $u$ היא סוגרת מעגל מכוון. בגרף עם מעגל אין מיון טופולוגי. התעלמות מהצלע משנה את הגרף ואינה נותנת מיון שלו. ומעגל אינו קשור לקשירות.",
+      "recap": "צלע אחורה ← מעגל ← אין מיון טופולוגי",
+      "questionHtml": "ריצת DFS על גרף מכוון מצאה צלע אחורה. מה מסיקים?",
+      "explanationHtml": "צלע אחורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(u,v)</annotation></semantics></math></span> מחברת את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> לאב קדמון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>, ויחד עם מסלול העץ מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> אל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> היא סוגרת מעגל מכוון. בגרף עם מעגל אין מיון טופולוגי. התעלמות מהצלע משנה את הגרף ואינה נותנת מיון שלו. ומעגל אינו קשור לקשירות.",
+      "recapHtml": "צלע אחורה ← מעגל ← אין מיון טופולוגי"
+     }
+    ]
+   },
+   {
+    "id": "C06",
+    "order": 6,
+    "icon": "⚖️",
+    "title": "טענות על גרפים: הוכח או הפרך",
+    "goal": "לקרוא טענה על גרפים ולהחליט אם להפריך אותה בדוגמה נגדית או להוכיח אותה, ולבנות את הדוגמה או את ההוכחה.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>רוב שאלות הגרפים במבחן הן \"הוכיחו או הפריכו\". הצעד הראשון הוא לקרוא את הכמתים.</p>\n<ul>\n<li><b>\"בהכרח\" / \"לכל גרף\" / \"לכל סדר שכנים\":</b> הטענה צריכה להתקיים תמיד. <b>דוגמה נגדית אחת מפריכה אותה</b>. כדי להוכיח צריך נימוק כללי, ודוגמאות שמתאימות לא מוכיחות כלום.</li>\n<li><b>\"קיים\":</b> כדי להוכיח מספיק להראות דוגמה אחת. כדי להפריך צריך להראות שלכל בחירה זה נכשל.</li>\n</ul>\n<h3>איך מפריכים</h3>\n<p>בונים את הגרף הקטן ביותר שמקיים את <b>כל</b> התנאים בטענה ושובר את המסקנה. כותבים: הגרף (קודקודים וצלעות), הרצה של האלגוריתם עליו או בדיקה של התנאי, והנקודה שבה המסקנה נכשלת. בודקים שוב שכל תנאי של הטענה מתקיים בדוגמה.</p>\n<div class=\"lesson-ex\"><b>דוגמה.</b> הטענה: \"אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo>=</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|E|=|V|-1</annotation></semantics></math></span> אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> עץ\". הדוגמה: משולש על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{1,2,3\\}</annotation></semantics></math></span> וקודקוד מבודד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span>. יש 4 קודקודים ו-3 צלעות, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo>=</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|E|=|V|-1</annotation></semantics></math></span>, אבל הגרף אינו קשיר ויש בו מעגל, ולכן אינו עץ.\n<div class=\"graph-fig\" data-graph='{\"directed\": false, \"caption\": \"דוגמה נגדית: משולש וקודקוד מבודד\", \"nodes\": [\"1\", \"2\", \"3\", \"4\"], \"edges\": [{\"u\": \"1\", \"v\": \"2\"}, {\"u\": \"2\", \"v\": \"3\"}, {\"u\": \"1\", \"v\": \"3\"}]}'></div>\n</div>\n<h3>איך מוכיחים</h3>\n<p>מציבים קודקודים וצלעות כלליים, מסתמכים על מה שהאלגוריתם עושה, ומגיעים ישר למסקנה, או <b>בשלילה</b>: מניחים שהמסקנה שגויה ומגיעים לסתירה.</p>\n<h3>סימונים ועובדות שימושיות</h3>\n<ul>\n<li><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>E</mi><mrow><mi>B</mi><mi>F</mi><mi>S</mi><mo stretchy=\"false\">(</mo><mi>G</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow></msub></mrow><annotation encoding=\"application/x-tex\">E_{BFS(G,v)}</annotation></semantics></math></span> הוא קבוצת צלעות עץ ה-BFS מהקודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>E</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi><mo stretchy=\"false\">(</mo><mi>G</mi><mo stretchy=\"false\">)</mo></mrow></msub></mrow><annotation encoding=\"application/x-tex\">E_{DFS(G)}</annotation></semantics></math></span> היא קבוצת צלעות יער ה-DFS של כל הגרף.</li>\n<li>BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> מגלה בדיוק את הרכיב של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><msub><mi>E</mi><mrow><mi>B</mi><mi>F</mi><mi>S</mi><mo stretchy=\"false\">(</mo><mi>G</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow></msub><mi mathvariant=\"normal\">∣</mi><mo>=</mo><msub><mi>n</mi><mi>v</mi></msub><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|E_{BFS(G,v)}|=n_v-1</annotation></semantics></math></span> כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>n</mi><mi>v</mi></msub></mrow><annotation encoding=\"application/x-tex\">n_v</annotation></semantics></math></span> גודל הרכיב. ביער DFS עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> עצים יש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">|V|-k</annotation></semantics></math></span> צלעות, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><mo stretchy=\"false\">(</mo><msub><mi>n</mi><mi>i</mi></msub><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\sum_i (n_i-1)</annotation></semantics></math></span> על פני הרכיבים, לא משנה מאיפה מתחילים.</li>\n<li>גרף קשיר על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> קודקודים: לפחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">n-1</annotation></semantics></math></span> צלעות. עץ: קשיר וחסר מעגלים, בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">n-1</annotation></semantics></math></span> צלעות.</li>\n<li>בגרף מכוון: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mrow><mi>deg</mi><mo>⁡</mo></mrow><mo>+</mo></msup><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\deg^+(x)</annotation></semantics></math></span> דרגת היציאה (צלעות שיוצאות מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span>), <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mrow><mi>deg</mi><mo>⁡</mo></mrow><mo>−</mo></msup><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\deg^-(x)</annotation></semantics></math></span> דרגת הכניסה. קודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> הוא <b>שורש</b> אם כל הקודקודים ישיגים ממנו.</li>\n<li>ב-BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> בגרף לא מכוון: לכל צלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(u,v)</annotation></semantics></math></span> מתקיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>−</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mi mathvariant=\"normal\">∣</mi><mo>≤</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|d[u]-d[v]|\\le1</annotation></semantics></math></span>. בגרף מכוון רק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]\\le d[u]+1</annotation></semantics></math></span>.</li>\n</ul>\n<div class=\"lesson-trap\">⚠️ הדוגמה הנגדית חייבת לקיים את <b>כל</b> התנאים של הטענה, גם אלה ה\"קטנים\". קודקוד מבודד שובר תנאי כמו \"לכל קודקוד דרגה לפחות 1\".</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C06-Q1",
+      "question": "הטענה: \"אם לכל קודקוד בגרף לא מכוון $G$ יש דרגה לפחות 1, אז $G$ קשיר\". איזה גרף הוא דוגמה נגדית לטענה?",
+      "options": [
+       {
+        "id": "a",
+        "value": "ארבעה קודקודים $1,2,3,4$ עם שתי הצלעות $\\{1,2\\}$ ו-$\\{3,4\\}$",
+        "type": "text",
+        "html": "ארבעה קודקודים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">1,2,3,4</annotation></semantics></math></span> עם שתי הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{1,2\\}</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{3,4\\}</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "מסלול $1-2-3-4$",
+        "type": "text",
+        "html": "מסלול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>−</mo><mn>2</mn><mo>−</mo><mn>3</mn><mo>−</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">1-2-3-4</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "משולש על $\\{1,2,3\\}$ וקודקוד מבודד $4$",
+        "type": "text",
+        "html": "משולש על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{1,2,3\\}</annotation></semantics></math></span> וקודקוד מבודד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "כוכב: מרכז אחד המחובר לשלושה עלים",
+        "type": "text",
+        "html": "כוכב: מרכז אחד המחובר לשלושה עלים"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "בדוגמה הנכונה לכל קודקוד דרגה 1 והגרף לא קשיר (שני רכיבים). המסלול והכוכב קשירים, ולכן אינם מפריכים כלום. במשולש עם קודקוד מבודד הקודקוד $4$ בדרגה 0, כלומר התנאי של הטענה לא מתקיים, ולכן זו אינה דוגמה נגדית.",
+      "recap": "דוגמה נגדית חייבת לקיים את התנאים ולשבור את המסקנה",
+      "questionHtml": "הטענה: \"אם לכל קודקוד בגרף לא מכוון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> יש דרגה לפחות 1, אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> קשיר\". איזה גרף הוא דוגמה נגדית לטענה?",
+      "explanationHtml": "בדוגמה הנכונה לכל קודקוד דרגה 1 והגרף לא קשיר (שני רכיבים). המסלול והכוכב קשירים, ולכן אינם מפריכים כלום. במשולש עם קודקוד מבודד הקודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span> בדרגה 0, כלומר התנאי של הטענה לא מתקיים, ולכן זו אינה דוגמה נגדית.",
+      "recapHtml": "דוגמה נגדית חייבת לקיים את התנאים ולשבור את המסקנה"
+     },
+     {
+      "id": "C06-Q2",
+      "step": {
+       "type": "choice",
+       "correctId": "a",
+       "prompt": "הטענה: \"בהרצת BFS מ-$s$ בגרף **לא מכוון** קשיר, לכל צלע $(u,v)$ מתקיים $|d[u]-d[v]|\\le1$\". האם היא נכונה?",
+       "options": [
+        {
+         "id": "a",
+         "value": "נכונה, וצריך להוכיח אותה",
+         "type": "text",
+         "html": "נכונה, וצריך להוכיח אותה"
+        },
+        {
+         "id": "b",
+         "value": "לא נכונה, ויש דוגמה נגדית קטנה",
+         "type": "text",
+         "html": "לא נכונה, ויש דוגמה נגדית קטנה"
+        }
+       ],
+       "explain": "נכונה. כש-$u$ נשלף מהתור, שכנו $v$ כבר התגלה או מתגלה עכשיו, בכל מקרה $d[v]\\le d[u]+1$. בגרף לא מכוון גם $(v,u)$ צלע, ולכן $d[u]\\le d[v]+1$. אין דוגמה נגדית, וכל ניסיון לבנות כזו נכשל. בגרף מכוון, לעומת זאת, רק אי-השוויון הראשון מובטח.",
+       "promptHtml": "הטענה: \"בהרצת BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> בגרף <strong>לא מכוון</strong> קשיר, לכל צלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(u,v)</annotation></semantics></math></span> מתקיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>−</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mi mathvariant=\"normal\">∣</mi><mo>≤</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|d[u]-d[v]|\\le1</annotation></semantics></math></span>\". האם היא נכונה?",
+       "explainHtml": "נכונה. כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> נשלף מהתור, שכנו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> כבר התגלה או מתגלה עכשיו, בכל מקרה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]\\le d[u]+1</annotation></semantics></math></span>. בגרף לא מכוון גם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>v</mi><mo separator=\"true\">,</mo><mi>u</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(v,u)</annotation></semantics></math></span> צלע, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[u]\\le d[v]+1</annotation></semantics></math></span>. אין דוגמה נגדית, וכל ניסיון לבנות כזו נכשל. בגרף מכוון, לעומת זאת, רק אי-השוויון הראשון מובטח."
+      },
+      "recap": "לפני שמחפשים דוגמה נגדית בודקים אם הטענה כנראה נכונה",
+      "recapHtml": "לפני שמחפשים דוגמה נגדית בודקים אם הטענה כנראה נכונה"
+     },
+     {
+      "id": "C06-Q3",
+      "step": {
+       "type": "findbug",
+       "bugIndex": 3,
+       "prompt": "ההוכחה הבאה לטענה מהשאלה הקודמת כוללת שורה אחת שגויה. מצאו אותה.",
+       "lines": [
+        "תהי $(u,v)$ צלע. מספיק להוכיח $d[v]\\le d[u]+1$: הגרף לא מכוון, ולכן גם $(v,u)$ צלע, והטיעון בתפקידים הפוכים נותן $d[u]\\le d[v]+1$.",
+        "כש-$u$ נשלף מהתור, בוחנים את כל שכניו, ובהם $v$.",
+        "אם $v$ לבן, הוא מתגלה עכשיו על ידי $u$, ולכן $d[v]=d[u]+1$.",
+        "אם $v$ כבר התגלה, אז הוא התגלה על ידי קודקוד $w$ שנשלף לפני $u$, ולכן $d[w]\\ge d[u]$ ו-$d[v]=d[w]+1\\ge d[u]+1$.",
+        "בשני המקרים $d[v]\\le d[u]+1$, ובסימטריה $|d[u]-d[v]|\\le1$ לכל צלע."
+       ],
+       "explain": "קודקודים נשלפים מהתור בסדר עולה של $d$, ולכן מי שנשלף לפני $u$ מקיים $d[w]\\le d[u]$, ומכאן $d[v]=d[w]+1\\le d[u]+1$. השורה השגויה מהפכת את שני אי-השוויונות, ואז המסקנה בשורה האחרונה לא נובעת.",
+       "promptHtml": "ההוכחה הבאה לטענה מהשאלה הקודמת כוללת שורה אחת שגויה. מצאו אותה.",
+       "explainHtml": "קודקודים נשלפים מהתור בסדר עולה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">d</annotation></semantics></math></span>, ולכן מי שנשלף לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> מקיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>w</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[w]\\le d[u]</annotation></semantics></math></span>, ומכאן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>w</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]=d[w]+1\\le d[u]+1</annotation></semantics></math></span>. השורה השגויה מהפכת את שני אי-השוויונות, ואז המסקנה בשורה האחרונה לא נובעת.",
+       "linesHtml": [
+        "תהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(u,v)</annotation></semantics></math></span> צלע. מספיק להוכיח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]\\le d[u]+1</annotation></semantics></math></span>: הגרף לא מכוון, ולכן גם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>v</mi><mo separator=\"true\">,</mo><mi>u</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(v,u)</annotation></semantics></math></span> צלע, והטיעון בתפקידים הפוכים נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[u]\\le d[v]+1</annotation></semantics></math></span>.",
+        "כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> נשלף מהתור, בוחנים את כל שכניו, ובהם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span>.",
+        "אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> לבן, הוא מתגלה עכשיו על ידי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]=d[u]+1</annotation></semantics></math></span>.",
+        "אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> כבר התגלה, אז הוא התגלה על ידי קודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>w</mi></mrow><annotation encoding=\"application/x-tex\">w</annotation></semantics></math></span> שנשלף לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>w</mi><mo stretchy=\"false\">]</mo><mo>≥</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[w]\\ge d[u]</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>w</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn><mo>≥</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]=d[w]+1\\ge d[u]+1</annotation></semantics></math></span>.",
+        "בשני המקרים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]\\le d[u]+1</annotation></semantics></math></span>, ובסימטריה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>−</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mi mathvariant=\"normal\">∣</mi><mo>≤</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|d[u]-d[v]|\\le1</annotation></semantics></math></span> לכל צלע."
+       ]
+      },
+      "recap": "התור מוציא קודקודים בסדר עולה של $d$",
+      "recapHtml": "התור מוציא קודקודים בסדר עולה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">d</annotation></semantics></math></span>"
+     },
+     {
+      "id": "C06-Q4",
+      "question": "מריצים BFS מ-$s$ בגרף **מכוון**, ו-$(u,v)$ צלע כש-$u$ ישיג מ-$s$. מה נכון תמיד?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$d[v]\\le d[u]+1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]\\le d[u]+1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$|d[u]-d[v]|\\le1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>−</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mi mathvariant=\"normal\">∣</mi><mo>≤</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|d[u]-d[v]|\\le1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$d[v]=d[u]+1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]=d[u]+1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$d[v]\\ge d[u]$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>≥</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[v]\\ge d[u]</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "כש-$u$ נשלף, $v$ כבר התגלה או מתגלה עכשיו ולכן $d[v]\\le d[u]+1$. שאר האפשרויות נכשלות בדוגמה אחת: במסלול $s\\to a\\to b\\to c$ עם הצלע $c\\to a$ מתקיים $d[a]=1$ ו-$d[c]=3$, ולכן לצלע $(c,a)$ ההפרש הוא 2 ($|d[c]-d[a]|\\le1$ נכשל), $d[a]\\ne d[c]+1$ ו-$d[a]<d[c]$ ($d[v]\\ge d[u]$ נכשל).",
+      "recap": "בגרף מכוון רק $d[v]\\le d[u]+1$ מובטח",
+      "questionHtml": "מריצים BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> בגרף <strong>מכוון</strong>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>u</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(u,v)</annotation></semantics></math></span> צלע כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> ישיג מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span>. מה נכון תמיד?",
+      "explanationHtml": "כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> נשלף, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> כבר התגלה או מתגלה עכשיו ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]\\le d[u]+1</annotation></semantics></math></span>. שאר האפשרויות נכשלות בדוגמה אחת: במסלול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi><mo>→</mo><mi>a</mi><mo>→</mo><mi>b</mi><mo>→</mo><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">s\\to a\\to b\\to c</annotation></semantics></math></span> עם הצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi><mo>→</mo><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">c\\to a</annotation></semantics></math></span> מתקיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>a</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[a]=1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>c</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">d[c]=3</annotation></semantics></math></span>, ולכן לצלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>c</mi><mo separator=\"true\">,</mo><mi>a</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(c,a)</annotation></semantics></math></span> ההפרש הוא 2 (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>d</mi><mo stretchy=\"false\">[</mo><mi>c</mi><mo stretchy=\"false\">]</mo><mo>−</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>a</mi><mo stretchy=\"false\">]</mo><mi mathvariant=\"normal\">∣</mi><mo>≤</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|d[c]-d[a]|\\le1</annotation></semantics></math></span> נכשל), <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>a</mi><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>c</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[a]\\ne d[c]+1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>a</mi><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>c</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[a]&lt;d[c]</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>≥</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">d[v]\\ge d[u]</annotation></semantics></math></span> נכשל).",
+      "recapHtml": "בגרף מכוון רק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>d</mi><mo stretchy=\"false\">[</mo><mi>u</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">d[v]\\le d[u]+1</annotation></semantics></math></span> מובטח"
+     },
+     {
+      "bankId": "24B-A-Q1a",
+      "recap": "דוגמה נגדית: שני משולשים זרים נותנים $|E|=|V|=6$ ואינם קשירים",
+      "recapHtml": "דוגמה נגדית: שני משולשים זרים נותנים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo>=</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>=</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">|E|=|V|=6</annotation></semantics></math></span> ואינם קשירים"
+     },
+     {
+      "bankId": "24B-A-Q1b",
+      "recap": "BFS רואה רק את הרכיב של המקור, DFS עובר בין כל הרכיבים: כמות הצלעות שונה",
+      "recapHtml": "BFS רואה רק את הרכיב של המקור, DFS עובר בין כל הרכיבים: כמות הצלעות שונה"
+     }
+    ]
+   },
+   {
+    "id": "C07",
+    "order": 7,
+    "icon": "🌳",
+    "title": "BFS מול DFS: עצים וטענות",
+    "goal": "להשוות עץ BFS לעץ DFS: גבהים, מי גילה כל קודקוד, מתי העצים זהים, ולטפל בטענות על קודקוד שורש בגרף מכוון.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>אותו גרף, אותו מקור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span>, ושני עצים שונים. כדי להוכיח או להפריך טענות על שניהם צריך להכיר מה כל אחד מבטיח.</p>\n<h3>עץ BFS</h3>\n<ul>\n<li>עומק קודקוד בעץ הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo stretchy=\"false\">[</mo><mi>v</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>s</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">d[v]=\\delta(s,v)</annotation></semantics></math></span>, המרחק האמיתי. <b>גובה</b> העץ הוא המרחק הגדול ביותר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span>.</li>\n<li>צלע שאינה בעץ מחברת קודקודים ששכבותיהם שונות בלא יותר מ-1 (לא מכוון).</li>\n<li>קודקוד מתגלה ע\"י <b>הראשון שנשלף מהתור</b> מבין שכניו. מכך שיש מסלול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> אל קודקוד לבן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> ברגע שבו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> נשלף <b>לא נובע</b> ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> יהיה צאצא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span>: קודקוד אחר, שנשלף אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>u</mi></mrow><annotation encoding=\"application/x-tex\">u</annotation></semantics></math></span> אבל לפני שכנו של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> בדרך, יכול לגלות את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> קודם.</li>\n</ul>\n<h3>עץ DFS</h3>\n<ul>\n<li>עמוק ומסועף מעט: הוא הולך כל עוד יש שכן לבן.</li>\n<li>בגרף לא מכוון כל צלע שאינה בעץ מחברת קודקוד לצאצא שלו (אחורה), ולעולם לא בין ענפים שונים.</li>\n<li>העומק של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>v</mi></mrow><annotation encoding=\"application/x-tex\">v</annotation></semantics></math></span> בכל עץ פורש מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span>, ובפרט בעץ DFS, הוא לפחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>s</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\delta(s,v)</annotation></semantics></math></span> (המסלול בעץ הוא מסלול בגרף). לכן <b>גובה עץ ה-DFS גדול או שווה לגובה עץ ה-BFS</b>.</li>\n</ul>\n<div class=\"lesson-ex\"><b>דוגמה.</b> בגרף הלא מכוון עם הצלעות A–B, A–C, A–D, B–E, C–E, D–F, E–F: עץ ה-BFS מ-A הוא בגובה 2 (B, C, D בשכבה 1; E, F בשכבה 2). עץ ה-DFS האלפביתי הוא שרשרת A, B, E, F, D עם C תלוי על E, בגובה 4.\n<div class=\"graph-fig\" data-graph='{\"directed\": false, \"algo\": \"bfs\", \"source\": \"A\", \"caption\": \"BFS מ-A: גובה 2\", \"nodes\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"], \"edges\": [{\"u\": \"A\", \"v\": \"B\"}, {\"u\": \"A\", \"v\": \"C\"}, {\"u\": \"A\", \"v\": \"D\"}, {\"u\": \"B\", \"v\": \"E\"}, {\"u\": \"C\", \"v\": \"E\"}, {\"u\": \"D\", \"v\": \"F\"}, {\"u\": \"E\", \"v\": \"F\"}], \"expect\": {\"d\": {\"A\": 0, \"B\": 1, \"C\": 1, \"D\": 1, \"E\": 2, \"F\": 2}, \"pi\": {\"A\": null, \"B\": \"A\", \"C\": \"A\", \"D\": \"A\", \"E\": \"B\", \"F\": \"D\"}}}'></div>\n<div class=\"graph-fig\" data-graph='{\"directed\": false, \"algo\": \"dfs\", \"caption\": \"DFS מ-A: גובה 4\", \"nodes\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"], \"edges\": [{\"u\": \"A\", \"v\": \"B\"}, {\"u\": \"A\", \"v\": \"C\"}, {\"u\": \"A\", \"v\": \"D\"}, {\"u\": \"B\", \"v\": \"E\"}, {\"u\": \"C\", \"v\": \"E\"}, {\"u\": \"D\", \"v\": \"F\"}, {\"u\": \"E\", \"v\": \"F\"}], \"expect\": {\"order\": [\"A\", \"B\", \"E\", \"C\", \"F\", \"D\"], \"pi\": {\"A\": null, \"B\": \"A\", \"C\": \"E\", \"D\": \"F\", \"E\": \"B\", \"F\": \"E\"}}}'></div>\n</div>\n<h3>מתי העצים זהים?</h3>\n<div class=\"lesson-rule\">🔑 בגרף קשיר לא מכוון, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>T</mi><mrow><mi>B</mi><mi>F</mi><mi>S</mi></mrow></msub><mo>=</mo><msub><mi>T</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow></msub></mrow><annotation encoding=\"application/x-tex\">T_{BFS}=T_{DFS}</annotation></semantics></math></span> אפשרי רק כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> הוא <b>עץ</b>. אם יש צלע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>a</mi><mo separator=\"true\">,</mo><mi>b</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(a,b)</annotation></semantics></math></span> מחוץ לעץ, ב-DFS היא מחברת קודקוד לצאצא שלו שאינו בנו (אחרת היא צלע העץ), כלומר העומקים נבדלים ב-2 לפחות. אבל אם העץ הוא גם עץ BFS, צלע מחוץ לו מחברת שכבות שנבדלות ב-1 לכל היותר. סתירה. לכן בכל גרף קשיר עם מעגל, לכל מקור ולכל סדר שכנים, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>T</mi><mrow><mi>B</mi><mi>F</mi><mi>S</mi></mrow></msub><mo mathvariant=\"normal\">≠</mo><msub><mi>T</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow></msub></mrow><annotation encoding=\"application/x-tex\">T_{BFS}\\ne T_{DFS}</annotation></semantics></math></span>.</div>\n<h3>גרף מכוון ושורש</h3>\n<p>קודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> הוא <b>שורש</b> אם כל הקודקודים ישיגים ממנו. אז BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> מגלה את כולם, וגם DFS שמתחיל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> מגלה את כולם בעץ אחד (משפט השביל הלבן), ולכן בשני העצים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|V|-1</annotation></semantics></math></span> צלעות. אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> אינו שורש, BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> מגלה רק את הישיגים, ו-DFS ממשיך לשורשים נוספים ויוצר יער.</p>\n<div class=\"lesson-trap\">⚠️ בשאלות עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>E</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow></msub><mo>=</mo><msub><mi>E</mi><mrow><mi>B</mi><mi>F</mi><mi>S</mi></mrow></msub></mrow><annotation encoding=\"application/x-tex\">E_{DFS}=E_{BFS}</annotation></semantics></math></span> בגרף מכוון, צומת שאינו ישיג מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> יכול לשבת ביער ה-DFS כעץ בודד בלי צלעות. אז הצלעות שוות אף שהוא לא ישיג.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C07-Q1",
+      "step": {
+       "type": "numeric",
+       "answer": 2,
+       "tol": 0,
+       "prompt": "בגרף הלא מכוון עם הצלעות $A\\!-\\!B,\\ A\\!-\\!C,\\ A\\!-\\!D,\\ B\\!-\\!E,\\ C\\!-\\!E,\\ D\\!-\\!F,\\ E\\!-\\!F$ מריצים BFS מ-$A$. מהו גובה עץ ה-BFS (העומק הגדול ביותר)?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F"
+        ],
+        "directed": false,
+        "algo": "bfs",
+        "source": "A",
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "C"
+         },
+         {
+          "u": "A",
+          "v": "D"
+         },
+         {
+          "u": "B",
+          "v": "E"
+         },
+         {
+          "u": "C",
+          "v": "E"
+         },
+         {
+          "u": "D",
+          "v": "F"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         }
+        ]
+       },
+       "explain": "$B,C,D$ בשכבה 1, ו-$E$ (דרך $B$) ו-$F$ (דרך $D$) בשכבה 2. אין קודקוד במרחק 3, ולכן הגובה 2.",
+       "promptHtml": "בגרף הלא מכוון עם הצלעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>B</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>C</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>A</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>D</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>B</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>C</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>E</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>D</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>F</mi><mo separator=\"true\">,</mo><mtext> </mtext><mi>E</mi><mtext> ⁣</mtext><mo>−</mo><mtext> ⁣</mtext><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">A\\!-\\!B,\\ A\\!-\\!C,\\ A\\!-\\!D,\\ B\\!-\\!E,\\ C\\!-\\!E,\\ D\\!-\\!F,\\ E\\!-\\!F</annotation></semantics></math></span> מריצים BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span>. מהו גובה עץ ה-BFS (העומק הגדול ביותר)?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo separator=\"true\">,</mo><mi>C</mi><mo separator=\"true\">,</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">B,C,D</annotation></semantics></math></span> בשכבה 1, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> (דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span>) ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> (דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span>) בשכבה 2. אין קודקוד במרחק 3, ולכן הגובה 2."
+      },
+      "recap": "גובה עץ BFS = המרחק הגדול ביותר מהמקור",
+      "recapHtml": "גובה עץ BFS = המרחק הגדול ביותר מהמקור"
+     },
+     {
+      "id": "C07-Q2",
+      "step": {
+       "type": "numeric",
+       "answer": 4,
+       "tol": 0,
+       "prompt": "באותו גרף מריצים DFS מ-$A$ (שכנים בסדר אלפביתי). מהו גובה עץ ה-DFS?",
+       "graph": {
+        "nodes": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F"
+        ],
+        "directed": false,
+        "algo": "dfs",
+        "edges": [
+         {
+          "u": "A",
+          "v": "B"
+         },
+         {
+          "u": "A",
+          "v": "C"
+         },
+         {
+          "u": "A",
+          "v": "D"
+         },
+         {
+          "u": "B",
+          "v": "E"
+         },
+         {
+          "u": "C",
+          "v": "E"
+         },
+         {
+          "u": "D",
+          "v": "F"
+         },
+         {
+          "u": "E",
+          "v": "F"
+         }
+        ]
+       },
+       "explain": "$A$ מגלה את $B$, $B$ את $E$. $E$ בוחן קודם את $C$ (שכן אלפביתי קטן) ומגלה אותו, ואז את $F$, ו-$F$ מגלה את $D$. השרשרת $A,B,E,F,D$ באורך 4 צלעות. $C$ בגובה 3 ונתלה על $E$. הגובה 4, גדול מגובה ה-BFS (2), כצפוי.",
+       "promptHtml": "באותו גרף מריצים DFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> (שכנים בסדר אלפביתי). מהו גובה עץ ה-DFS?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> מגלה את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span> בוחן קודם את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> (שכן אלפביתי קטן) ומגלה אותו, ואז את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>F</mi></mrow><annotation encoding=\"application/x-tex\">F</annotation></semantics></math></span> מגלה את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">D</annotation></semantics></math></span>. השרשרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo separator=\"true\">,</mo><mi>B</mi><mo separator=\"true\">,</mo><mi>E</mi><mo separator=\"true\">,</mo><mi>F</mi><mo separator=\"true\">,</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">A,B,E,F,D</annotation></semantics></math></span> באורך 4 צלעות. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">C</annotation></semantics></math></span> בגובה 3 ונתלה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>E</mi></mrow><annotation encoding=\"application/x-tex\">E</annotation></semantics></math></span>. הגובה 4, גדול מגובה ה-BFS (2), כצפוי."
+      },
+      "recap": "גובה DFS ≥ גובה BFS",
+      "recapHtml": "גובה DFS ≥ גובה BFS"
+     },
+     {
+      "id": "C07-Q3",
+      "question": "$G$ גרף לא מכוון קשיר ופשוט. מתי ייתכן שעץ BFS ועץ DFS מאותו קודקוד $s$ (עם סדרי שכנים מתאימים) הם אותו עץ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "רק כש-$G$ עצמו הוא עץ",
+        "type": "text",
+        "html": "רק כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> עצמו הוא עץ"
+       },
+       {
+        "id": "b",
+        "value": "כש-$G$ מכיל מעגל אחד בלבד ו-$s$ אינו נמצא עליו",
+        "type": "text",
+        "html": "כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> מכיל מעגל אחד בלבד ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> אינו נמצא עליו"
+       },
+       {
+        "id": "c",
+        "value": "כש-$G$ דו-צדדי",
+        "type": "text",
+        "html": "כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> דו-צדדי"
+       },
+       {
+        "id": "d",
+        "value": "כש-$s$ הוא קודקוד מדרגה 1",
+        "type": "text",
+        "html": "כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> הוא קודקוד מדרגה 1"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "אם יש צלע מחוץ לעץ, ב-DFS היא מחברת קודקוד לצאצא רחוק (עומק שונה בלפחות 2), וב-BFS היא מחברת עומקים שנבדלים בלא יותר מ-1, ולכן שני העצים לא יכולים להיות זהים. מכאן שהזהות אפשרית רק בעץ, ובעץ שני האלגוריתמים מוצאים את אותו עץ יחיד. מעגל אחד, דו-צדדיות ודרגת $s$ אינם משנים את הטיעון: גם $C_4$ (דו-צדדי) וגם מעגל עם $s$ מדרגה 1 נותנים עצים שונים.",
+      "recap": "$T_{BFS}=T_{DFS}$ רק אם $G$ עץ",
+      "questionHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> גרף לא מכוון קשיר ופשוט. מתי ייתכן שעץ BFS ועץ DFS מאותו קודקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> (עם סדרי שכנים מתאימים) הם אותו עץ?",
+      "explanationHtml": "אם יש צלע מחוץ לעץ, ב-DFS היא מחברת קודקוד לצאצא רחוק (עומק שונה בלפחות 2), וב-BFS היא מחברת עומקים שנבדלים בלא יותר מ-1, ולכן שני העצים לא יכולים להיות זהים. מכאן שהזהות אפשרית רק בעץ, ובעץ שני האלגוריתמים מוצאים את אותו עץ יחיד. מעגל אחד, דו-צדדיות ודרגת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> אינם משנים את הטיעון: גם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>C</mi><mn>4</mn></msub></mrow><annotation encoding=\"application/x-tex\">C_4</annotation></semantics></math></span> (דו-צדדי) וגם מעגל עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> מדרגה 1 נותנים עצים שונים.",
+      "recapHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>T</mi><mrow><mi>B</mi><mi>F</mi><mi>S</mi></mrow></msub><mo>=</mo><msub><mi>T</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow></msub></mrow><annotation encoding=\"application/x-tex\">T_{BFS}=T_{DFS}</annotation></semantics></math></span> רק אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> עץ"
+     },
+     {
+      "id": "C07-Q4",
+      "question": "$G$ גרף **מכוון**, ו-$s$ שורש (כל הקודקודים ישיגים ממנו). מריצים BFS מ-$s$ ו-DFS שמתחיל ב-$s$. איזו טענה נכונה?",
+      "options": [
+       {
+        "id": "a",
+        "value": "שני העצים מכילים בדיוק $|V|-1$ צלעות, כי שניהם מגלים את כל הקודקודים בעץ אחד",
+        "type": "text",
+        "html": "שני העצים מכילים בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|V|-1</annotation></semantics></math></span> צלעות, כי שניהם מגלים את כל הקודקודים בעץ אחד"
+       },
+       {
+        "id": "b",
+        "value": "ב-DFS יש יותר צלעות, כי צלעות קדימה וחוצות מצטרפות לעץ",
+        "type": "text",
+        "html": "ב-DFS יש יותר צלעות, כי צלעות קדימה וחוצות מצטרפות לעץ"
+       },
+       {
+        "id": "c",
+        "value": "ב-BFS יש פחות צלעות, כי הוא מדלג על קודקודים",
+        "type": "text",
+        "html": "ב-BFS יש פחות צלעות, כי הוא מדלג על קודקודים"
+       },
+       {
+        "id": "d",
+        "value": "שני העצים בעלי $|V|-1$ צלעות רק אם בגרף אין מעגלים",
+        "type": "text",
+        "html": "שני העצים בעלי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|V|-1</annotation></semantics></math></span> צלעות רק אם בגרף אין מעגלים"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "BFS מגלה את כל הישיגים מ-$s$, כלומר את כולם. גם DFS שמתחיל ב-$s$ מגלה את כולם בעץ אחד לפי משפט השביל הלבן. עץ על $|V|$ קודקודים הוא בדיוק $|V|-1$ צלעות. צלעות קדימה וחוצות אינן צלעות עץ ואינן נספרות. ל-BFS אין דילוג: הוא מגלה כל ישיג. והמעגלים אינם משנים את מספר צלעות העץ.",
+      "recap": "$s$ שורש ← בשני העצים $|V|-1$ צלעות",
+      "questionHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> גרף <strong>מכוון</strong>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> שורש (כל הקודקודים ישיגים ממנו). מריצים BFS מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> ו-DFS שמתחיל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span>. איזו טענה נכונה?",
+      "explanationHtml": "BFS מגלה את כל הישיגים מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span>, כלומר את כולם. גם DFS שמתחיל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> מגלה את כולם בעץ אחד לפי משפט השביל הלבן. עץ על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|V|</annotation></semantics></math></span> קודקודים הוא בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|V|-1</annotation></semantics></math></span> צלעות. צלעות קדימה וחוצות אינן צלעות עץ ואינן נספרות. ל-BFS אין דילוג: הוא מגלה כל ישיג. והמעגלים אינם משנים את מספר צלעות העץ.",
+      "recapHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> שורש ← בשני העצים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|V|-1</annotation></semantics></math></span> צלעות"
+     },
+     {
+      "bankId": "24B-B-Q1a",
+      "recap": "$E_{DFS}=E_{BFS}$ אינו אומר ש-$s$ שורש: צומת לא ישיג הוא עץ בודד ב-DFS",
+      "recapHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>E</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow></msub><mo>=</mo><msub><mi>E</mi><mrow><mi>B</mi><mi>F</mi><mi>S</mi></mrow></msub></mrow><annotation encoding=\"application/x-tex\">E_{DFS}=E_{BFS}</annotation></semantics></math></span> אינו אומר ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> שורש: צומת לא ישיג הוא עץ בודד ב-DFS"
+     },
+     {
+      "bankId": "26B-A-Q3a",
+      "recap": "ב-BFS קודקוד מתגלה על ידי מי שנשלף ראשון, ולא על ידי מי שיש לו מסלול אליו",
+      "recapHtml": "ב-BFS קודקוד מתגלה על ידי מי שנשלף ראשון, ולא על ידי מי שיש לו מסלול אליו"
+     }
+    ]
+   },
+   {
+    "id": "C08",
+    "order": 8,
+    "icon": "🏆",
+    "title": "מבחן גמר: גרפים",
+    "goal": "לפתור שאלות אמיתיות מהמבחנים על BFS, DFS וטענות על גרפים, כולל הוכחות והפרכות.",
+    "source": "ai-verified",
+    "boss": true,
+    "lesson": {
+     "html": "\n<p>זו רמת הגמר: שאלות אמיתיות מהמאגר, עם צעדים מודרכים. לפני שמתחילים, רשימת בדיקה קצרה:</p>\n<ul>\n<li><b>אלגוריתם על גרף:</b> איזה חיפוש (BFS למרחקים וקשירות, DFS לזמנים ומעגלים), על איזה גרף (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi></mrow><annotation encoding=\"application/x-tex\">G</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi><mo>−</mo><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">G-x</annotation></semantics></math></span>), ומאיזה קודקוד. הסיבוכיות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi mathvariant=\"normal\">∣</mi><mi>V</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mi mathvariant=\"normal\">∣</mi><mi>E</mi><mi mathvariant=\"normal\">∣</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(|V|+|E|)</annotation></semantics></math></span> לכל הרצה.</li>\n<li><b>מסלול קצר דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span>:</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>z</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>z</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\delta(x,z)+\\delta(z,y)=\\delta(x,y)</annotation></semantics></math></span>. <b>צומת הפרדה:</b> BFS ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi><mo>−</mo><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">G-x</annotation></semantics></math></span> ובדיקה שכל שכני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> התגלו.</li>\n<li><b>טענה \"הוכח או הפרך\":</b> קוראים את הכמתים; להפריך בדוגמה הקטנה ביותר שמקיימת כל תנאי; להוכיח בשלילה או ישירות.</li>\n<li><b>קשירות:</b> רכיב קשירות הוא תת-גרף קשיר מקסימלי. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><msub><mi>E</mi><mrow><mi>D</mi><mi>F</mi><mi>S</mi></mrow></msub><mi mathvariant=\"normal\">∣</mi><mo>=</mo><msub><mo>∑</mo><mi>i</mi></msub><mo stretchy=\"false\">(</mo><msub><mi>n</mi><mi>i</mi></msub><mo>−</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">|E_{DFS}|=\\sum_i(n_i-1)</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><msub><mi>E</mi><mrow><mi>B</mi><mi>F</mi><mi>S</mi><mo stretchy=\"false\">(</mo><mi>G</mi><mo separator=\"true\">,</mo><mi>v</mi><mo stretchy=\"false\">)</mo></mrow></msub><mi mathvariant=\"normal\">∣</mi><mo>=</mo><msub><mi>n</mi><mi>v</mi></msub><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">|E_{BFS(G,v)}|=n_v-1</annotation></semantics></math></span>.</li>\n<li><b>BFS מול DFS:</b> ב-BFS קודקוד מתגלה על ידי הראשון שנשלף; ב-DFS לא מכוון אין צלעות חוצות.</li>\n<li><b>שורש בגרף מכוון:</b> אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> אינו שורש, קודקוד שאינו ישיג מופיע ביער ה-DFS כעץ נפרד.</li>\n</ul>\n<div class=\"lesson-rule\">🔑 בצעדים המודרכים אפשר לדלג או לבקש את הפתרון. נסו קודם לבד על דף: ההוכחות הן 5-6 שורות בלבד.</div>\n"
+    },
+    "questions": [
+     {
+      "bankId": "24A-A-Q1b",
+      "recap": "מסלול קצר דרך $z$: $\\delta(x,z)+\\delta(z,y)=\\delta(x,y)$, שתי הרצות BFS",
+      "recapHtml": "מסלול קצר דרך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>z</mi></mrow><annotation encoding=\"application/x-tex\">z</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>z</mi><mo stretchy=\"false\">)</mo><mo>+</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>z</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo><mo>=</mo><mi>δ</mi><mo stretchy=\"false\">(</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\delta(x,z)+\\delta(z,y)=\\delta(x,y)</annotation></semantics></math></span>, שתי הרצות BFS"
+     },
+     {
+      "bankId": "24A-C-Q1a",
+      "recap": "צומת הפרדה: BFS ב-$G-x$ מאחד השכנים ובדיקה שכל שכני $x$ התגלו",
+      "recapHtml": "צומת הפרדה: BFS ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>G</mi><mo>−</mo><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">G-x</annotation></semantics></math></span> מאחד השכנים ובדיקה שכל שכני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> התגלו"
+     },
+     {
+      "bankId": "24B-A-Q1c",
+      "recap": "הוכחה בשלילה: ב-DFS מספר הצלעות קבוע, וב-BFS הוא תלוי בגודל הרכיב של המקור",
+      "recapHtml": "הוכחה בשלילה: ב-DFS מספר הצלעות קבוע, וב-BFS הוא תלוי בגודל הרכיב של המקור"
+     },
+     {
+      "bankId": "24B-B-Q1c",
+      "recap": "סכום דרגות חיובי עדיין מאפשר קודקוד בלי צלע נכנסת ובלי להיות ישיג",
+      "recapHtml": "סכום דרגות חיובי עדיין מאפשר קודקוד בלי צלע נכנסת ובלי להיות ישיג"
+     },
+     {
+      "bankId": "26B-A-Q3b",
+      "recap": "מעגל דרך המקור: ב-BFS שתי צלעות המעגל יוצאות מ-$s$ כצלעות עץ, ב-DFS לא יכולות שתיהן",
+      "recapHtml": "מעגל דרך המקור: ב-BFS שתי צלעות המעגל יוצאות מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>s</mi></mrow><annotation encoding=\"application/x-tex\">s</annotation></semantics></math></span> כצלעות עץ, ב-DFS לא יכולות שתיהן"
+     },
+     {
+      "bankId": "25B-A-Q1b",
+      "recap": "רכיב קשירות הוא מקסימלי, ולכן כל קודקוד על מסלול בין שני קודקודים בו שייך לו",
+      "recapHtml": "רכיב קשירות הוא מקסימלי, ולכן כל קודקוד על מסלול בין שני קודקודים בו שייך לו"
+     }
+    ]
+   }
+  ]
+ },
+ "greedy_proofs": {
+  "levels": [
+   {
+    "id": "C01",
+    "order": 1,
+    "icon": "🪙",
+    "title": "מהו אלגוריתם חמדן",
+    "goal": "להריץ אלגוריתם חמדן על דוגמה קטנה, ולהסביר למה דוגמה שעובדת עדיין אינה הוכחה.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>אלגוריתם <b>חמדן</b> בונה פתרון בשלבים, ובכל שלב בוחר את האפשרות ש\"נראית הכי טובה עכשיו\", בלי לחזור ולתקן. כמעט תמיד המבנה הוא אותו מבנה:</p>\n<ul>\n<li><b>ממיינים</b> את האיברים לפי כלל כלשהו (הקטן ביותר, הקצה הימני ביותר, היחס הגבוה ביותר ...).</li>\n<li><b>עוברים בסדר הזה</b> ולוקחים כל איבר שעדיין אפשר לקחת.</li>\n</ul>\n<p>לכן זמן הריצה הוא כמעט תמיד מיון ועוד מעבר אחד: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mi>log</mi><mo>⁡</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n\\log n)</annotation></semantics></math></span>.</p>\n<div class=\"lesson-ex\">דוגמה: מטבעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>10</mn><mo separator=\"true\">,</mo><mn>25</mn></mrow><annotation encoding=\"application/x-tex\">1,5,10,25</annotation></semantics></math></span> וצריך לשלם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>63</mn></mrow><annotation encoding=\"application/x-tex\">63</annotation></semantics></math></span> במספר מינימלי של מטבעות. החמדן לוקח את המטבע הגדול ביותר שנכנס: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>25</mn></mrow><annotation encoding=\"application/x-tex\">25</annotation></semantics></math></span>, שוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>25</mn></mrow><annotation encoding=\"application/x-tex\">25</annotation></semantics></math></span> (נשאר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">13</annotation></semantics></math></span>), אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">10</annotation></semantics></math></span> (נשאר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span>), ואז שלושה מטבעות של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>. סך הכול שישה מטבעות.</div>\n<h3>חמדן הוא לא תמיד נכון</h3>\n<p>כלל חמדני שנראה הגיוני יכול להיכשל. עם המטבעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">1,3,4</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span> לתשלום, החמדן לוקח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span> ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>: שלושה מטבעות. אבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo>+</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3+3</annotation></semantics></math></span> הם <b>שניים</b>.</p>\n<div class=\"lesson-trap\">⚠️ הצלחה על דוגמה אחת, או על חמש דוגמאות, אינה הוכחה. בשאלה חמדנית במבחן יש שני חלקים: <b>לבחור כלל</b>, ואז <b>להוכיח</b> שהוא תמיד נותן פתרון אופטימלי (או לתת דוגמה נגדית אם הוא לא).</div>\n<div class=\"lesson-rule\">🔑 במסלול הזה: רמה 2 לומדת לשבור כלל בעזרת דוגמה נגדית, רמות 3-5 לומדות להוכיח כלל נכון, רמה 6 היא תרמיל, רמה 7 היא הופמן, ורמה 8 היא מבחן.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C01-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "מטבעות $1,5,10,25$ ותשלום $63$. כמה מטבעות משתמש בהם האלגוריתם החמדני שלוקח תמיד את המטבע הגדול ביותר שנכנס?",
+       "answer": 6,
+       "tol": 0,
+       "explain": "$25+25+10+1+1+1=63$: שישה מטבעות.",
+       "promptHtml": "מטבעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>10</mn><mo separator=\"true\">,</mo><mn>25</mn></mrow><annotation encoding=\"application/x-tex\">1,5,10,25</annotation></semantics></math></span> ותשלום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>63</mn></mrow><annotation encoding=\"application/x-tex\">63</annotation></semantics></math></span>. כמה מטבעות משתמש בהם האלגוריתם החמדני שלוקח תמיד את המטבע הגדול ביותר שנכנס?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>25</mn><mo>+</mo><mn>25</mn><mo>+</mo><mn>10</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>63</mn></mrow><annotation encoding=\"application/x-tex\">25+25+10+1+1+1=63</annotation></semantics></math></span>: שישה מטבעות."
+      },
+      "recap": "חמדן על מטבעות: תמיד את הגדול ביותר שנכנס",
+      "recapHtml": "חמדן על מטבעות: תמיד את הגדול ביותר שנכנס"
+     },
+     {
+      "id": "C01-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "מטבעות $1,3,4$ ותשלום $6$. כמה מטבעות משתמש בהם האלגוריתם החמדני (הגדול ביותר שנכנס)?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "החמדן לוקח $4$, אחר כך $1$ ו-$1$: שלושה מטבעות.",
+       "promptHtml": "מטבעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">1,3,4</annotation></semantics></math></span> ותשלום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span>. כמה מטבעות משתמש בהם האלגוריתם החמדני (הגדול ביותר שנכנס)?",
+       "explainHtml": "החמדן לוקח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>: שלושה מטבעות."
+      },
+      "recap": "אותו כלל על מערכת מטבעות אחרת",
+      "recapHtml": "אותו כלל על מערכת מטבעות אחרת"
+     },
+     {
+      "id": "C01-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "באותם נתונים (מטבעות $1,3,4$ ותשלום $6$): מהו המספר הקטן ביותר האפשרי של מטבעות?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "$3+3=6$ משתמש בשני מטבעות, ולא ניתן עם מטבע אחד. כלומר החמדן (שלושה) אינו אופטימלי.",
+       "promptHtml": "באותם נתונים (מטבעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">1,3,4</annotation></semantics></math></span> ותשלום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span>): מהו המספר הקטן ביותר האפשרי של מטבעות?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo>+</mo><mn>3</mn><mo>=</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">3+3=6</annotation></semantics></math></span> משתמש בשני מטבעות, ולא ניתן עם מטבע אחד. כלומר החמדן (שלושה) אינו אופטימלי."
+      },
+      "recap": "כשהחמדן מקבל יותר מהאופטימום, הכלל שגוי",
+      "recapHtml": "כשהחמדן מקבל יותר מהאופטימום, הכלל שגוי"
+     },
+     {
+      "id": "C01-Q4",
+      "question": "למערכת המטבעות $1,5,12$ בודקים את הסכומים הבאים. באיזה מהם האלגוריתם החמדני (הגדול ביותר שנכנס) משתמש ביותר מטבעות מהנדרש?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$15$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>15</mn></mrow><annotation encoding=\"application/x-tex\">15</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$10$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">10</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$25$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>25</mn></mrow><annotation encoding=\"application/x-tex\">25</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$7$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">7</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "ב-$15$ החמדן לוקח $12+1+1+1$ (ארבעה מטבעות) בעוד $5+5+5$ הם שלושה. ב-$10$ החמדן לוקח $5+5$, וזה אופטימלי. ב-$25$ הוא לוקח $12+12+1$ (שלושה), ואי אפשר פחות. ב-$7$ הוא לוקח $5+1+1$ ואין דרך טובה יותר.",
+      "recap": "מחפשים סכום שבו הבחירה הגדולה חוסמת פתרון קצר יותר",
+      "questionHtml": "למערכת המטבעות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">1,5,12</annotation></semantics></math></span> בודקים את הסכומים הבאים. באיזה מהם האלגוריתם החמדני (הגדול ביותר שנכנס) משתמש ביותר מטבעות מהנדרש?",
+      "explanationHtml": "ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>15</mn></mrow><annotation encoding=\"application/x-tex\">15</annotation></semantics></math></span> החמדן לוקח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">12+1+1+1</annotation></semantics></math></span> (ארבעה מטבעות) בעוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo>+</mo><mn>5</mn><mo>+</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">5+5+5</annotation></semantics></math></span> הם שלושה. ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">10</annotation></semantics></math></span> החמדן לוקח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo>+</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">5+5</annotation></semantics></math></span>, וזה אופטימלי. ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>25</mn></mrow><annotation encoding=\"application/x-tex\">25</annotation></semantics></math></span> הוא לוקח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn><mo>+</mo><mn>12</mn><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">12+12+1</annotation></semantics></math></span> (שלושה), ואי אפשר פחות. ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">7</annotation></semantics></math></span> הוא לוקח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">5+1+1</annotation></semantics></math></span> ואין דרך טובה יותר.",
+      "recapHtml": "מחפשים סכום שבו הבחירה הגדולה חוסמת פתרון קצר יותר"
+     },
+     {
+      "id": "C01-Q5",
+      "step": {
+       "type": "text",
+       "prompt": "אלגוריתם חמדן ממיין $n$ איברים לפי כלל קבוע ועובר עליהם פעם אחת. מה סיבוכיות הזמן שלו? (למשל O(n))",
+       "accept": [
+        "O(n log n)",
+        "Θ(n log n)"
+       ],
+       "normalize": "complexity",
+       "explain": "המיון עולה $O(n\\log n)$ והמעבר $O(n)$, ולכן הסך הכול $O(n\\log n)$. אין לכתוב $O(n)$ בלי הצדקה, למשל מיון שאינו נחוץ.",
+       "promptHtml": "אלגוריתם חמדן ממיין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> איברים לפי כלל קבוע ועובר עליהם פעם אחת. מה סיבוכיות הזמן שלו? (למשל O(n))",
+       "explainHtml": "המיון עולה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mi>log</mi><mo>⁡</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n\\log n)</annotation></semantics></math></span> והמעבר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n)</annotation></semantics></math></span>, ולכן הסך הכול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mi>log</mi><mo>⁡</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n\\log n)</annotation></semantics></math></span>. אין לכתוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n)</annotation></semantics></math></span> בלי הצדקה, למשל מיון שאינו נחוץ."
+      },
+      "recap": "חמדן = מיון + מעבר = O(n log n)",
+      "recapHtml": "חמדן = מיון + מעבר = O(n log n)"
+     },
+     {
+      "id": "C01-Q6",
+      "question": "אלגוריתם חמדן החזיר פתרון אופטימלי בכל אחת מעשר דוגמאות קטנות שבדקתם. מה אפשר להסיק?",
+      "options": [
+       {
+        "id": "a",
+        "value": "עדיין צריך הוכחה, כי דוגמה נגדית יכולה להתקיים בקלט שלא בדקנו",
+        "type": "text",
+        "html": "עדיין צריך הוכחה, כי דוגמה נגדית יכולה להתקיים בקלט שלא בדקנו"
+       },
+       {
+        "id": "b",
+        "value": "האלגוריתם נכון, כי עשר דוגמאות מספיקות",
+        "type": "text",
+        "html": "האלגוריתם נכון, כי עשר דוגמאות מספיקות"
+       },
+       {
+        "id": "c",
+        "value": "האלגוריתם נכון, כי הוא חמדן",
+        "type": "text",
+        "html": "האלגוריתם נכון, כי הוא חמדן"
+       },
+       {
+        "id": "d",
+        "value": "האלגוריתם שגוי, כי חמדן אף פעם לא אופטימלי",
+        "type": "text",
+        "html": "האלגוריתם שגוי, כי חמדן אף פעם לא אופטימלי"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "בדיקת דוגמאות יכולה רק להפריך. עשר הצלחות אינן הוכחה, וחמדן אינו נכון מעצם היותו חמדן. אבל גם הטענה ההפוכה שגויה: חמדנים רבים הם אופטימליים (תזמון קטעים, הופמן, תרמיל שברי) וההוכחה היא מה שמבדיל.",
+      "recap": "דוגמאות מפריכות, הוכחה מוכיחה",
+      "questionHtml": "אלגוריתם חמדן החזיר פתרון אופטימלי בכל אחת מעשר דוגמאות קטנות שבדקתם. מה אפשר להסיק?",
+      "explanationHtml": "בדיקת דוגמאות יכולה רק להפריך. עשר הצלחות אינן הוכחה, וחמדן אינו נכון מעצם היותו חמדן. אבל גם הטענה ההפוכה שגויה: חמדנים רבים הם אופטימליים (תזמון קטעים, הופמן, תרמיל שברי) וההוכחה היא מה שמבדיל.",
+      "recapHtml": "דוגמאות מפריכות, הוכחה מוכיחה"
+     }
+    ]
+   },
+   {
+    "id": "C02",
+    "order": 2,
+    "icon": "🔍",
+    "title": "לבדוק כלל מול דוגמה נגדית",
+    "goal": "להפריך כלל חמדני שנראה סביר בעזרת דוגמה קטנה, ולזהות את הכלל הנכון בבעיית הקטעים הזרים.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>הבעיה הקלאסית: נתונות משימות, כל אחת <b>קטע</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mi>s</mi><mo separator=\"true\">,</mo><mi>f</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[s,f]</annotation></semantics></math></span> על ציר הזמן (התחלה וסיום). שני קטעים <b>מתנגשים</b> אם יש להם נקודה משותפת. צריך לבחור <b>כמה שיותר קטעים שאינם מתנגשים</b>.</p>\n<p>יש כמה כללים חמדניים סבירים: לבחור קודם את הקטע <b>הקצר ביותר</b>, או את זה ש<b>מתחיל ראשון</b>, או את זה ש<b>מסתיים ראשון</b>. רק אחד מהם תמיד נכון, ואת זה מגלים בבדיקה.</p>\n<div class=\"lesson-rule\">🔑 <b>מתכון להפרכה.</b>\n<ol>\n<li>כותבים את הכלל במדויק (מה בוחרים, מה זורקים אחרי הבחירה).</li>\n<li>מחפשים דוגמה של <b>שלושה-ארבעה קטעים</b> שבה הבחירה הראשונה של הכלל <b>חוסמת</b> פתרון גדול יותר.</li>\n<li>מריצים את הכלל על הדוגמה ומחשבים כמה קטעים הוא בוחר.</li>\n<li>מציגים פתרון טוב יותר ומראים שהוא חוקי.</li>\n</ol></div>\n<div class=\"lesson-ex\">הכלל \"המתחיל ראשון\" על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10],[2,3],[4,5]</annotation></semantics></math></span>: הוא בוחר את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10]</annotation></semantics></math></span> שמתנגש בשני האחרים, ומקבל קטע אחד. אבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[2,3]</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[4,5]</annotation></semantics></math></span> זרים, ושני קטעים עדיפים. הכלל \"הקצר ביותר\" נכשל על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10],[9,12],[11,20]</annotation></semantics></math></span>: הקצר הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[9,12]</annotation></semantics></math></span>, שמתנגש בשניים האחרים, ושוב מקבלים קטע אחד מול שניים.</div>\n<div class=\"lesson-rule\">🔑 הכלל שנשאר, <b>המסתיים ראשון</b>, תמיד נכון: בוחרים את הקטע עם סיום מוקדם ביותר, זורקים את כל מי שמתנגש בו וחוזרים. את ההוכחה נלמד ברמה הבאה.</div>\n<div class=\"lesson-trap\">⚠️ הדוגמה הנגדית חייבת להראות <b>שני מספרים</b>: כמה הכלל קיבל וכמה אפשר לקבל. \"הכלל נכשל\" בלי הפתרון הטוב יותר אינו דוגמה נגדית.</div>\n<p>אותו רעיון עובד בכל בעיה. למשל \"כמה שיותר פריטים בתקציב\": הכלל \"היקר ביותר שנכנס קודם\" נראה סביר, אך הוא ממהר להשתמש בתקציב. בתקציב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">12</annotation></semantics></math></span> ומחירים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">2,3,4,7,8</annotation></semantics></math></span> הוא לוקח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span> ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span> (שני פריטים), בעוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>4</mn><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">2+3+4=9</annotation></semantics></math></span> הם שלושה פריטים.</p>\n"
+    },
+    "questions": [
+     {
+      "id": "C02-Q1",
+      "question": "הכלל החמדני: תמיד לבחור את הקטע שמתחיל ראשון (ולזרוק את כל מי שמתנגש בו). איזו מהדוגמאות הבאות היא דוגמה נגדית לכלל הזה, כלומר הכלל מקבל בה פחות קטעים זרים מהאפשרי?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$[1,10],\\ [2,3],\\ [4,5],\\ [6,7]$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mo stretchy=\"false\">[</mo><mn>6</mn><mo separator=\"true\">,</mo><mn>7</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10],\\ [2,3],\\ [4,5],\\ [6,7]</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$[1,3],\\ [4,6],\\ [7,9]$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mo stretchy=\"false\">[</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,3],\\ [4,6],\\ [7,9]</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$[1,5],\\ [2,6],\\ [7,9]$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mo stretchy=\"false\">[</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,5],\\ [2,6],\\ [7,9]</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$[1,4],\\ [2,3],\\ [5,8]$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>8</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,4],\\ [2,3],\\ [5,8]</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "בקבוצה עם הקטע הארוך $[1,10]$ הכלל בוחר אותו ומקבל קטע אחד, בעוד שלושת האחרים זרים זה לזה. בקבוצה של שלושה קטעים רצופים הכלל בוחר את שלושתם. בקבוצה עם $[1,5],[2,6],[7,9]$ הוא מקבל שניים וזה האופטימום. בקבוצה עם $[1,4],[2,3],[5,8]$ הוא מקבל שניים, ושניים הם האופטימום.",
+      "recap": "מחפשים קטע ארוך שחוסם הרבה קטנים",
+      "questionHtml": "הכלל החמדני: תמיד לבחור את הקטע שמתחיל ראשון (ולזרוק את כל מי שמתנגש בו). איזו מהדוגמאות הבאות היא דוגמה נגדית לכלל הזה, כלומר הכלל מקבל בה פחות קטעים זרים מהאפשרי?",
+      "explanationHtml": "בקבוצה עם הקטע הארוך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10]</annotation></semantics></math></span> הכלל בוחר אותו ומקבל קטע אחד, בעוד שלושת האחרים זרים זה לזה. בקבוצה של שלושה קטעים רצופים הכלל בוחר את שלושתם. בקבוצה עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,5],[2,6],[7,9]</annotation></semantics></math></span> הוא מקבל שניים וזה האופטימום. בקבוצה עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>8</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,4],[2,3],[5,8]</annotation></semantics></math></span> הוא מקבל שניים, ושניים הם האופטימום.",
+      "recapHtml": "מחפשים קטע ארוך שחוסם הרבה קטנים"
+     },
+     {
+      "id": "C02-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "הכלל \"הקצר ביותר קודם\" על הקטעים $[1,10],[9,12],[11,20]$. כמה קטעים הוא בוחר?",
+       "answer": 1,
+       "tol": 0,
+       "explain": "הקצר הוא $[9,12]$ (אורך $3$). הוא מתנגש בשני האחרים, ולכן נבחר קטע אחד. האופטימום הוא שניים: $[1,10]$ ו-$[11,20]$.",
+       "promptHtml": "הכלל \"הקצר ביותר קודם\" על הקטעים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10],[9,12],[11,20]</annotation></semantics></math></span>. כמה קטעים הוא בוחר?",
+       "explainHtml": "הקצר הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[9,12]</annotation></semantics></math></span> (אורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span>). הוא מתנגש בשני האחרים, ולכן נבחר קטע אחד. האופטימום הוא שניים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10]</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[11,20]</annotation></semantics></math></span>."
+      },
+      "recap": "הקצר ביותר יכול לחסום שני ארוכים",
+      "recapHtml": "הקצר ביותר יכול לחסום שני ארוכים"
+     },
+     {
+      "id": "C02-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "הכלל \"המסתיים ראשון\" על הקטעים $[1,4],[3,5],[0,6],[5,7],[3,9],[5,9],[6,10],[8,11],[8,12],[2,14],[12,16]$. כמה קטעים זרים הוא בוחר?",
+       "answer": 4,
+       "tol": 0,
+       "explain": "בוחרים $[1,4]$, אחר כך הקטע הראשון שמתחיל אחרי $4$ ומסתיים הכי מוקדם: $[5,7]$, אחריו $[8,11]$, ואחריו $[12,16]$. סך הכול ארבעה, וזה גם המקסימום.",
+       "promptHtml": "הכלל \"המסתיים ראשון\" על הקטעים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>6</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>11</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>14</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>16</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,4],[3,5],[0,6],[5,7],[3,9],[5,9],[6,10],[8,11],[8,12],[2,14],[12,16]</annotation></semantics></math></span>. כמה קטעים זרים הוא בוחר?",
+       "explainHtml": "בוחרים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,4]</annotation></semantics></math></span>, אחר כך הקטע הראשון שמתחיל אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span> ומסתיים הכי מוקדם: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[5,7]</annotation></semantics></math></span>, אחריו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>11</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[8,11]</annotation></semantics></math></span>, ואחריו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>16</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[12,16]</annotation></semantics></math></span>. סך הכול ארבעה, וזה גם המקסימום."
+      },
+      "recap": "בוחרים את המסתיים ראשון, זורקים מתנגשים וחוזרים",
+      "recapHtml": "בוחרים את המסתיים ראשון, זורקים מתנגשים וחוזרים"
+     },
+     {
+      "id": "C02-Q4",
+      "step": {
+       "type": "numeric",
+       "prompt": "מחפשים כמה שיותר פריטים בתקציב $12$, מחירים $2,3,4,7,8$. הכלל \"היקר ביותר שעדיין נכנס קודם\" כמה פריטים לוקח?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "הוא לוקח $8$ (נשאר $4$) ואז $4$ (נשאר $0$): שני פריטים. אבל $2+3+4=9\\le 12$ הם שלושה פריטים, ולכן הכלל נכשל.",
+       "promptHtml": "מחפשים כמה שיותר פריטים בתקציב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">12</annotation></semantics></math></span>, מחירים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">2,3,4,7,8</annotation></semantics></math></span>. הכלל \"היקר ביותר שעדיין נכנס קודם\" כמה פריטים לוקח?",
+       "explainHtml": "הוא לוקח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span> (נשאר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span>) ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span> (נשאר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>): שני פריטים. אבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>4</mn><mo>=</mo><mn>9</mn><mo>≤</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">2+3+4=9\\le 12</annotation></semantics></math></span> הם שלושה פריטים, ולכן הכלל נכשל."
+      },
+      "recap": "כלל שמבזבז תקציב על פריט יקר נכשל",
+      "recapHtml": "כלל שמבזבז תקציב על פריט יקר נכשל"
+     },
+     {
+      "id": "C02-Q5",
+      "question": "בבעיית בחירת הכי הרבה קטעים זרים, איזה כלל חמדני תמיד נותן פתרון אופטימלי?",
+      "options": [
+       {
+        "id": "a",
+        "value": "לבחור את הקטע שמסתיים ראשון",
+        "type": "text",
+        "html": "לבחור את הקטע שמסתיים ראשון"
+       },
+       {
+        "id": "b",
+        "value": "לבחור את הקטע הקצר ביותר",
+        "type": "text",
+        "html": "לבחור את הקטע הקצר ביותר"
+       },
+       {
+        "id": "c",
+        "value": "לבחור את הקטע הארוך ביותר",
+        "type": "text",
+        "html": "לבחור את הקטע הארוך ביותר"
+       },
+       {
+        "id": "d",
+        "value": "לבחור את הקטע שמתחיל ראשון",
+        "type": "text",
+        "html": "לבחור את הקטע שמתחיל ראשון"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "רק הבחירה לפי הסיום המוקדם נכונה. הקצר ביותר נכשל על $[1,10],[9,12],[11,20]$, הארוך ביותר נכשל על $[1,10],[2,3],[4,5]$ (בוחר את $[1,10]$ ומקבל אחד מול שניים), והמתחיל ראשון נכשל על אותה דוגמה.",
+      "recap": "קטעים זרים: המסתיים ראשון",
+      "questionHtml": "בבעיית בחירת הכי הרבה קטעים זרים, איזה כלל חמדני תמיד נותן פתרון אופטימלי?",
+      "explanationHtml": "רק הבחירה לפי הסיום המוקדם נכונה. הקצר ביותר נכשל על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10],[9,12],[11,20]</annotation></semantics></math></span>, הארוך ביותר נכשל על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10],[2,3],[4,5]</annotation></semantics></math></span> (בוחר את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10]</annotation></semantics></math></span> ומקבל אחד מול שניים), והמתחיל ראשון נכשל על אותה דוגמה.",
+      "recapHtml": "קטעים זרים: המסתיים ראשון"
+     }
+    ]
+   },
+   {
+    "id": "C03",
+    "order": 3,
+    "icon": "🔁",
+    "title": "טיעון ההחלפה, צעד אחר צעד",
+    "goal": "להוכיח שיש פתרון אופטימלי שמכיל את הבחירה החמדנית הראשונה, ולזהות את הצעד שחסר בהוכחה כושלת.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>הוכחת נכונות לאלגוריתם חמדני מורכבת משני חלקים. החלק הראשון, <b>תכונת הבחירה החמדנית</b>, אומר: <b>קיים פתרון אופטימלי שמכיל את הבחירה הראשונה של החמדן</b>. מוכיחים אותו ב<b>טיעון החלפה</b>.</p>\n<div class=\"lesson-rule\">🔑 <b>ארבעה צעדים, תמיד באותו סדר:</b>\n<ol>\n<li>נותנים שם: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> הבחירה החמדנית הראשונה, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> פתרון אופטימלי כלשהו. אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi><mo>∈</mo><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">g\\in O</annotation></semantics></math></span> סיימנו.</li>\n<li>אחרת מוצאים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> את האיבר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>o</mi></mrow><annotation encoding=\"application/x-tex\">o</annotation></semantics></math></span> ש\"תופס את המקום\" של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>.</li>\n<li>מחליפים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mo>=</mo><mo stretchy=\"false\">(</mo><mi>O</mi><mo>∖</mo><mo stretchy=\"false\">{</mo><mi>o</mi><mo stretchy=\"false\">}</mo><mo stretchy=\"false\">)</mo><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">O&#x27;=(O\\setminus\\{o\\})\\cup\\{g\\}</annotation></semantics></math></span>, ומנמקים לפי הכלל החמדני ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> \"טוב לפחות כמו\" <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>o</mi></mrow><annotation encoding=\"application/x-tex\">o</annotation></semantics></math></span>.</li>\n<li>מראים <b>שני דברים</b>: ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> <b>חוקי</b>, ושהערך שלו <b>לא גרוע</b> מזה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span>. אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> אופטימלי ומכיל את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>.</li>\n</ol></div>\n<div class=\"lesson-ex\"><b>קטעים זרים, לפי הסיום המוקדם.</b> יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> הקטע שמסתיים ראשון מכולם, ויהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> אופטימלי עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi><mo mathvariant=\"normal\">∉</mo><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">g\\notin O</annotation></semantics></math></span>. יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>o</mi></mrow><annotation encoding=\"application/x-tex\">o</annotation></semantics></math></span> הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> שמסתיים ראשון. מכיוון ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> מסתיים ראשון מכולם, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">(</mo><mi>g</mi><mo stretchy=\"false\">)</mo><mo>≤</mo><mi>f</mi><mo stretchy=\"false\">(</mo><mi>o</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">f(g)\\le f(o)</annotation></semantics></math></span>. נחליף ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mo>=</mo><mo stretchy=\"false\">(</mo><mi>O</mi><mo>∖</mo><mo stretchy=\"false\">{</mo><mi>o</mi><mo stretchy=\"false\">}</mo><mo stretchy=\"false\">)</mo><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">O&#x27;=(O\\setminus\\{o\\})\\cup\\{g\\}</annotation></semantics></math></span>. הוא חוקי: שאר קטעי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> מתחילים אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">(</mo><mi>o</mi><mo stretchy=\"false\">)</mo><mo>≥</mo><mi>f</mi><mo stretchy=\"false\">(</mo><mi>g</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">f(o)\\ge f(g)</annotation></semantics></math></span>, ולכן אינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>. והגודל זהה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mi mathvariant=\"normal\">∣</mi><mo>=</mo><mi mathvariant=\"normal\">∣</mi><mi>O</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|O&#x27;|=|O|</annotation></semantics></math></span>. לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> אופטימלי ומכיל את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>.</div>\n<div class=\"lesson-trap\">⚠️ <b>הצעד שהכי הרבה פעמים חסר הוא החוקיות.</b> לא מספיק לומר \"לא הפסדנו ערך\". צריך להראות שאחרי ההחלפה לא נוצרה חפיפה, לא עברנו את התקציב, ולא הופר אילוץ אחר.</div>\n<div class=\"lesson-trap\">⚠️ <b>כלל שגוי נשבר בדיוק בצעד הזה.</b> בכלל \"הקצר קודם\", אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo>=</mo><mo stretchy=\"false\">{</mo><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">O=\\{[1,10],[11,20]\\}</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi><mo>=</mo><mo stretchy=\"false\">[</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">g=[9,12]</annotation></semantics></math></span>, ההחלפה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10]</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> יוצרת חפיפה עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[11,20]</annotation></semantics></math></span>. הטיעון נתקע, וזה סימן שצריך דוגמה נגדית.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C03-Q1",
+      "question": "בהוכחת תכונת הבחירה החמדנית, אחרי שהחלפנו את $o$ ב-$g$ ויצרנו את $O'$, מה בדיוק צריך להראות?",
+      "options": [
+       {
+        "id": "a",
+        "value": "ש-$O'$ חוקי, ושהערך שלו לא קטן מהערך של $O$",
+        "type": "text",
+        "html": "ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> חוקי, ושהערך שלו לא קטן מהערך של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "ש-$O'$ שווה בדיוק ל-$O$ בכל האיברים",
+        "type": "text",
+        "html": "ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> שווה בדיוק ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> בכל האיברים"
+       },
+       {
+        "id": "c",
+        "value": "ש-$O'$ חוקי בלבד, כי הערך נשמר מאליו",
+        "type": "text",
+        "html": "ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> חוקי בלבד, כי הערך נשמר מאליו"
+       },
+       {
+        "id": "d",
+        "value": "שהאלגוריתם החמדן מריץ מיון",
+        "type": "text",
+        "html": "שהאלגוריתם החמדן מריץ מיון"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "צריך את שני הדברים: חוקיות וערך לא גרוע. אם מראים רק ערך, ייתכן ש-$O'$ אינו פתרון בכלל. אם מראים רק חוקיות, אי אפשר להסיק שהוא אופטימלי. $O'$ שונה מ-$O$ בהחלט (הוא מכיל את $g$), והמיון אינו חלק מהצעד.",
+      "recap": "אחרי ההחלפה: חוקי + לא גרוע",
+      "questionHtml": "בהוכחת תכונת הבחירה החמדנית, אחרי שהחלפנו את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>o</mi></mrow><annotation encoding=\"application/x-tex\">o</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> ויצרנו את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span>, מה בדיוק צריך להראות?",
+      "explanationHtml": "צריך את שני הדברים: חוקיות וערך לא גרוע. אם מראים רק ערך, ייתכן ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> אינו פתרון בכלל. אם מראים רק חוקיות, אי אפשר להסיק שהוא אופטימלי. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> שונה מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> בהחלט (הוא מכיל את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>), והמיון אינו חלק מהצעד.",
+      "recapHtml": "אחרי ההחלפה: חוקי + לא גרוע"
+     },
+     {
+      "id": "C03-Q2",
+      "step": {
+       "type": "order",
+       "prompt": "סדרו את הוכחת תכונת הבחירה החמדנית לקטעים זרים (בחירה לפי הסיום המוקדם).",
+       "lines": [
+        "יהי $g$ הקטע שמסתיים ראשון מכולם ויהי $O$ פתרון אופטימלי. אם $g\\in O$ סיימנו.",
+        "אחרת יהי $o$ הקטע של $O$ שמסתיים ראשון.",
+        "מכיוון ש-$g$ מסתיים ראשון מכולם, $f(g)\\le f(o)$; נחליף ונגדיר $O'=(O\\setminus\\{o\\})\\cup\\{g\\}$.",
+        "$O'$ חוקי: שאר קטעי $O$ מתחילים אחרי $f(o)\\ge f(g)$, ולכן אינם מתנגשים ב-$g$.",
+        "$|O'|=|O|$, ולכן $O'$ אופטימלי ומכיל את $g$."
+       ],
+       "explain": "קודם מנסחים ($g$ ו-$O$), אחר כך בוחרים מה מחליפים, אחר כך מחליפים ומנמקים את הצעד בכלל החמדני, אחר כך בודקים חוקיות (היא נשענת על $f(o)\\ge f(g)$ מהצעד הקודם), ולבסוף שהגודל נשמר.",
+       "promptHtml": "סדרו את הוכחת תכונת הבחירה החמדנית לקטעים זרים (בחירה לפי הסיום המוקדם).",
+       "explainHtml": "קודם מנסחים (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span>), אחר כך בוחרים מה מחליפים, אחר כך מחליפים ומנמקים את הצעד בכלל החמדני, אחר כך בודקים חוקיות (היא נשענת על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">(</mo><mi>o</mi><mo stretchy=\"false\">)</mo><mo>≥</mo><mi>f</mi><mo stretchy=\"false\">(</mo><mi>g</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">f(o)\\ge f(g)</annotation></semantics></math></span> מהצעד הקודם), ולבסוף שהגודל נשמר.",
+       "linesHtml": [
+        "יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> הקטע שמסתיים ראשון מכולם ויהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> פתרון אופטימלי. אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi><mo>∈</mo><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">g\\in O</annotation></semantics></math></span> סיימנו.",
+        "אחרת יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>o</mi></mrow><annotation encoding=\"application/x-tex\">o</annotation></semantics></math></span> הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> שמסתיים ראשון.",
+        "מכיוון ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> מסתיים ראשון מכולם, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">(</mo><mi>g</mi><mo stretchy=\"false\">)</mo><mo>≤</mo><mi>f</mi><mo stretchy=\"false\">(</mo><mi>o</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">f(g)\\le f(o)</annotation></semantics></math></span>; נחליף ונגדיר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mo>=</mo><mo stretchy=\"false\">(</mo><mi>O</mi><mo>∖</mo><mo stretchy=\"false\">{</mo><mi>o</mi><mo stretchy=\"false\">}</mo><mo stretchy=\"false\">)</mo><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">O&#x27;=(O\\setminus\\{o\\})\\cup\\{g\\}</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> חוקי: שאר קטעי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> מתחילים אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">(</mo><mi>o</mi><mo stretchy=\"false\">)</mo><mo>≥</mo><mi>f</mi><mo stretchy=\"false\">(</mo><mi>g</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">f(o)\\ge f(g)</annotation></semantics></math></span>, ולכן אינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mi mathvariant=\"normal\">∣</mi><mo>=</mo><mi mathvariant=\"normal\">∣</mi><mi>O</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|O&#x27;|=|O|</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> אופטימלי ומכיל את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>."
+       ]
+      },
+      "recap": "מבנה הוכחה: שמות, מה מחליפים, החלפה, חוקיות, ערך",
+      "recapHtml": "מבנה הוכחה: שמות, מה מחליפים, החלפה, חוקיות, ערך"
+     },
+     {
+      "id": "C03-Q3",
+      "step": {
+       "type": "findbug",
+       "prompt": "בגרסה הבאה של ההוכחה שורה אחת שונתה והיא שגויה. מצאו אותה.",
+       "lines": [
+        "יהי $g$ הקטע שמסתיים ראשון מכולם ויהי $O$ פתרון אופטימלי. אם $g\\in O$ סיימנו.",
+        "אחרת יהי $o$ הקטע של $O$ שמסתיים ראשון.",
+        "מכיוון ש-$g$ מסתיים ראשון מכולם, $f(g)\\ge f(o)$; נחליף ונגדיר $O'=(O\\setminus\\{o\\})\\cup\\{g\\}$.",
+        "$O'$ חוקי: שאר קטעי $O$ מתחילים אחרי $f(o)\\ge f(g)$, ולכן אינם מתנגשים ב-$g$.",
+        "$|O'|=|O|$, ולכן $O'$ אופטימלי ומכיל את $g$."
+       ],
+       "bugIndex": 2,
+       "explain": "$g$ מסתיים ראשון מכולם, ולכן $f(g)\\le f(o)$ ולא להפך. בכיוון הלא נכון שורת החוקיות הבאה אינה נובעת.",
+       "promptHtml": "בגרסה הבאה של ההוכחה שורה אחת שונתה והיא שגויה. מצאו אותה.",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> מסתיים ראשון מכולם, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">(</mo><mi>g</mi><mo stretchy=\"false\">)</mo><mo>≤</mo><mi>f</mi><mo stretchy=\"false\">(</mo><mi>o</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">f(g)\\le f(o)</annotation></semantics></math></span> ולא להפך. בכיוון הלא נכון שורת החוקיות הבאה אינה נובעת.",
+       "linesHtml": [
+        "יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> הקטע שמסתיים ראשון מכולם ויהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> פתרון אופטימלי. אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi><mo>∈</mo><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">g\\in O</annotation></semantics></math></span> סיימנו.",
+        "אחרת יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>o</mi></mrow><annotation encoding=\"application/x-tex\">o</annotation></semantics></math></span> הקטע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> שמסתיים ראשון.",
+        "מכיוון ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> מסתיים ראשון מכולם, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">(</mo><mi>g</mi><mo stretchy=\"false\">)</mo><mo>≥</mo><mi>f</mi><mo stretchy=\"false\">(</mo><mi>o</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">f(g)\\ge f(o)</annotation></semantics></math></span>; נחליף ונגדיר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mo>=</mo><mo stretchy=\"false\">(</mo><mi>O</mi><mo>∖</mo><mo stretchy=\"false\">{</mo><mi>o</mi><mo stretchy=\"false\">}</mo><mo stretchy=\"false\">)</mo><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">O&#x27;=(O\\setminus\\{o\\})\\cup\\{g\\}</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> חוקי: שאר קטעי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> מתחילים אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">(</mo><mi>o</mi><mo stretchy=\"false\">)</mo><mo>≥</mo><mi>f</mi><mo stretchy=\"false\">(</mo><mi>g</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">f(o)\\ge f(g)</annotation></semantics></math></span>, ולכן אינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mi mathvariant=\"normal\">∣</mi><mo>=</mo><mi mathvariant=\"normal\">∣</mi><mi>O</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|O&#x27;|=|O|</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> אופטימלי ומכיל את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>."
+       ]
+      },
+      "recap": "בודקים את כיוון אי-השוויון שנובע מהכלל",
+      "recapHtml": "בודקים את כיוון אי-השוויון שנובע מהכלל"
+     },
+     {
+      "id": "C03-Q4",
+      "question": "הכלל \"הקצר קודם\" לקטעים זרים. נתון $O=\\{[1,10],[11,20]\\}$ וה\"בחירה\" $g=[9,12]$. מדוע ההחלפה של $[1,10]$ ב-$g$ לא מראה שיש אופטימלי עם $g$?",
+      "options": [
+       {
+        "id": "a",
+        "value": "כי $g$ מתנגש גם עם $[11,20]$, ולכן הפתרון אחרי ההחלפה אינו חוקי",
+        "type": "text",
+        "html": "כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> מתנגש גם עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[11,20]</annotation></semantics></math></span>, ולכן הפתרון אחרי ההחלפה אינו חוקי"
+       },
+       {
+        "id": "b",
+        "value": "כי $g$ ארוך מ-$[1,10]$",
+        "type": "text",
+        "html": "כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> ארוך מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10]</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "כי $O$ אינו אופטימלי",
+        "type": "text",
+        "html": "כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> אינו אופטימלי"
+       },
+       {
+        "id": "d",
+        "value": "כי הערך של $O'$ גדול יותר",
+        "type": "text",
+        "html": "כי הערך של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">O&#x27;</annotation></semantics></math></span> גדול יותר"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "הקטע $[9,12]$ מתנגש גם עם $[1,10]$ (בנקודות $9,10$) וגם עם $[11,20]$ (בנקודות $11,12$). אחרי ההחלפה נשאר $[9,12],[11,20]$ שמתנגשים, ולכן החוקיות נשברת. $g$ קצר מ-$[1,10]$ ולא ארוך ממנו, $O$ אכן אופטימלי (שני קטעים), והערך אינו הבעיה.",
+      "recap": "החוקיות היא הצעד שנשבר בכלל שגוי",
+      "questionHtml": "הכלל \"הקצר קודם\" לקטעים זרים. נתון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo>=</mo><mo stretchy=\"false\">{</mo><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">O=\\{[1,10],[11,20]\\}</annotation></semantics></math></span> וה\"בחירה\" <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi><mo>=</mo><mo stretchy=\"false\">[</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">g=[9,12]</annotation></semantics></math></span>. מדוע ההחלפה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10]</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> לא מראה שיש אופטימלי עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>?",
+      "explanationHtml": "הקטע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[9,12]</annotation></semantics></math></span> מתנגש גם עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10]</annotation></semantics></math></span> (בנקודות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn><mo separator=\"true\">,</mo><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">9,10</annotation></semantics></math></span>) וגם עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[11,20]</annotation></semantics></math></span> (בנקודות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>11</mn><mo separator=\"true\">,</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">11,12</annotation></semantics></math></span>). אחרי ההחלפה נשאר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>11</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[9,12],[11,20]</annotation></semantics></math></span> שמתנגשים, ולכן החוקיות נשברת. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> קצר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,10]</annotation></semantics></math></span> ולא ארוך ממנו, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> אכן אופטימלי (שני קטעים), והערך אינו הבעיה.",
+      "recapHtml": "החוקיות היא הצעד שנשבר בכלל שגוי"
+     },
+     {
+      "id": "C03-Q5",
+      "question": "בהוכחה לבעיית \"כמה שיותר פריטים בתקציב $K$\" (בוחרים לפי מחיר עולה) מחליפים פריט $a\\in O$ בפריט הזול ביותר $d\\notin O$. מה צריך להראות כדי שההחלפה תהיה חוקית?",
+      "options": [
+       {
+        "id": "a",
+        "value": "שהסכום אחרי ההחלפה לא עולה על $K$, כי $d$ לא יקר מ-$a$",
+        "type": "text",
+        "html": "שהסכום אחרי ההחלפה לא עולה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>K</mi></mrow><annotation encoding=\"application/x-tex\">K</annotation></semantics></math></span>, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">d</annotation></semantics></math></span> לא יקר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "שמספר הפריטים גדל באחד",
+        "type": "text",
+        "html": "שמספר הפריטים גדל באחד"
+       },
+       {
+        "id": "c",
+        "value": "ש-$d$ יקר מ-$a$",
+        "type": "text",
+        "html": "ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">d</annotation></semantics></math></span> יקר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "ש-$a$ הוא הפריט הזול ביותר בכל הקבוצה",
+        "type": "text",
+        "html": "ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> הוא הפריט הזול ביותר בכל הקבוצה"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "אחרי ההחלפה הסכום משתנה ב-$d-a\\le 0$ (כי $d$ הזול ביותר), ולכן אינו עולה על $K$, ומספר הפריטים נשאר זהה. מספר הפריטים אינו גדל, $d$ אינו יקר מ-$a$ אלא זול ממנו, ו-$a$ אינו הזול ביותר (הזול ביותר הוא $d$).",
+      "recap": "בתקציב: החלפה בזול יותר לא מגדילה את הסכום",
+      "questionHtml": "בהוכחה לבעיית \"כמה שיותר פריטים בתקציב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>K</mi></mrow><annotation encoding=\"application/x-tex\">K</annotation></semantics></math></span>\" (בוחרים לפי מחיר עולה) מחליפים פריט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mo>∈</mo><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">a\\in O</annotation></semantics></math></span> בפריט הזול ביותר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo mathvariant=\"normal\">∉</mo><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">d\\notin O</annotation></semantics></math></span>. מה צריך להראות כדי שההחלפה תהיה חוקית?",
+      "explanationHtml": "אחרי ההחלפה הסכום משתנה ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi><mo>−</mo><mi>a</mi><mo>≤</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">d-a\\le 0</annotation></semantics></math></span> (כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">d</annotation></semantics></math></span> הזול ביותר), ולכן אינו עולה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>K</mi></mrow><annotation encoding=\"application/x-tex\">K</annotation></semantics></math></span>, ומספר הפריטים נשאר זהה. מספר הפריטים אינו גדל, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">d</annotation></semantics></math></span> אינו יקר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> אלא זול ממנו, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> אינו הזול ביותר (הזול ביותר הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">d</annotation></semantics></math></span>).",
+      "recapHtml": "בתקציב: החלפה בזול יותר לא מגדילה את הסכום"
+     }
+    ]
+   },
+   {
+    "id": "C04",
+    "order": 4,
+    "icon": "🧱",
+    "title": "תת-מבנה אופטימלי והוכחה שלמה",
+    "goal": "להשלים את ההוכחה החמדנית עם החלק השני (תת-מבנה אופטימלי), ולהציג פתרון אופטימלי נוסף כשהפתרון אינו יחיד.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>תכונת הבחירה החמדנית לבדה אינה מסיימת את ההוכחה. היא אומרת שהצעד הראשון בטוח, אבל צריך גם להראות שמה שנשאר אחריו הוא בעיה <b>מאותו סוג, קטנה יותר</b>, ושהפתרון האופטימלי שלה הוא בדיוק שאר הפתרון האופטימלי.</p>\n<div class=\"lesson-rule\">🔑 <b>תת-מבנה אופטימלי.</b> יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> אופטימלי שמכיל את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> (קיים לפי החלק הראשון). נסמן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo>−</mo></msup><mo>=</mo><mi>O</mi><mo>∖</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">O^-=O\\setminus\\{g\\}</annotation></semantics></math></span>.\n<ol>\n<li><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo>−</mo></msup></mrow><annotation encoding=\"application/x-tex\">O^-</annotation></semantics></math></span> הוא פתרון חוקי של תת-הבעיה (למשל: הקטעים שאינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>).</li>\n<li>נניח בשלילה שקיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> פתרון של תת-הבעיה עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>B</mi><mi mathvariant=\"normal\">∣</mi><mo>&gt;</mo><mi mathvariant=\"normal\">∣</mi><msup><mi>O</mi><mo>−</mo></msup><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|B|&gt;|O^-|</annotation></semantics></math></span>.</li>\n<li>אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">B\\cup\\{g\\}</annotation></semantics></math></span> חוקי לבעיה המקורית, וגדול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span>. סתירה לאופטימליות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span>.</li>\n</ol>\nלכן אחרי הבחירה החמדנית פותרים את תת-הבעיה, ובאינדוקציה על גודל הקלט החמדן אופטימלי.</div>\n<div class=\"lesson-ex\">בקטעים הזרים: אחרי בחירת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> נשארים הקטעים שמתחילים אחרי הסיום של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>. לדוגמה, בקלט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>6</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>11</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>14</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>16</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,4],[3,5],[0,6],[5,7],[3,9],[5,9],[6,10],[8,11],[8,12],[2,14],[12,16]</annotation></semantics></math></span> הקטע החמדני הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,4]</annotation></semantics></math></span>, ונשארים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>6</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>11</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>16</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[5,7],[5,9],[6,10],[8,11],[8,12],[12,16]</annotation></semantics></math></span>.</div>\n<h3>אותו שלד על בעיה אחרת: כיסוי נקודות</h3>\n<p>נקודות על הציר וצריך לכסות את כולן בכמה שפחות מקטעים <b>באורך קבוע</b>. החמדן: ממיינים, הנקודה השמאלית ביותר שעוד לא מכוסה פותחת מקטע שמתחיל בה. בהחלפה, כל מקטע של פתרון אחר שמכסה את הנקודה הזו אפשר להזיז כך שיתחיל בה, והוא עדיין מכסה אותה ולכל הפחות מה שהיה מימין.</p>\n<h3>\"האם הפתרון האופטימלי יחיד?\"</h3>\n<p>שאלת מבחן נפוצה. התשובה כמעט תמיד <b>לא</b>, ומה שנדרש הוא <b>להציג פתרון אופטימלי נוסף</b> ולוודא שהוא חוקי ובאותו גודל. הוא לא חייב להיות חמדני. לדוגמה, תקציב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span> ופריטים במחירים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">3,3,5</annotation></semantics></math></span>: שני פריטים הם המקסימום, והאפשרויות הן שני ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> יחד (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span>), או אחד מה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> עם ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">5</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span>), באחת משתי דרכים.</p>\n<div class=\"lesson-trap\">⚠️ כשהדוגמה מקבלת כמה תשובות נכונות, מציגים את אחת מהן (או את כולן) ובודקים חוקיות. תשובה שאינה חוקית, או קטנה יותר, אינה פתרון נוסף.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C04-Q1",
+      "question": "בבעיית הקטעים הזרים, הקטע החמדני הראשון הוא $g$. מהי תת-הבעיה שנשארת?",
+      "options": [
+       {
+        "id": "a",
+        "value": "אותה בעיה על הקטעים שאינם מתנגשים ב-$g$",
+        "type": "text",
+        "html": "אותה בעיה על הקטעים שאינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "אותה בעיה על כל הקטעים חוץ מ-$g$, גם אלה שמתנגשים בו",
+        "type": "text",
+        "html": "אותה בעיה על כל הקטעים חוץ מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>, גם אלה שמתנגשים בו"
+       },
+       {
+        "id": "c",
+        "value": "בעיה שונה: בחירת קטע אחד בלבד",
+        "type": "text",
+        "html": "בעיה שונה: בחירת קטע אחד בלבד"
+       },
+       {
+        "id": "d",
+        "value": "אותה בעיה על הקטעים שמסתיימים לפני $g$ בלבד",
+        "type": "text",
+        "html": "אותה בעיה על הקטעים שמסתיימים לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> בלבד"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "קטעים שמתנגשים ב-$g$ אסורים אחרי שבחרנו אותו, ולכן הם לא חלק מתת-הבעיה. לכן תת-הבעיה היא אותה בעיה בדיוק על הקטעים שאינם מתנגשים ב-$g$. כל הקטעים חוץ מ-$g$ כוללים גם מתנגשים, ובחירת קטע אחד בלבד היא בעיה אחרת. אין קטעים שמסתיימים לפני $g$ (הוא מסתיים ראשון), והתת-בעיה היא דווקא על אלה שמתחילים אחרי הסיום שלו.",
+      "recap": "תת-בעיה = אותה בעיה על מה שנשאר חוקי",
+      "questionHtml": "בבעיית הקטעים הזרים, הקטע החמדני הראשון הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>. מהי תת-הבעיה שנשארת?",
+      "explanationHtml": "קטעים שמתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> אסורים אחרי שבחרנו אותו, ולכן הם לא חלק מתת-הבעיה. לכן תת-הבעיה היא אותה בעיה בדיוק על הקטעים שאינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>. כל הקטעים חוץ מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> כוללים גם מתנגשים, ובחירת קטע אחד בלבד היא בעיה אחרת. אין קטעים שמסתיימים לפני <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> (הוא מסתיים ראשון), והתת-בעיה היא דווקא על אלה שמתחילים אחרי הסיום שלו.",
+      "recapHtml": "תת-בעיה = אותה בעיה על מה שנשאר חוקי"
+     },
+     {
+      "id": "C04-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "בקלט מהדוגמה בשיעור ($[1,4],[3,5],[0,6],[5,7],[3,9],[5,9],[6,10],[8,11],[8,12],[2,14],[12,16]$) אחרי בחירת $[1,4]$ נשארים הקטעים שמתחילים אחרי $4$. מהו המספר המקסימלי של קטעים זרים ביניהם?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "נשארים $[5,7],[5,9],[6,10],[8,11],[8,12],[12,16]$. הטוב ביותר הוא $[5,7],[8,11],[12,16]$: שלושה. וביחד עם $[1,4]$ מקבלים ארבעה, כפי שהתת-מבנה אומר: אופטימום כולל פחות אחד שווה לאופטימום תת-הבעיה.",
+       "promptHtml": "בקלט מהדוגמה בשיעור (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>6</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>11</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>14</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>16</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,4],[3,5],[0,6],[5,7],[3,9],[5,9],[6,10],[8,11],[8,12],[2,14],[12,16]</annotation></semantics></math></span>) אחרי בחירת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,4]</annotation></semantics></math></span> נשארים הקטעים שמתחילים אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span>. מהו המספר המקסימלי של קטעים זרים ביניהם?",
+       "explainHtml": "נשארים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>6</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>11</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>12</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>16</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[5,7],[5,9],[6,10],[8,11],[8,12],[12,16]</annotation></semantics></math></span>. הטוב ביותר הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>7</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>11</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">[</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>16</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[5,7],[8,11],[12,16]</annotation></semantics></math></span>: שלושה. וביחד עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>4</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[1,4]</annotation></semantics></math></span> מקבלים ארבעה, כפי שהתת-מבנה אומר: אופטימום כולל פחות אחד שווה לאופטימום תת-הבעיה."
+      },
+      "recap": "OPT = 1 + OPT של תת-הבעיה",
+      "recapHtml": "OPT = 1 + OPT של תת-הבעיה"
+     },
+     {
+      "id": "C04-Q3",
+      "step": {
+       "type": "order",
+       "prompt": "סדרו את ההוכחה של תת-המבנה האופטימלי.",
+       "lines": [
+        "יהי $O$ אופטימלי המכיל את $g$ ויהי $O^-=O\\setminus\\{g\\}$; הוא פתרון חוקי של תת-הבעיה, כי איבריו אינם מתנגשים ב-$g$.",
+        "נניח בשלילה שקיים פתרון $B$ של תת-הבעיה עם $|B|>|O^-|$.",
+        "$B\\cup\\{g\\}$ חוקי לבעיה המקורית, כי איברי $B$ אינם מתנגשים ב-$g$.",
+        "$|B\\cup\\{g\\}|>|O|$, בסתירה לאופטימליות $O$."
+       ],
+       "explain": "מגדירים את $O^-$, מניחים בשלילה שקיים $B$ טוב ממנו, מרכיבים ממנו פתרון לבעיה המקורית, ומקבלים סתירה.",
+       "promptHtml": "סדרו את ההוכחה של תת-המבנה האופטימלי.",
+       "explainHtml": "מגדירים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo>−</mo></msup></mrow><annotation encoding=\"application/x-tex\">O^-</annotation></semantics></math></span>, מניחים בשלילה שקיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> טוב ממנו, מרכיבים ממנו פתרון לבעיה המקורית, ומקבלים סתירה.",
+       "linesHtml": [
+        "יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> אופטימלי המכיל את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> ויהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo>−</mo></msup><mo>=</mo><mi>O</mi><mo>∖</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">O^-=O\\setminus\\{g\\}</annotation></semantics></math></span>; הוא פתרון חוקי של תת-הבעיה, כי איבריו אינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>.",
+        "נניח בשלילה שקיים פתרון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> של תת-הבעיה עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>B</mi><mi mathvariant=\"normal\">∣</mi><mo>&gt;</mo><mi mathvariant=\"normal\">∣</mi><msup><mi>O</mi><mo>−</mo></msup><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|B|&gt;|O^-|</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">B\\cup\\{g\\}</annotation></semantics></math></span> חוקי לבעיה המקורית, כי איברי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> אינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>B</mi><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo><mi mathvariant=\"normal\">∣</mi><mo>&gt;</mo><mi mathvariant=\"normal\">∣</mi><mi>O</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|B\\cup\\{g\\}|&gt;|O|</annotation></semantics></math></span>, בסתירה לאופטימליות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span>."
+       ]
+      },
+      "recap": "תת-מבנה: הנחה בשלילה, מוסיפים את g, סתירה",
+      "recapHtml": "תת-מבנה: הנחה בשלילה, מוסיפים את g, סתירה"
+     },
+     {
+      "id": "C04-Q4",
+      "step": {
+       "type": "findbug",
+       "prompt": "בגרסה הבאה שורה אחת שונתה והיא שגויה. מצאו אותה.",
+       "lines": [
+        "יהי $O$ אופטימלי המכיל את $g$ ויהי $O^-=O\\setminus\\{g\\}$; הוא פתרון חוקי של תת-הבעיה, כי איבריו אינם מתנגשים ב-$g$.",
+        "נניח בשלילה שקיים פתרון $B$ של תת-הבעיה עם $|B|>|O^-|$.",
+        "$B\\cup\\{g\\}$ חוקי לבעיה המקורית, כי איברי $B$ אינם מתנגשים ב-$g$.",
+        "$|B\\cup\\{g\\}|<|O|$, בסתירה לאופטימליות $O$."
+       ],
+       "bugIndex": 3,
+       "explain": "הסתירה נובעת מכך ש-$B\\cup\\{g\\}$ גדול מ-$O$ האופטימלי. אם הוא קטן, אין כאן שום סתירה.",
+       "promptHtml": "בגרסה הבאה שורה אחת שונתה והיא שגויה. מצאו אותה.",
+       "explainHtml": "הסתירה נובעת מכך ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">B\\cup\\{g\\}</annotation></semantics></math></span> גדול מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> האופטימלי. אם הוא קטן, אין כאן שום סתירה.",
+       "linesHtml": [
+        "יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> אופטימלי המכיל את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> ויהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>O</mi><mo>−</mo></msup><mo>=</mo><mi>O</mi><mo>∖</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">O^-=O\\setminus\\{g\\}</annotation></semantics></math></span>; הוא פתרון חוקי של תת-הבעיה, כי איבריו אינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>.",
+        "נניח בשלילה שקיים פתרון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> של תת-הבעיה עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>B</mi><mi mathvariant=\"normal\">∣</mi><mo>&gt;</mo><mi mathvariant=\"normal\">∣</mi><msup><mi>O</mi><mo>−</mo></msup><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|B|&gt;|O^-|</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">B\\cup\\{g\\}</annotation></semantics></math></span> חוקי לבעיה המקורית, כי איברי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> אינם מתנגשים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>B</mi><mo>∪</mo><mo stretchy=\"false\">{</mo><mi>g</mi><mo stretchy=\"false\">}</mo><mi mathvariant=\"normal\">∣</mi><mo>&lt;</mo><mi mathvariant=\"normal\">∣</mi><mi>O</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">|B\\cup\\{g\\}|&lt;|O|</annotation></semantics></math></span>, בסתירה לאופטימליות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span>."
+       ]
+      },
+      "recap": "הסתירה: מצאנו פתרון גדול מהאופטימלי",
+      "recapHtml": "הסתירה: מצאנו פתרון גדול מהאופטימלי"
+     },
+     {
+      "id": "C04-Q5",
+      "step": {
+       "type": "numeric",
+       "prompt": "צריך לכסות את הנקודות $10,15,22,31,34,60$ בכמה שפחות מקטעים סגורים באורך $10$. החמדן: הנקודה השמאלית ביותר שאינה מכוסה פותחת מקטע שמתחיל בה. כמה מקטעים?",
+       "answer": 4,
+       "tol": 0,
+       "explain": "$[10,20]$ מכסה $10,15$. $22$ פותחת $[22,32]$ שמכסה $22,31$. $34$ פותחת $[34,44]$. $60$ פותחת $[60,70]$. סך הכול ארבעה, וזה גם המינימום.",
+       "promptHtml": "צריך לכסות את הנקודות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>10</mn><mo separator=\"true\">,</mo><mn>15</mn><mo separator=\"true\">,</mo><mn>22</mn><mo separator=\"true\">,</mo><mn>31</mn><mo separator=\"true\">,</mo><mn>34</mn><mo separator=\"true\">,</mo><mn>60</mn></mrow><annotation encoding=\"application/x-tex\">10,15,22,31,34,60</annotation></semantics></math></span> בכמה שפחות מקטעים סגורים באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">10</annotation></semantics></math></span>. החמדן: הנקודה השמאלית ביותר שאינה מכוסה פותחת מקטע שמתחיל בה. כמה מקטעים?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>10</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[10,20]</annotation></semantics></math></span> מכסה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>10</mn><mo separator=\"true\">,</mo><mn>15</mn></mrow><annotation encoding=\"application/x-tex\">10,15</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>22</mn></mrow><annotation encoding=\"application/x-tex\">22</annotation></semantics></math></span> פותחת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>22</mn><mo separator=\"true\">,</mo><mn>32</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[22,32]</annotation></semantics></math></span> שמכסה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>22</mn><mo separator=\"true\">,</mo><mn>31</mn></mrow><annotation encoding=\"application/x-tex\">22,31</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>34</mn></mrow><annotation encoding=\"application/x-tex\">34</annotation></semantics></math></span> פותחת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>34</mn><mo separator=\"true\">,</mo><mn>44</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[34,44]</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>60</mn></mrow><annotation encoding=\"application/x-tex\">60</annotation></semantics></math></span> פותחת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">[</mo><mn>60</mn><mo separator=\"true\">,</mo><mn>70</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">[60,70]</annotation></semantics></math></span>. סך הכול ארבעה, וזה גם המינימום."
+      },
+      "recap": "כיסוי: הנקודה השמאלית הלא מכוסה פותחת מקטע",
+      "recapHtml": "כיסוי: הנקודה השמאלית הלא מכוסה פותחת מקטע"
+     },
+     {
+      "id": "C04-Q6",
+      "step": {
+       "type": "numeric",
+       "prompt": "תקציב $8$ ופריטים במחירים $3,3,5$ (שלושה פריטים שונים). כמה קבוצות שונות של שני פריטים הן פתרונות אופטימליים (מספר פריטים מקסימלי בתקציב)?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "שני פריטים הם המקסימום (שלושה עולים $11>8$). הזוגות: שני ה-$3$ (סכום $6$), ה-$3$ הראשון עם ה-$5$ ($8$), וה-$3$ השני עם ה-$5$ ($8$). שלושה פתרונות, ולכן הפתרון אינו יחיד.",
+       "promptHtml": "תקציב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span> ופריטים במחירים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">3,3,5</annotation></semantics></math></span> (שלושה פריטים שונים). כמה קבוצות שונות של שני פריטים הן פתרונות אופטימליים (מספר פריטים מקסימלי בתקציב)?",
+       "explainHtml": "שני פריטים הם המקסימום (שלושה עולים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>11</mn><mo>&gt;</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">11&gt;8</annotation></semantics></math></span>). הזוגות: שני ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> (סכום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span>), ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> הראשון עם ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">5</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span>), וה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> השני עם ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">5</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span>). שלושה פתרונות, ולכן הפתרון אינו יחיד."
+      },
+      "recap": "פתרון אופטימלי לא חייב להיות יחיד",
+      "recapHtml": "פתרון אופטימלי לא חייב להיות יחיד"
+     }
+    ]
+   },
+   {
+    "id": "C05",
+    "order": 5,
+    "icon": "🏃",
+    "title": "החמדן מקדים ו\"הכי קרוב לחמדן\"",
+    "goal": "להוכיח אופטימליות בלי להחליף: להראות שהחמדן תמיד \"לפני\" כל פתרון אחר, או להתחיל מפתרון אופטימלי הכי קרוב לחמדן.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>יש שיטה שנייה להוכיח שחמדן נכון, והיא מתאימה כשהפתרון הוא <b>רשימה ממוינת של בחירות</b> (תחנות, מסעדות, משימות לפי הסדר). במקום להחליף איבר אחד, משווים <b>את כל הרשימה</b> לפתרון אחר.</p>\n<div class=\"lesson-ex\"><b>מסעדות במרחק לפחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span>.</b> נתונים מיקומים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>&lt;</mo><mo>⋯</mo><mo>&lt;</mo><msub><mi>x</mi><mi>n</mi></msub></mrow><annotation encoding=\"application/x-tex\">x_1&lt;\\dots&lt;x_n</annotation></semantics></math></span> על קו, ובוחרים כמה שיותר מקומות כך שכל שניים רחוקים לפחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span>. החמדן: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mn>1</mn></msub><mo>=</mo><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">g_1=x_1</annotation></semantics></math></span>, וכל מקום הבא הוא המקום הראשון שמרוחק לפחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> מהאחרון שנבחר.</div>\n<div class=\"lesson-rule\">🔑 <b>\"החמדן מקדים\".</b> יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mn>1</mn></msub><mo>&lt;</mo><mo>⋯</mo><mo>&lt;</mo><msub><mi>o</mi><mi>m</mi></msub></mrow><annotation encoding=\"application/x-tex\">o_1&lt;\\dots&lt;o_m</annotation></semantics></math></span> פתרון חוקי כלשהו. נוכיח <b><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>≤</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r\\le o_r</annotation></semantics></math></span> לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>r</mi></mrow><annotation encoding=\"application/x-tex\">r</annotation></semantics></math></span></b>, באינדוקציה:\n<ol>\n<li>בסיס: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mn>1</mn></msub><mo>=</mo><msub><mi>x</mi><mn>1</mn></msub><mo>≤</mo><msub><mi>o</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">g_1=x_1\\le o_1</annotation></semantics></math></span>.</li>\n<li>צעד: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≥</mo><msub><mi>o</mi><mi>r</mi></msub><mo>+</mo><mi>k</mi><mo>≥</mo><msub><mi>g</mi><mi>r</mi></msub><mo>+</mo><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">o_{r+1}\\ge o_r+k\\ge g_r+k</annotation></semantics></math></span>, לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{r+1}</annotation></semantics></math></span> מועמד חוקי לחמדן אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r</annotation></semantics></math></span>. החמדן לוקח את המועמד השמאלי ביותר, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≤</mo><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">g_{r+1}\\le o_{r+1}</annotation></semantics></math></span>.</li>\n<li>סיום: אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi><mo>&gt;</mo><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">m&gt;|G|</annotation></semantics></math></span>, אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{|G|+1}</annotation></semantics></math></span> מועמד אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mrow><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi></mrow></msub></mrow><annotation encoding=\"application/x-tex\">g_{|G|}</annotation></semantics></math></span> והחמדן לא היה עוצר. סתירה, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi><mo>≥</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">|G|\\ge m</annotation></semantics></math></span>.</li>\n</ol></div>\n<div class=\"lesson-trap\">⚠️ החמדן אינו חייב להיות שווה לפתרון האופטימלי (ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">0,3,4,7,8,12,13</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">k=5</annotation></semantics></math></span> הפתרון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">0,8,13</annotation></semantics></math></span> אופטימלי, והחמדן הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">0,7,12</annotation></semantics></math></span>). מוכיחים שהוא <b>לא מאחר</b>, לא שהוא זהה.</div>\n<h3>\"הכי קרוב לחמדן\"</h3>\n<p>שיטה שקולה: בין כל הפתרונות האופטימליים בוחרים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> ש<b>הרישא המשותפת שלו עם החמדן ארוכה ביותר</b>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mn>1</mn></msub><mo>=</mo><msub><mi>g</mi><mn>1</mn></msub><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><msub><mi>o</mi><mi>i</mi></msub><mo>=</mo><msub><mi>g</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">o_1=g_1,\\dots,o_i=g_i</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub><mo mathvariant=\"normal\">≠</mo><msub><mi>g</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{i+1}\\ne g_{i+1}</annotation></semantics></math></span>. מחליפים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{i+1}</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">g_{i+1}</annotation></semantics></math></span> (החמדן מקדים אותו), בודקים שהפתרון חוקי ובאותו גודל, ומקבלים אופטימלי עם רישא משותפת ארוכה יותר. זו <b>סתירה לבחירת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span></b>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> זהה לחמדן.</p>\n<h3>הרעיון בלי מטרואידים</h3>\n<p>לא צריך תורת מטרואידים. הרעיון אחד: חמדן נכון כשהוא <b>אף פעם לא מתחרט</b>. כל פתרון אופטימלי אפשר \"לסדר מחדש\" כך שיתחיל בבחירה שלו בלי להפסיד. חמדן נכשל כשבחירה אחת <b>חוסמת</b> משהו שאי אפשר לשחזר (מטבע גדול שמונע פתרון קצר, פריט כבד בתרמיל 0/1).</p>\n"
+    },
+    "questions": [
+     {
+      "id": "C05-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "מיקומים $0,3,4,7,8,12,13$ ו-$k=5$. כמה מקומות בוחר החמדן (הראשון, ואחר כך הראשון שמרוחק לפחות $k$ מהאחרון)?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "$0$, אחר כך $7$ (הראשון עם $7\\ge 0+5$), אחר כך $12$ (הראשון עם $12\\ge 7+5$). הבא היה צריך להיות לפחות $17$, ואין. שלושה מקומות, וזה גם המקסימום.",
+       "promptHtml": "מיקומים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">0,3,4,7,8,12,13</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">k=5</annotation></semantics></math></span>. כמה מקומות בוחר החמדן (הראשון, ואחר כך הראשון שמרוחק לפחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> מהאחרון)?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">7</annotation></semantics></math></span> (הראשון עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn><mo>≥</mo><mn>0</mn><mo>+</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">7\\ge 0+5</annotation></semantics></math></span>), אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">12</annotation></semantics></math></span> (הראשון עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn><mo>≥</mo><mn>7</mn><mo>+</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">12\\ge 7+5</annotation></semantics></math></span>). הבא היה צריך להיות לפחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>17</mn></mrow><annotation encoding=\"application/x-tex\">17</annotation></semantics></math></span>, ואין. שלושה מקומות, וזה גם המקסימום."
+      },
+      "recap": "מריצים את החמדן: כל פעם הראשון שמרוחק מספיק",
+      "recapHtml": "מריצים את החמדן: כל פעם הראשון שמרוחק מספיק"
+     },
+     {
+      "id": "C05-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "באותה הרצה (מיקומים $0,3,4,7,8,12,13$ ו-$k=5$): מהו המקום השלישי שהחמדן בוחר?",
+       "answer": 12,
+       "tol": 0,
+       "explain": "אחרי $0$ ו-$7$ נדרש מקום עם ערך לפחות $12$, והראשון הוא $12$.",
+       "promptHtml": "באותה הרצה (מיקומים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">0,3,4,7,8,12,13</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">k=5</annotation></semantics></math></span>): מהו המקום השלישי שהחמדן בוחר?",
+       "explainHtml": "אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">7</annotation></semantics></math></span> נדרש מקום עם ערך לפחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">12</annotation></semantics></math></span>, והראשון הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">12</annotation></semantics></math></span>."
+      },
+      "recap": "g3 = 12",
+      "recapHtml": "g3 = 12"
+     },
+     {
+      "id": "C05-Q3",
+      "question": "בהוכחת \"החמדן מקדים\" למסעדות, מהו המשפט שמוכיחים באינדוקציה (לכל פתרון חוקי $o_1<\\dots<o_m$ ולכל $r\\le m$)?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$g_r\\le o_r$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>≤</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r\\le o_r</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$g_r=o_r$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>=</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r=o_r</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$g_r\\ge o_r$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>≥</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r\\ge o_r</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$g_r+k=o_r$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>+</mo><mi>k</mi><mo>=</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r+k=o_r</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "החמדן אף פעם לא מאחר: הוא שמאלי או שווה. שוויון אינו נכון בדרך כלל (ב-$0,3,4,7,8,12,13$ עם $k=5$ הפתרון $0,8,13$ אופטימלי ושונה מהחמדן). אי-השוויון ההפוך שגוי כי החמדן בוחר את המועמד השמאלי ביותר, והקשר $g_r+k=o_r$ אינו נכון בדרך כלל.",
+      "recap": "stay ahead: g_r ≤ o_r",
+      "questionHtml": "בהוכחת \"החמדן מקדים\" למסעדות, מהו המשפט שמוכיחים באינדוקציה (לכל פתרון חוקי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mn>1</mn></msub><mo>&lt;</mo><mo>⋯</mo><mo>&lt;</mo><msub><mi>o</mi><mi>m</mi></msub></mrow><annotation encoding=\"application/x-tex\">o_1&lt;\\dots&lt;o_m</annotation></semantics></math></span> ולכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>r</mi><mo>≤</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">r\\le m</annotation></semantics></math></span>)?",
+      "explanationHtml": "החמדן אף פעם לא מאחר: הוא שמאלי או שווה. שוויון אינו נכון בדרך כלל (ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">0,3,4,7,8,12,13</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">k=5</annotation></semantics></math></span> הפתרון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>8</mn><mo separator=\"true\">,</mo><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">0,8,13</annotation></semantics></math></span> אופטימלי ושונה מהחמדן). אי-השוויון ההפוך שגוי כי החמדן בוחר את המועמד השמאלי ביותר, והקשר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>+</mo><mi>k</mi><mo>=</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r+k=o_r</annotation></semantics></math></span> אינו נכון בדרך כלל.",
+      "recapHtml": "stay ahead: g_r ≤ o_r"
+     },
+     {
+      "id": "C05-Q4",
+      "step": {
+       "type": "order",
+       "prompt": "סדרו את הוכחת \"החמדן מקדים\" למסעדות.",
+       "lines": [
+        "באינדוקציה על $r$: בסיס $g_1=x_1\\le o_1$; בצעד נניח $g_r\\le o_r$.",
+        "$o_{r+1}\\ge o_r+k\\ge g_r+k$, כי הפתרון $o$ חוקי וכי $g_r\\le o_r$.",
+        "לכן $o_{r+1}$ מועמד חוקי לחמדן אחרי $g_r$; החמדן בוחר את המועמד השמאלי ביותר, ולכן $g_{r+1}\\le o_{r+1}$.",
+        "אם $m>|G|$, אז $o_{|G|+1}$ היה מועמד אחרי $g_{|G|}$ והחמדן לא היה עוצר, בסתירה; לכן $|G|\\ge m$."
+       ],
+       "explain": "קודם בסיס והנחה, אחר כך החסם על $o_{r+1}$, אחר כך המסקנה על הבחירה של החמדן, ובסוף ההשוואה בין הגדלים.",
+       "promptHtml": "סדרו את הוכחת \"החמדן מקדים\" למסעדות.",
+       "explainHtml": "קודם בסיס והנחה, אחר כך החסם על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{r+1}</annotation></semantics></math></span>, אחר כך המסקנה על הבחירה של החמדן, ובסוף ההשוואה בין הגדלים.",
+       "linesHtml": [
+        "באינדוקציה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>r</mi></mrow><annotation encoding=\"application/x-tex\">r</annotation></semantics></math></span>: בסיס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mn>1</mn></msub><mo>=</mo><msub><mi>x</mi><mn>1</mn></msub><mo>≤</mo><msub><mi>o</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">g_1=x_1\\le o_1</annotation></semantics></math></span>; בצעד נניח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>≤</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r\\le o_r</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≥</mo><msub><mi>o</mi><mi>r</mi></msub><mo>+</mo><mi>k</mi><mo>≥</mo><msub><mi>g</mi><mi>r</mi></msub><mo>+</mo><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">o_{r+1}\\ge o_r+k\\ge g_r+k</annotation></semantics></math></span>, כי הפתרון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>o</mi></mrow><annotation encoding=\"application/x-tex\">o</annotation></semantics></math></span> חוקי וכי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>≤</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r\\le o_r</annotation></semantics></math></span>.",
+        "לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{r+1}</annotation></semantics></math></span> מועמד חוקי לחמדן אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r</annotation></semantics></math></span>; החמדן בוחר את המועמד השמאלי ביותר, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≤</mo><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">g_{r+1}\\le o_{r+1}</annotation></semantics></math></span>.",
+        "אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi><mo>&gt;</mo><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">m&gt;|G|</annotation></semantics></math></span>, אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{|G|+1}</annotation></semantics></math></span> היה מועמד אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mrow><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi></mrow></msub></mrow><annotation encoding=\"application/x-tex\">g_{|G|}</annotation></semantics></math></span> והחמדן לא היה עוצר, בסתירה; לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi><mo>≥</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">|G|\\ge m</annotation></semantics></math></span>."
+       ]
+      },
+      "recap": "stay ahead: בסיס, צעד, ובסוף השוואת גדלים",
+      "recapHtml": "stay ahead: בסיס, צעד, ובסוף השוואת גדלים"
+     },
+     {
+      "id": "C05-Q5",
+      "step": {
+       "type": "findbug",
+       "prompt": "בגרסה הבאה שורה אחת שונתה והיא שגויה. מצאו אותה.",
+       "lines": [
+        "באינדוקציה על $r$: בסיס $g_1=x_1\\le o_1$; בצעד נניח $g_r\\le o_r$.",
+        "$o_{r+1}\\le o_r+k\\le g_r+k$, כי הפתרון $o$ חוקי וכי $g_r\\le o_r$.",
+        "לכן $o_{r+1}$ מועמד חוקי לחמדן אחרי $g_r$; החמדן בוחר את המועמד השמאלי ביותר, ולכן $g_{r+1}\\le o_{r+1}$.",
+        "אם $m>|G|$, אז $o_{|G|+1}$ היה מועמד אחרי $g_{|G|}$ והחמדן לא היה עוצר, בסתירה; לכן $|G|\\ge m$."
+       ],
+       "bugIndex": 1,
+       "explain": "חוקיות פירושה מרחק לפחות $k$, ולכן $o_{r+1}\\ge o_r+k$. בכיוון ההפוך אי אפשר להסיק ש-$o_{r+1}$ רחוק מספיק מ-$g_r$.",
+       "promptHtml": "בגרסה הבאה שורה אחת שונתה והיא שגויה. מצאו אותה.",
+       "explainHtml": "חוקיות פירושה מרחק לפחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≥</mo><msub><mi>o</mi><mi>r</mi></msub><mo>+</mo><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">o_{r+1}\\ge o_r+k</annotation></semantics></math></span>. בכיוון ההפוך אי אפשר להסיק ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{r+1}</annotation></semantics></math></span> רחוק מספיק מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r</annotation></semantics></math></span>.",
+       "linesHtml": [
+        "באינדוקציה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>r</mi></mrow><annotation encoding=\"application/x-tex\">r</annotation></semantics></math></span>: בסיס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mn>1</mn></msub><mo>=</mo><msub><mi>x</mi><mn>1</mn></msub><mo>≤</mo><msub><mi>o</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">g_1=x_1\\le o_1</annotation></semantics></math></span>; בצעד נניח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>≤</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r\\le o_r</annotation></semantics></math></span>.",
+        "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≤</mo><msub><mi>o</mi><mi>r</mi></msub><mo>+</mo><mi>k</mi><mo>≤</mo><msub><mi>g</mi><mi>r</mi></msub><mo>+</mo><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">o_{r+1}\\le o_r+k\\le g_r+k</annotation></semantics></math></span>, כי הפתרון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>o</mi></mrow><annotation encoding=\"application/x-tex\">o</annotation></semantics></math></span> חוקי וכי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub><mo>≤</mo><msub><mi>o</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r\\le o_r</annotation></semantics></math></span>.",
+        "לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{r+1}</annotation></semantics></math></span> מועמד חוקי לחמדן אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mi>r</mi></msub></mrow><annotation encoding=\"application/x-tex\">g_r</annotation></semantics></math></span>; החמדן בוחר את המועמד השמאלי ביותר, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>≤</mo><msub><mi>o</mi><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">g_{r+1}\\le o_{r+1}</annotation></semantics></math></span>.",
+        "אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi><mo>&gt;</mo><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi></mrow><annotation encoding=\"application/x-tex\">m&gt;|G|</annotation></semantics></math></span>, אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>o</mi><mrow><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding=\"application/x-tex\">o_{|G|+1}</annotation></semantics></math></span> היה מועמד אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>g</mi><mrow><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi></mrow></msub></mrow><annotation encoding=\"application/x-tex\">g_{|G|}</annotation></semantics></math></span> והחמדן לא היה עוצר, בסתירה; לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">∣</mi><mi>G</mi><mi mathvariant=\"normal\">∣</mi><mo>≥</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">|G|\\ge m</annotation></semantics></math></span>."
+       ]
+      },
+      "recap": "מרחק לפחות k נותן ≥, לא ≤",
+      "recapHtml": "מרחק לפחות k נותן ≥, לא ≤"
+     },
+     {
+      "id": "C05-Q6",
+      "question": "בטיעון \"הכי קרוב לחמדן\" בוחרים מבין הפתרונות האופטימליים את $O$ עם הרישא המשותפת הארוכה ביותר עם החמדן, ומחליפים את האיבר הראשון שבו הם נבדלים. מהי הסתירה?",
+      "options": [
+       {
+        "id": "a",
+        "value": "אחרי ההחלפה מתקבל פתרון אופטימלי עם רישא משותפת ארוכה יותר, בסתירה לבחירת $O$",
+        "type": "text",
+        "html": "אחרי ההחלפה מתקבל פתרון אופטימלי עם רישא משותפת ארוכה יותר, בסתירה לבחירת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "אחרי ההחלפה הפתרון קטן יותר, בסתירה לאופטימליות",
+        "type": "text",
+        "html": "אחרי ההחלפה הפתרון קטן יותר, בסתירה לאופטימליות"
+       },
+       {
+        "id": "c",
+        "value": "אחרי ההחלפה הפתרון אינו חוקי",
+        "type": "text",
+        "html": "אחרי ההחלפה הפתרון אינו חוקי"
+       },
+       {
+        "id": "d",
+        "value": "החמדן מחזיר פתרון ריק",
+        "type": "text",
+        "html": "החמדן מחזיר פתרון ריק"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "ההחלפה שומרת על חוקיות ועל הגודל (זה מה שמראים), ולכן הפתרון החדש אופטימלי. אבל הוא קרוב יותר לחמדן מ-$O$, בסתירה לכך ש-$O$ נבחר כקרוב ביותר. לא נכון שהפתרון קטן או לא חוקי (זה מה שההוכחה מפריכה), והחמדן אינו ריק.",
+      "recap": "ההחלפה נותנת פתרון קרוב יותר לחמדן: סתירה לבחירת O",
+      "questionHtml": "בטיעון \"הכי קרוב לחמדן\" בוחרים מבין הפתרונות האופטימליים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> עם הרישא המשותפת הארוכה ביותר עם החמדן, ומחליפים את האיבר הראשון שבו הם נבדלים. מהי הסתירה?",
+      "explanationHtml": "ההחלפה שומרת על חוקיות ועל הגודל (זה מה שמראים), ולכן הפתרון החדש אופטימלי. אבל הוא קרוב יותר לחמדן מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span>, בסתירה לכך ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> נבחר כקרוב ביותר. לא נכון שהפתרון קטן או לא חוקי (זה מה שההוכחה מפריכה), והחמדן אינו ריק.",
+      "recapHtml": "ההחלפה נותנת פתרון קרוב יותר לחמדן: סתירה לבחירת O"
+     }
+    ]
+   },
+   {
+    "id": "C06",
+    "order": 6,
+    "icon": "🎒",
+    "title": "תרמיל שברי מול תרמיל 0/1",
+    "goal": "לדעת מתי חמדן לפי יחס ערך-משקל אופטימלי (שברי) ומתי הוא נכשל (0/1), ולזהות מקרים מיוחדים שבהם חמדן כן עובד.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>בבעיית התרמיל נתונים פריטים עם <b>משקל</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">w_i</annotation></semantics></math></span> ו<b>ערך</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>v</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">v_i</annotation></semantics></math></span>, ותרמיל שמחזיק משקל כולל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>W</mi></mrow><annotation encoding=\"application/x-tex\">W</annotation></semantics></math></span>. רוצים למקסם את הערך. יש שתי גרסאות, והתשובה לשאלה \"האם חמדן אופטימלי\" שונה:</p>\n<table>\n<thead><tr><th>גרסה</th><th>מה מותר</th><th>חמדן לפי יחס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>v</mi><mi>i</mi></msub><mi mathvariant=\"normal\">/</mi><msub><mi>w</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">v_i/w_i</annotation></semantics></math></span> יורד</th></tr></thead>\n<tbody>\n<tr><td><b>שברי</b></td><td>לקחת חלק מפריט</td><td><b>אופטימלי</b></td></tr>\n<tr><td><b>0/1</b></td><td>לקחת פריט שלם או לא לקחת</td><td><b>נכשל</b> (הבעיה נפתרת בתכנות דינמי)</td></tr>\n</tbody></table>\n<div class=\"lesson-ex\">פריטים (ערך, משקל): <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>60</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">(</mo><mn>100</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">(</mo><mn>120</mn><mo separator=\"true\">,</mo><mn>30</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(60,10),(100,20),(120,30)</annotation></semantics></math></span> ותרמיל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>50</mn></mrow><annotation encoding=\"application/x-tex\">50</annotation></semantics></math></span>. היחסים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">6,5,4</annotation></semantics></math></span>. <b>שברי:</b> לוקחים את הראשון והשני במלואם (משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">30</annotation></semantics></math></span>, ערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>160</mn></mrow><annotation encoding=\"application/x-tex\">160</annotation></semantics></math></span>) ואת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>20</mn></mrow><annotation encoding=\"application/x-tex\">20</annotation></semantics></math></span> מתוך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">30</annotation></semantics></math></span> של השלישי: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>120</mn><mo>⋅</mo><mfrac><mn>20</mn><mn>30</mn></mfrac><mo>=</mo><mn>80</mn></mrow><annotation encoding=\"application/x-tex\">120\\cdot\\frac{20}{30}=80</annotation></semantics></math></span>. סך הכול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>240</mn></mrow><annotation encoding=\"application/x-tex\">240</annotation></semantics></math></span>. <b>0/1:</b> החמדן לוקח את הראשון והשני (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>160</mn></mrow><annotation encoding=\"application/x-tex\">160</annotation></semantics></math></span>), והשלישי כבר לא נכנס. אבל השני והשלישי יחד (משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>50</mn></mrow><annotation encoding=\"application/x-tex\">50</annotation></semantics></math></span>) נותנים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>220</mn></mrow><annotation encoding=\"application/x-tex\">220</annotation></semantics></math></span>.</div>\n<div class=\"lesson-rule\">🔑 <b>למה טיעון ההחלפה עובד בשברי.</b> אם הפתרון האופטימלי לוקח פחות מהפריט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> בעל היחס הגבוה ביותר, והוא לוקח במקומו משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi></mrow><annotation encoding=\"application/x-tex\">\\delta</annotation></semantics></math></span> מפריט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> ביחס נמוך יותר, מחליפים: מוציאים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi></mrow><annotation encoding=\"application/x-tex\">\\delta</annotation></semantics></math></span> מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> ומוסיפים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi></mrow><annotation encoding=\"application/x-tex\">\\delta</annotation></semantics></math></span> מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>. המשקל זהה, והערך משתנה ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><msub><mi>r</mi><mi>i</mi></msub><mo>−</mo><msub><mi>r</mi><mi>j</mi></msub><mo stretchy=\"false\">)</mo><mo>≥</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\delta(r_i-r_j)\\ge 0</annotation></semantics></math></span>, כאשר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>r</mi><mo>=</mo><mi>v</mi><mi mathvariant=\"normal\">/</mi><mi>w</mi></mrow><annotation encoding=\"application/x-tex\">r=v/w</annotation></semantics></math></span>. ב-0/1 אי אפשר להוציא משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi></mrow><annotation encoding=\"application/x-tex\">\\delta</annotation></semantics></math></span> שרירותי, ולכן ההחלפה נשברת.</div>\n<h3>מקרים מיוחדים שבהם חמדן כן נכון</h3>\n<ul>\n<li><b>ככל שהפריט כבד יותר ערכו קטן יותר</b> (אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>w</mi><mi>a</mi></msub><mo>≤</mo><msub><mi>w</mi><mi>b</mi></msub></mrow><annotation encoding=\"application/x-tex\">w_a\\le w_b</annotation></semantics></math></span> אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>v</mi><mi>a</mi></msub><mo>≥</mo><msub><mi>v</mi><mi>b</mi></msub></mrow><annotation encoding=\"application/x-tex\">v_a\\ge v_b</annotation></semantics></math></span>): לוקחים לפי משקל עולה כל עוד נכנס. ההחלפה: מחליפים פריט בקל ממנו, ולכן המשקל לא גדל והערך לא קטן.</li>\n<li><b>זמן זהה לכל המשימות</b> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>t</mi><mi>i</mi></msub><mo>=</mo><mi>t</mi></mrow><annotation encoding=\"application/x-tex\">t_i=t</annotation></semantics></math></span>): קבוצה חוקית אם ורק אם יש בה לכל היותר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mo stretchy=\"false\">⌊</mo><mi>T</mi><mi mathvariant=\"normal\">/</mi><mi>t</mi><mo stretchy=\"false\">⌋</mo></mrow><annotation encoding=\"application/x-tex\">k=\\lfloor T/t\\rfloor</annotation></semantics></math></span> משימות, ולכן לוקחים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> הרווחים הגדולים ביותר. לדוגמה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>t</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">t=3</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">T=10</annotation></semantics></math></span> ורווחים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo separator=\"true\">,</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">5,9,2,7,4</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">k=3</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn><mo>+</mo><mn>7</mn><mo>+</mo><mn>5</mn><mo>=</mo><mn>21</mn></mrow><annotation encoding=\"application/x-tex\">9+7+5=21</annotation></semantics></math></span>.</li>\n</ul>\n<div class=\"lesson-trap\">⚠️ במבחן \"תנו דוגמה נגדית לחמדן לפי יחס\" כמעט תמיד מתכוונים ל-0/1. מספיקות שתי משימות: יחס גבוה עם משקל קטן שחוסם משימה גדולה. למשל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">T=5</annotation></semantics></math></span>, משימה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>t</mi><mo>=</mo><mn>1</mn><mo separator=\"true\">,</mo><mi>v</mi><mo>=</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(t=1,v=2)</annotation></semantics></math></span> ומשימה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>t</mi><mo>=</mo><mn>5</mn><mo separator=\"true\">,</mo><mi>v</mi><mo>=</mo><mn>9</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(t=5,v=9)</annotation></semantics></math></span>: החמדן לוקח את הראשונה (יחס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span> מול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1.8</mn></mrow><annotation encoding=\"application/x-tex\">1.8</annotation></semantics></math></span>) ומרוויח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>, בעוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">9</annotation></semantics></math></span> אפשרי.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C06-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "תרמיל שברי, קיבולת $50$, פריטים (ערך, משקל): $(60,10),(100,20),(120,30)$. מהו הערך המקסימלי?",
+       "answer": 240,
+       "tol": 0,
+       "explain": "לפי יחס יורד ($6,5,4$): כל הראשון והשני ($160$, משקל $30$), ו-$20$ מתוך $30$ של השלישי: $80$. סך הכול $240$.",
+       "promptHtml": "תרמיל שברי, קיבולת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>50</mn></mrow><annotation encoding=\"application/x-tex\">50</annotation></semantics></math></span>, פריטים (ערך, משקל): <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>60</mn><mo separator=\"true\">,</mo><mn>10</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">(</mo><mn>100</mn><mo separator=\"true\">,</mo><mn>20</mn><mo stretchy=\"false\">)</mo><mo separator=\"true\">,</mo><mo stretchy=\"false\">(</mo><mn>120</mn><mo separator=\"true\">,</mo><mn>30</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(60,10),(100,20),(120,30)</annotation></semantics></math></span>. מהו הערך המקסימלי?",
+       "explainHtml": "לפי יחס יורד (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">6,5,4</annotation></semantics></math></span>): כל הראשון והשני (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>160</mn></mrow><annotation encoding=\"application/x-tex\">160</annotation></semantics></math></span>, משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">30</annotation></semantics></math></span>), ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>20</mn></mrow><annotation encoding=\"application/x-tex\">20</annotation></semantics></math></span> מתוך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">30</annotation></semantics></math></span> של השלישי: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>80</mn></mrow><annotation encoding=\"application/x-tex\">80</annotation></semantics></math></span>. סך הכול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>240</mn></mrow><annotation encoding=\"application/x-tex\">240</annotation></semantics></math></span>."
+      },
+      "recap": "שברי: לפי יחס, ואת האחרון לוקחים חלקית",
+      "recapHtml": "שברי: לפי יחס, ואת האחרון לוקחים חלקית"
+     },
+     {
+      "id": "C06-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "אותם פריטים, אבל תרמיל 0/1 (פריט שלם או כלום). כמה ערך מקבל האלגוריתם החמדן לפי יחס יורד (לוקח כל פריט שנכנס, לפי הסדר)?",
+       "answer": 160,
+       "tol": 0,
+       "explain": "הוא לוקח את הראשון ($10$) ואת השני ($20$), משקל $30$. השלישי ($30$) כבר לא נכנס ($30+30=60>50$). הערך $60+100=160$.",
+       "promptHtml": "אותם פריטים, אבל תרמיל 0/1 (פריט שלם או כלום). כמה ערך מקבל האלגוריתם החמדן לפי יחס יורד (לוקח כל פריט שנכנס, לפי הסדר)?",
+       "explainHtml": "הוא לוקח את הראשון (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">10</annotation></semantics></math></span>) ואת השני (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>20</mn></mrow><annotation encoding=\"application/x-tex\">20</annotation></semantics></math></span>), משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">30</annotation></semantics></math></span>. השלישי (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">30</annotation></semantics></math></span>) כבר לא נכנס (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>30</mn><mo>+</mo><mn>30</mn><mo>=</mo><mn>60</mn><mo>&gt;</mo><mn>50</mn></mrow><annotation encoding=\"application/x-tex\">30+30=60&gt;50</annotation></semantics></math></span>). הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>60</mn><mo>+</mo><mn>100</mn><mo>=</mo><mn>160</mn></mrow><annotation encoding=\"application/x-tex\">60+100=160</annotation></semantics></math></span>."
+      },
+      "recap": "0/1: החמדן לפי יחס מפספס",
+      "recapHtml": "0/1: החמדן לפי יחס מפספס"
+     },
+     {
+      "id": "C06-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "באותו תרמיל 0/1: מהו הערך המקסימלי האמיתי?",
+       "answer": 220,
+       "tol": 0,
+       "explain": "השני והשלישי יחד: משקל $20+30=50$, ערך $100+120=220$. כלומר החמדן ($160$) אינו אופטימלי ב-0/1.",
+       "promptHtml": "באותו תרמיל 0/1: מהו הערך המקסימלי האמיתי?",
+       "explainHtml": "השני והשלישי יחד: משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>20</mn><mo>+</mo><mn>30</mn><mo>=</mo><mn>50</mn></mrow><annotation encoding=\"application/x-tex\">20+30=50</annotation></semantics></math></span>, ערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>100</mn><mo>+</mo><mn>120</mn><mo>=</mo><mn>220</mn></mrow><annotation encoding=\"application/x-tex\">100+120=220</annotation></semantics></math></span>. כלומר החמדן (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>160</mn></mrow><annotation encoding=\"application/x-tex\">160</annotation></semantics></math></span>) אינו אופטימלי ב-0/1."
+      },
+      "recap": "0/1: האופטימום 220 מול 160 של החמדן",
+      "recapHtml": "0/1: האופטימום 220 מול 160 של החמדן"
+     },
+     {
+      "id": "C06-Q4",
+      "question": "מדוע האלגוריתם החמדן לפי יחס ערך-משקל אופטימלי בתרמיל שברי אבל לא בתרמיל 0/1?",
+      "options": [
+       {
+        "id": "a",
+        "value": "בשברי אפשר להחליף משקל שרירותי בין פריטים, ובכך טיעון ההחלפה עובד; ב-0/1 אי אפשר ולכן הוא נשבר",
+        "type": "text",
+        "html": "בשברי אפשר להחליף משקל שרירותי בין פריטים, ובכך טיעון ההחלפה עובד; ב-0/1 אי אפשר ולכן הוא נשבר"
+       },
+       {
+        "id": "b",
+        "value": "כי ב-0/1 היחסים תמיד שווים",
+        "type": "text",
+        "html": "כי ב-0/1 היחסים תמיד שווים"
+       },
+       {
+        "id": "c",
+        "value": "כי בשברי אין צורך למיין",
+        "type": "text",
+        "html": "כי בשברי אין צורך למיין"
+       },
+       {
+        "id": "d",
+        "value": "כי תרמיל 0/1 אינו בעיית אופטימיזציה",
+        "type": "text",
+        "html": "כי תרמיל 0/1 אינו בעיית אופטימיזציה"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "בהחלפה מוציאים משקל $\\delta$ מפריט ביחס נמוך ומוסיפים אותו מפריט ביחס גבוה. זה חוקי רק כשמותר לקחת חלקים. ב-0/1 היחסים שונים בדרך כלל, צריך למיין גם בשברי, והבעיה היא כן בעיית אופטימיזציה (היא פשוט נפתרת בתכנות דינמי).",
+      "recap": "שברי: אפשר להחליף חלקים; 0/1: אי אפשר",
+      "questionHtml": "מדוע האלגוריתם החמדן לפי יחס ערך-משקל אופטימלי בתרמיל שברי אבל לא בתרמיל 0/1?",
+      "explanationHtml": "בהחלפה מוציאים משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi></mrow><annotation encoding=\"application/x-tex\">\\delta</annotation></semantics></math></span> מפריט ביחס נמוך ומוסיפים אותו מפריט ביחס גבוה. זה חוקי רק כשמותר לקחת חלקים. ב-0/1 היחסים שונים בדרך כלל, צריך למיין גם בשברי, והבעיה היא כן בעיית אופטימיזציה (היא פשוט נפתרת בתכנות דינמי).",
+      "recapHtml": "שברי: אפשר להחליף חלקים; 0/1: אי אפשר"
+     },
+     {
+      "id": "C06-Q5",
+      "step": {
+       "type": "order",
+       "prompt": "סדרו את טיעון ההחלפה לתרמיל שברי.",
+       "lines": [
+        "יהי $i$ הפריט עם היחס הגבוה ביותר, ויהי $O$ אופטימלי שלוקח ממנו פחות ממה שאפשר ולוקח במקומו משקל $\\delta>0$ מפריט $j$ עם יחס $r_j\\le r_i$.",
+        "מחליפים: מוציאים משקל $\\delta$ מ-$j$ ומוסיפים משקל $\\delta$ מ-$i$.",
+        "המשקל הכולל לא השתנה, ולכן הפתרון חוקי; הערך השתנה ב-$\\delta(r_i-r_j)\\ge 0$, ולכן הוא אופטימלי ולוקח יותר מ-$i$."
+       ],
+       "explain": "קודם מתארים את מצב הפתרון האופטימלי הלא חמדני, אחר כך מחליפים, ולבסוף בודקים חוקיות (המשקל) ושהערך לא קטן.",
+       "promptHtml": "סדרו את טיעון ההחלפה לתרמיל שברי.",
+       "explainHtml": "קודם מתארים את מצב הפתרון האופטימלי הלא חמדני, אחר כך מחליפים, ולבסוף בודקים חוקיות (המשקל) ושהערך לא קטן.",
+       "linesHtml": [
+        "יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> הפריט עם היחס הגבוה ביותר, ויהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> אופטימלי שלוקח ממנו פחות ממה שאפשר ולוקח במקומו משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\delta&gt;0</annotation></semantics></math></span> מפריט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> עם יחס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>r</mi><mi>j</mi></msub><mo>≤</mo><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding=\"application/x-tex\">r_j\\le r_i</annotation></semantics></math></span>.",
+        "מחליפים: מוציאים משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi></mrow><annotation encoding=\"application/x-tex\">\\delta</annotation></semantics></math></span> מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> ומוסיפים משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi></mrow><annotation encoding=\"application/x-tex\">\\delta</annotation></semantics></math></span> מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>.",
+        "המשקל הכולל לא השתנה, ולכן הפתרון חוקי; הערך השתנה ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>δ</mi><mo stretchy=\"false\">(</mo><msub><mi>r</mi><mi>i</mi></msub><mo>−</mo><msub><mi>r</mi><mi>j</mi></msub><mo stretchy=\"false\">)</mo><mo>≥</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\delta(r_i-r_j)\\ge 0</annotation></semantics></math></span>, ולכן הוא אופטימלי ולוקח יותר מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>."
+       ]
+      },
+      "recap": "שברי: מעבירים δ מיחס נמוך ליחס גבוה",
+      "recapHtml": "שברי: מעבירים δ מיחס נמוך ליחס גבוה"
+     },
+     {
+      "id": "C06-Q6",
+      "step": {
+       "type": "numeric",
+       "prompt": "משקלים $2,3,6,8$ וערכים $9,7,5,1$ (ככל שהפריט כבד יותר ערכו קטן יותר), תרמיל 0/1 בקיבולת $11$. כמה ערך נותן החמדן שלוקח לפי משקל עולה כל עוד נכנס, והוא גם האופטימום?",
+       "answer": 21,
+       "tol": 0,
+       "explain": "לוקחים $2$, $3$ ו-$6$ (משקל $11$): $9+7+5=21$. במקרה המיוחד הזה (משקל גדל וערך קטן) החמדן לפי משקל אופטימלי.",
+       "promptHtml": "משקלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>6</mn><mo separator=\"true\">,</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">2,3,6,8</annotation></semantics></math></span> וערכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn><mo separator=\"true\">,</mo><mn>7</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">9,7,5,1</annotation></semantics></math></span> (ככל שהפריט כבד יותר ערכו קטן יותר), תרמיל 0/1 בקיבולת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>11</mn></mrow><annotation encoding=\"application/x-tex\">11</annotation></semantics></math></span>. כמה ערך נותן החמדן שלוקח לפי משקל עולה כל עוד נכנס, והוא גם האופטימום?",
+       "explainHtml": "לוקחים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span> (משקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>11</mn></mrow><annotation encoding=\"application/x-tex\">11</annotation></semantics></math></span>): <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn><mo>+</mo><mn>7</mn><mo>+</mo><mn>5</mn><mo>=</mo><mn>21</mn></mrow><annotation encoding=\"application/x-tex\">9+7+5=21</annotation></semantics></math></span>. במקרה המיוחד הזה (משקל גדל וערך קטן) החמדן לפי משקל אופטימלי."
+      },
+      "recap": "משקל עולה כשהערך יורד: חמדן לפי משקל נכון",
+      "recapHtml": "משקל עולה כשהערך יורד: חמדן לפי משקל נכון"
+     }
+    ]
+   },
+   {
+    "id": "C07",
+    "order": 7,
+    "icon": "🌳",
+    "title": "הופמן כאלגוריתם חמדני",
+    "goal": "לבנות עץ הופמן ולחשב את עלותו, להוכיח את הלמה של ההחלפה, לזהות חיבור חבלים כהופמן, ולהתמודד עם שוויונות.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n<p>קוד הופמן הוא חמדן קלאסי. נתונות אותיות עם שכיחויות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi></mrow><annotation encoding=\"application/x-tex\">f</annotation></semantics></math></span>, ובונים עץ בינרי שהעלים בו הן האותיות. <b>עלות</b> העץ: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo stretchy=\"false\">(</mo><mi>T</mi><mo stretchy=\"false\">)</mo><mo>=</mo><msub><mo>∑</mo><mi>c</mi></msub><mi>f</mi><mo stretchy=\"false\">(</mo><mi>c</mi><mo stretchy=\"false\">)</mo><mo>⋅</mo><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>c</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">B(T)=\\sum_c f(c)\\cdot d_T(c)</annotation></semantics></math></span>, כאשר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>c</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">d_T(c)</annotation></semantics></math></span> עומק העלה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">c</annotation></semantics></math></span> (אורך מילת הקוד). רוצים עץ בעלות מינימלית.</p>\n<div class=\"lesson-rule\">🔑 <b>האלגוריתם:</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">n-1</annotation></semantics></math></span> פעמים מוציאים את שני הצמתים הקלים ביותר, מחברים אותם לצומת חדש שמשקלו הסכום, ומחזירים אותו. <b>העלות</b> שווה לסכום משקלי כל הצמתים הפנימיים, כי כל חיבור \"משלם\" את משקל הצומת החדש.</div>\n<div class=\"lesson-ex\">שכיחויות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">1,1,2,2</annotation></semantics></math></span>: מחברים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">1+1=2</annotation></semantics></math></span> (עלות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>), אחר כך אחד משלושת ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span> עם אחר (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span>), ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span> עם השארית (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span>). הסכום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>6</mn><mo>=</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">2+4+6=12</annotation></semantics></math></span>.</div>\n<h3>למה זה נכון: החלפה</h3>\n<p><b>בחירה חמדנית.</b> יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> אופטימלי, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">x,y</annotation></semantics></math></span> שתי האותיות הקלות ביותר, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi><mo separator=\"true\">,</mo><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">b,c</annotation></semantics></math></span> שני עלים אחים בעומק מקסימלי. מחליפים בין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span>: ההפרש בעלות הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>b</mi><mo stretchy=\"false\">]</mo><mo>−</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>x</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">)</mo><mtext> </mtext><mo stretchy=\"false\">(</mo><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>b</mi><mo stretchy=\"false\">)</mo><mo>−</mo><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">)</mo><mo>≥</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">(f[b]-f[x])\\,(d_T(b)-d_T(x))\\ge 0</annotation></semantics></math></span>, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span> לא קל מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ועמוק לפחות כמוהו. אותו דבר ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">y</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">c</annotation></semantics></math></span>. <b>תת-מבנה:</b> מחליפים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">x,y</annotation></semantics></math></span> באות אחת בשכיחות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>x</mi><mo stretchy=\"false\">]</mo><mo>+</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>y</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">f[x]+f[y]</annotation></semantics></math></span> ופותרים את הבעיה הקטנה.</p>\n<h3>חיבור חבלים הוא הופמן בהסוואה</h3>\n<p>עלות חיבור שני חבלים היא סכום אורכיהם. המינימום לחיבור כולם: חיברו תמיד את שני הקצרים. עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">1,2,3,4,5</annotation></semantics></math></span> מחברים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">6</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">9</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>15</mn></mrow><annotation encoding=\"application/x-tex\">15</annotation></semantics></math></span>: העלות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo>+</mo><mn>6</mn><mo>+</mo><mn>9</mn><mo>+</mo><mn>15</mn><mo>=</mo><mn>33</mn></mrow><annotation encoding=\"application/x-tex\">3+6+9+15=33</annotation></semantics></math></span>.</p>\n<h3>שוויונות</h3>\n<div class=\"lesson-rule\">🔑 בקורס, <b>שוויונות נשברים שרירותית</b>. עץ או קוד הוא עץ הופמן אם <b>קיימת</b> שבירת שוויון שמובילה אליו. לכן לאותן שכיחויות יכולים להיות כמה עצי הופמן עם אורכי קוד שונים, אבל <b>אותה עלות</b>. שאלות על \"כל האפשרויות\" סופרות כל מה שאפשרי באיזושהי שבירת שוויון, ומוסיפות הערה: כלל קבוע לשבירת שוויון יכול לשנות את הספירה. כשהשאלה על עלות או על אפשרות, לא בודקים קוד מסוים אחד.</div>\n<div class=\"lesson-ex\">ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">1,1,2,2</annotation></semantics></math></span> לאות שכיחה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span> יכול להיות קוד באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span> או <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>, תלוי איך שוברים שוויון, אבל העלות תמיד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">12</annotation></semantics></math></span>.</div>\n"
+    },
+    "questions": [
+     {
+      "id": "C07-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "שכיחויות $5,9,12,13,16,45$. מהי העלות $B(T)$ של עץ הופמן?",
+       "answer": 224,
+       "tol": 0,
+       "explain": "מחברים $5+9=14$, אחר כך $12+13=25$, אחר כך $14+16=30$, אחר כך $25+30=55$, ולבסוף $45+55=100$. סכום הצמתים הפנימיים: $14+25+30+55+100=224$.",
+       "promptHtml": "שכיחויות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo separator=\"true\">,</mo><mn>9</mn><mo separator=\"true\">,</mo><mn>12</mn><mo separator=\"true\">,</mo><mn>13</mn><mo separator=\"true\">,</mo><mn>16</mn><mo separator=\"true\">,</mo><mn>45</mn></mrow><annotation encoding=\"application/x-tex\">5,9,12,13,16,45</annotation></semantics></math></span>. מהי העלות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo stretchy=\"false\">(</mo><mi>T</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">B(T)</annotation></semantics></math></span> של עץ הופמן?",
+       "explainHtml": "מחברים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo>+</mo><mn>9</mn><mo>=</mo><mn>14</mn></mrow><annotation encoding=\"application/x-tex\">5+9=14</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn><mo>+</mo><mn>13</mn><mo>=</mo><mn>25</mn></mrow><annotation encoding=\"application/x-tex\">12+13=25</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>14</mn><mo>+</mo><mn>16</mn><mo>=</mo><mn>30</mn></mrow><annotation encoding=\"application/x-tex\">14+16=30</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>25</mn><mo>+</mo><mn>30</mn><mo>=</mo><mn>55</mn></mrow><annotation encoding=\"application/x-tex\">25+30=55</annotation></semantics></math></span>, ולבסוף <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>45</mn><mo>+</mo><mn>55</mn><mo>=</mo><mn>100</mn></mrow><annotation encoding=\"application/x-tex\">45+55=100</annotation></semantics></math></span>. סכום הצמתים הפנימיים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>14</mn><mo>+</mo><mn>25</mn><mo>+</mo><mn>30</mn><mo>+</mo><mn>55</mn><mo>+</mo><mn>100</mn><mo>=</mo><mn>224</mn></mrow><annotation encoding=\"application/x-tex\">14+25+30+55+100=224</annotation></semantics></math></span>."
+      },
+      "recap": "עלות הופמן = סכום משקלי הצמתים הפנימיים",
+      "recapHtml": "עלות הופמן = סכום משקלי הצמתים הפנימיים"
+     },
+     {
+      "id": "C07-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "חמישה חבלים באורכים $1,2,3,4,5$. עלות חיבור שני חבלים היא סכום אורכיהם. מהי העלות המינימלית לחיבור כולם?",
+       "answer": 33,
+       "tol": 0,
+       "explain": "תמיד את שני הקצרים: $1+2=3$, אחר כך $3+3=6$, אחר כך $4+5=9$, ואז $6+9=15$. סכום: $3+6+9+15=33$. זו בדיוק עלות הופמן, וחיפוש בכל סדרי החיבור לא נותן פחות.",
+       "promptHtml": "חמישה חבלים באורכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">1,2,3,4,5</annotation></semantics></math></span>. עלות חיבור שני חבלים היא סכום אורכיהם. מהי העלות המינימלית לחיבור כולם?",
+       "explainHtml": "תמיד את שני הקצרים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mn>2</mn><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">1+2=3</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo>+</mo><mn>3</mn><mo>=</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">3+3=6</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn><mo>+</mo><mn>5</mn><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">4+5=9</annotation></semantics></math></span>, ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>6</mn><mo>+</mo><mn>9</mn><mo>=</mo><mn>15</mn></mrow><annotation encoding=\"application/x-tex\">6+9=15</annotation></semantics></math></span>. סכום: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo>+</mo><mn>6</mn><mo>+</mo><mn>9</mn><mo>+</mo><mn>15</mn><mo>=</mo><mn>33</mn></mrow><annotation encoding=\"application/x-tex\">3+6+9+15=33</annotation></semantics></math></span>. זו בדיוק עלות הופמן, וחיפוש בכל סדרי החיבור לא נותן פחות."
+      },
+      "recap": "חבלים = הופמן: שני הקצרים כל פעם",
+      "recapHtml": "חבלים = הופמן: שני הקצרים כל פעם"
+     },
+     {
+      "id": "C07-Q3",
+      "step": {
+       "type": "order",
+       "prompt": "סדרו את הוכחת הלמה של הופמן (שתי האותיות הקלות הן אחיות בעומק מקסימלי בעץ אופטימלי כלשהו).",
+       "lines": [
+        "יהי $T$ אופטימלי, $x,y$ שתי האותיות הקלות ביותר ו-$b,c$ אחים בעומק מקסימלי; אם $\\{x,y\\}=\\{b,c\\}$ סיימנו.",
+        "נחליף בין $x$ ל-$b$ ונקבל $T'$, עם $B(T)-B(T')=(f[b]-f[x])(d_T(b)-d_T(x))\\ge 0$, כי $f[b]\\ge f[x]$ וכי $b$ בעומק מקסימלי.",
+        "באופן דומה נחליף בין $y$ ל-$c$ ונקבל $T''$ עם $B(T')-B(T'')\\ge 0$.",
+        "לכן $B(T'')\\le B(T)$, כלומר $T''$ אופטימלי, ו-$x,y$ אחים בעומק מקסימלי בו."
+       ],
+       "explain": "מגדירים את המצב, מבצעים החלפה ראשונה ומחשבים את ההפרש, אחר כך מחליפים בפעם השנייה, ומסיקים שהעץ האחרון אופטימלי.",
+       "promptHtml": "סדרו את הוכחת הלמה של הופמן (שתי האותיות הקלות הן אחיות בעומק מקסימלי בעץ אופטימלי כלשהו).",
+       "explainHtml": "מגדירים את המצב, מבצעים החלפה ראשונה ומחשבים את ההפרש, אחר כך מחליפים בפעם השנייה, ומסיקים שהעץ האחרון אופטימלי.",
+       "linesHtml": [
+        "יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> אופטימלי, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">x,y</annotation></semantics></math></span> שתי האותיות הקלות ביותר ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi><mo separator=\"true\">,</mo><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">b,c</annotation></semantics></math></span> אחים בעומק מקסימלי; אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">}</mo><mo>=</mo><mo stretchy=\"false\">{</mo><mi>b</mi><mo separator=\"true\">,</mo><mi>c</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{x,y\\}=\\{b,c\\}</annotation></semantics></math></span> סיימנו.",
+        "נחליף בין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span> ונקבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>T</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">T&#x27;</annotation></semantics></math></span>, עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo stretchy=\"false\">(</mo><mi>T</mi><mo stretchy=\"false\">)</mo><mo>−</mo><mi>B</mi><mo stretchy=\"false\">(</mo><msup><mi>T</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mo stretchy=\"false\">)</mo><mo>=</mo><mo stretchy=\"false\">(</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>b</mi><mo stretchy=\"false\">]</mo><mo>−</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>x</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">(</mo><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>b</mi><mo stretchy=\"false\">)</mo><mo>−</mo><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">)</mo><mo>≥</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">B(T)-B(T&#x27;)=(f[b]-f[x])(d_T(b)-d_T(x))\\ge 0</annotation></semantics></math></span>, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>b</mi><mo stretchy=\"false\">]</mo><mo>≥</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>x</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">f[b]\\ge f[x]</annotation></semantics></math></span> וכי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span> בעומק מקסימלי.",
+        "באופן דומה נחליף בין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">y</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">c</annotation></semantics></math></span> ונקבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>T</mi><mrow><mo mathvariant=\"normal\">′</mo><mo mathvariant=\"normal\">′</mo></mrow></msup></mrow><annotation encoding=\"application/x-tex\">T&#x27;&#x27;</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo stretchy=\"false\">(</mo><msup><mi>T</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mo stretchy=\"false\">)</mo><mo>−</mo><mi>B</mi><mo stretchy=\"false\">(</mo><msup><mi>T</mi><mrow><mo mathvariant=\"normal\">′</mo><mo mathvariant=\"normal\">′</mo></mrow></msup><mo stretchy=\"false\">)</mo><mo>≥</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">B(T&#x27;)-B(T&#x27;&#x27;)\\ge 0</annotation></semantics></math></span>.",
+        "לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo stretchy=\"false\">(</mo><msup><mi>T</mi><mrow><mo mathvariant=\"normal\">′</mo><mo mathvariant=\"normal\">′</mo></mrow></msup><mo stretchy=\"false\">)</mo><mo>≤</mo><mi>B</mi><mo stretchy=\"false\">(</mo><mi>T</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">B(T&#x27;&#x27;)\\le B(T)</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>T</mi><mrow><mo mathvariant=\"normal\">′</mo><mo mathvariant=\"normal\">′</mo></mrow></msup></mrow><annotation encoding=\"application/x-tex\">T&#x27;&#x27;</annotation></semantics></math></span> אופטימלי, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">x,y</annotation></semantics></math></span> אחים בעומק מקסימלי בו."
+       ]
+      },
+      "recap": "הופמן: מחליפים x ב-b ו-y ב-c, ההפרש (f[b]-f[x])(d(b)-d(x)) אי-שלילי",
+      "recapHtml": "הופמן: מחליפים x ב-b ו-y ב-c, ההפרש (f[b]-f[x])(d(b)-d(x)) אי-שלילי"
+     },
+     {
+      "id": "C07-Q4",
+      "step": {
+       "type": "findbug",
+       "prompt": "בגרסה הבאה של ההוכחה שורה אחת שונתה והיא שגויה. מצאו אותה.",
+       "lines": [
+        "יהי $T$ אופטימלי, $x,y$ שתי האותיות הקלות ביותר ו-$b,c$ אחים בעומק מקסימלי; אם $\\{x,y\\}=\\{b,c\\}$ סיימנו.",
+        "נחליף בין $x$ ל-$b$ ונקבל $T'$, עם $B(T)-B(T')=(f[b]-f[x])(d_T(b)-d_T(x))\\le 0$, כי $f[b]\\ge f[x]$ וכי $b$ בעומק מקסימלי.",
+        "באופן דומה נחליף בין $y$ ל-$c$ ונקבל $T''$ עם $B(T')-B(T'')\\ge 0$.",
+        "לכן $B(T'')\\le B(T)$, כלומר $T''$ אופטימלי, ו-$x,y$ אחים בעומק מקסימלי בו."
+       ],
+       "bugIndex": 1,
+       "explain": "שני הגורמים אי-שליליים: $f[b]-f[x]\\ge 0$ ו-$d_T(b)-d_T(x)\\ge 0$, ולכן המכפלה אי-שלילית. בכיוון הנתון ($\\le 0$) ההחלפה לא הייתה מסתדרת עם המסקנה.",
+       "promptHtml": "בגרסה הבאה של ההוכחה שורה אחת שונתה והיא שגויה. מצאו אותה.",
+       "explainHtml": "שני הגורמים אי-שליליים: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>b</mi><mo stretchy=\"false\">]</mo><mo>−</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>x</mi><mo stretchy=\"false\">]</mo><mo>≥</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">f[b]-f[x]\\ge 0</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>b</mi><mo stretchy=\"false\">)</mo><mo>−</mo><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo><mo>≥</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">d_T(b)-d_T(x)\\ge 0</annotation></semantics></math></span>, ולכן המכפלה אי-שלילית. בכיוון הנתון (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo>≤</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\le 0</annotation></semantics></math></span>) ההחלפה לא הייתה מסתדרת עם המסקנה.",
+       "linesHtml": [
+        "יהי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> אופטימלי, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">x,y</annotation></semantics></math></span> שתי האותיות הקלות ביותר ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi><mo separator=\"true\">,</mo><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">b,c</annotation></semantics></math></span> אחים בעומק מקסימלי; אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi><mo stretchy=\"false\">}</mo><mo>=</mo><mo stretchy=\"false\">{</mo><mi>b</mi><mo separator=\"true\">,</mo><mi>c</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{x,y\\}=\\{b,c\\}</annotation></semantics></math></span> סיימנו.",
+        "נחליף בין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi></mrow><annotation encoding=\"application/x-tex\">x</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span> ונקבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>T</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup></mrow><annotation encoding=\"application/x-tex\">T&#x27;</annotation></semantics></math></span>, עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo stretchy=\"false\">(</mo><mi>T</mi><mo stretchy=\"false\">)</mo><mo>−</mo><mi>B</mi><mo stretchy=\"false\">(</mo><msup><mi>T</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mo stretchy=\"false\">)</mo><mo>=</mo><mo stretchy=\"false\">(</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>b</mi><mo stretchy=\"false\">]</mo><mo>−</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>x</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">(</mo><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>b</mi><mo stretchy=\"false\">)</mo><mo>−</mo><msub><mi>d</mi><mi>T</mi></msub><mo stretchy=\"false\">(</mo><mi>x</mi><mo stretchy=\"false\">)</mo><mo stretchy=\"false\">)</mo><mo>≤</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">B(T)-B(T&#x27;)=(f[b]-f[x])(d_T(b)-d_T(x))\\le 0</annotation></semantics></math></span>, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>f</mi><mo stretchy=\"false\">[</mo><mi>b</mi><mo stretchy=\"false\">]</mo><mo>≥</mo><mi>f</mi><mo stretchy=\"false\">[</mo><mi>x</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">f[b]\\ge f[x]</annotation></semantics></math></span> וכי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">b</annotation></semantics></math></span> בעומק מקסימלי.",
+        "באופן דומה נחליף בין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">y</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">c</annotation></semantics></math></span> ונקבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>T</mi><mrow><mo mathvariant=\"normal\">′</mo><mo mathvariant=\"normal\">′</mo></mrow></msup></mrow><annotation encoding=\"application/x-tex\">T&#x27;&#x27;</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo stretchy=\"false\">(</mo><msup><mi>T</mi><mo mathvariant=\"normal\" lspace=\"0em\" rspace=\"0em\">′</mo></msup><mo stretchy=\"false\">)</mo><mo>−</mo><mi>B</mi><mo stretchy=\"false\">(</mo><msup><mi>T</mi><mrow><mo mathvariant=\"normal\">′</mo><mo mathvariant=\"normal\">′</mo></mrow></msup><mo stretchy=\"false\">)</mo><mo>≥</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">B(T&#x27;)-B(T&#x27;&#x27;)\\ge 0</annotation></semantics></math></span>.",
+        "לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo stretchy=\"false\">(</mo><msup><mi>T</mi><mrow><mo mathvariant=\"normal\">′</mo><mo mathvariant=\"normal\">′</mo></mrow></msup><mo stretchy=\"false\">)</mo><mo>≤</mo><mi>B</mi><mo stretchy=\"false\">(</mo><mi>T</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">B(T&#x27;&#x27;)\\le B(T)</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>T</mi><mrow><mo mathvariant=\"normal\">′</mo><mo mathvariant=\"normal\">′</mo></mrow></msup></mrow><annotation encoding=\"application/x-tex\">T&#x27;&#x27;</annotation></semantics></math></span> אופטימלי, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>x</mi><mo separator=\"true\">,</mo><mi>y</mi></mrow><annotation encoding=\"application/x-tex\">x,y</annotation></semantics></math></span> אחים בעומק מקסימלי בו."
+       ]
+      },
+      "recap": "ההפרש בעלות אי-שלילי: שני גורמים אי-שליליים",
+      "recapHtml": "ההפרש בעלות אי-שלילי: שני גורמים אי-שליליים"
+     },
+     {
+      "id": "C07-Q5",
+      "question": "לאותיות $a,b,c,d$ בשכיחויות $1,1,2,2$ בהתאמה (בדיוק בסדר הזה), מה נכון לגבי אורכי מילות הקוד $(a,b,c,d)$ בעצי הופמן האפשריים?",
+      "options": [
+       {
+        "id": "a",
+        "value": "גם $(3,3,2,1)$ וגם $(2,2,2,2)$ אפשריים, כי ניתן לשבור שוויונות בדרכים שונות",
+        "type": "text",
+        "html": "גם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(3,3,2,1)</annotation></semantics></math></span> וגם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,2,2,2)</annotation></semantics></math></span> אפשריים, כי ניתן לשבור שוויונות בדרכים שונות"
+       },
+       {
+        "id": "b",
+        "value": "רק $(3,3,2,1)$ אפשרי",
+        "type": "text",
+        "html": "רק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(3,3,2,1)</annotation></semantics></math></span> אפשרי"
+       },
+       {
+        "id": "c",
+        "value": "רק $(2,2,2,2)$ אפשרי",
+        "type": "text",
+        "html": "רק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,2,2,2)</annotation></semantics></math></span> אפשרי"
+       },
+       {
+        "id": "d",
+        "value": "גם $(1,3,3,2)$ אפשרי, כי $a$ יכולה לקבל מילה באורך $1$",
+        "type": "text",
+        "html": "גם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(1,3,3,2)</annotation></semantics></math></span> אפשרי, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> יכולה לקבל מילה באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "אחרי חיבור $a,b$ ל-$2$ יש שלושה צמתים במשקל $2$. אם מחברים את הצומת החדש עם $c$ מקבלים אורכים $(3,3,2,1)$. אם מחברים $c$ עם $d$ מקבלים $(2,2,2,2)$. בשני המקרים העלות $12$. האות $a$ אף פעם לא מקבלת אורך $1$, כי היא אחת משתי הקלות ביותר וחוברת ראשונה. הערה: כלל קבוע לשבירת שוויון היה נותן רק אחת מהאפשרויות.",
+      "recap": "שוויון נשבר שרירותית: כמה אורכי קוד, אותה עלות",
+      "questionHtml": "לאותיות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mo separator=\"true\">,</mo><mi>b</mi><mo separator=\"true\">,</mo><mi>c</mi><mo separator=\"true\">,</mo><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">a,b,c,d</annotation></semantics></math></span> בשכיחויות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">1,1,2,2</annotation></semantics></math></span> בהתאמה (בדיוק בסדר הזה), מה נכון לגבי אורכי מילות הקוד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>a</mi><mo separator=\"true\">,</mo><mi>b</mi><mo separator=\"true\">,</mo><mi>c</mi><mo separator=\"true\">,</mo><mi>d</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(a,b,c,d)</annotation></semantics></math></span> בעצי הופמן האפשריים?",
+      "explanationHtml": "אחרי חיבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi><mo separator=\"true\">,</mo><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">a,b</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span> יש שלושה צמתים במשקל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>. אם מחברים את הצומת החדש עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">c</annotation></semantics></math></span> מקבלים אורכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(3,3,2,1)</annotation></semantics></math></span>. אם מחברים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>c</mi></mrow><annotation encoding=\"application/x-tex\">c</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>d</mi></mrow><annotation encoding=\"application/x-tex\">d</annotation></semantics></math></span> מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,2,2,2)</annotation></semantics></math></span>. בשני המקרים העלות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">12</annotation></semantics></math></span>. האות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">a</annotation></semantics></math></span> אף פעם לא מקבלת אורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>, כי היא אחת משתי הקלות ביותר וחוברת ראשונה. הערה: כלל קבוע לשבירת שוויון היה נותן רק אחת מהאפשרויות.",
+      "recapHtml": "שוויון נשבר שרירותית: כמה אורכי קוד, אותה עלות"
+     },
+     {
+      "id": "C07-Q6",
+      "step": {
+       "type": "numeric",
+       "prompt": "לשכיחויות $1,1,2,2$: מהי העלות $B(T)$ של עץ הופמן? (אותה עלות בכל שבירת שוויון.)",
+       "answer": 12,
+       "tol": 0,
+       "explain": "$1+1=2$, אחר כך $2+2=4$, ואז $2+4=6$: $2+4+6=12$. בבדיקה ישירה: באורכים $(2,2,2,2)$ העלות $1\\cdot2+1\\cdot2+2\\cdot2+2\\cdot2=12$, ובאורכים $(3,3,2,1)$ העלות $1\\cdot3+1\\cdot3+2\\cdot2+2\\cdot1=12$.",
+       "promptHtml": "לשכיחויות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">1,1,2,2</annotation></semantics></math></span>: מהי העלות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi><mo stretchy=\"false\">(</mo><mi>T</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">B(T)</annotation></semantics></math></span> של עץ הופמן? (אותה עלות בכל שבירת שוויון.)",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">1+1=2</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo>+</mo><mn>2</mn><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">2+2=4</annotation></semantics></math></span>, ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo>+</mo><mn>4</mn><mo>=</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">2+4=6</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>6</mn><mo>=</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">2+4+6=12</annotation></semantics></math></span>. בבדיקה ישירה: באורכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(2,2,2,2)</annotation></semantics></math></span> העלות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>⋅</mo><mn>2</mn><mo>+</mo><mn>1</mn><mo>⋅</mo><mn>2</mn><mo>+</mo><mn>2</mn><mo>⋅</mo><mn>2</mn><mo>+</mo><mn>2</mn><mo>⋅</mo><mn>2</mn><mo>=</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">1\\cdot2+1\\cdot2+2\\cdot2+2\\cdot2=12</annotation></semantics></math></span>, ובאורכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">(3,3,2,1)</annotation></semantics></math></span> העלות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>⋅</mo><mn>3</mn><mo>+</mo><mn>1</mn><mo>⋅</mo><mn>3</mn><mo>+</mo><mn>2</mn><mo>⋅</mo><mn>2</mn><mo>+</mo><mn>2</mn><mo>⋅</mo><mn>1</mn><mo>=</mo><mn>12</mn></mrow><annotation encoding=\"application/x-tex\">1\\cdot3+1\\cdot3+2\\cdot2+2\\cdot1=12</annotation></semantics></math></span>."
+      },
+      "recap": "אותה עלות בכל שבירת שוויון",
+      "recapHtml": "אותה עלות בכל שבירת שוויון"
+     }
+    ]
+   },
+   {
+    "id": "C08",
+    "order": 8,
+    "icon": "🏆",
+    "title": "מבחן מסכם: חמדנים והוכחות",
+    "goal": "לפתור שאלות חמדן אמיתיות מהמבחנים: אלגוריתם, הוכחת נכונות, פתרון לא יחיד והופמן בהסוואה.",
+    "source": "ai-verified",
+    "boss": true,
+    "lesson": {
+     "html": "\n<p>שאלות אמיתיות ממבחנים קודמים, בלי רמזים. לפני שמתחילים, הרשימה שחוזרת בכל שאלה חמדנית:</p>\n<div class=\"lesson-rule\">🔑\n<ol>\n<li><b>כלל:</b> מה ממיינים ומה בוחרים. בודקים אותו מול דוגמה קטנה לפני שמוכיחים.</li>\n<li><b>בחירה חמדנית:</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>g</mi></mrow><annotation encoding=\"application/x-tex\">g</annotation></semantics></math></span> הבחירה הראשונה, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi></mrow><annotation encoding=\"application/x-tex\">O</annotation></semantics></math></span> אופטימלי בלעדיה, מחליפים, ומראים <b>חוקיות</b> ו<b>ערך לא גרוע</b>. או: \"החמדן מקדים\", או \"הכי קרוב לחמדן\".</li>\n<li><b>תת-מבנה אופטימלי:</b> מה נשאר אחרי הבחירה, והסתירה אם הוא לא אופטימלי.</li>\n<li><b>סיבוכיות:</b> מיון ועוד מעבר, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mi>log</mi><mo>⁡</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(n\\log n)</annotation></semantics></math></span>.</li>\n<li><b>\"האם יחיד?\"</b> מציגים פתרון אופטימלי נוסף וחוקי.</li>\n<li><b>הופמן:</b> שני הקלים, עלות = סכום הצמתים הפנימיים, שוויונות שרירותיים.</li>\n</ol></div>\n"
+    },
+    "questions": [
+     {
+      "bankId": "25B-A-Q2a",
+      "recap": "פתרון אופטימלי לא חייב להיות יחיד: מציגים אחר וחוקי",
+      "recapHtml": "פתרון אופטימלי לא חייב להיות יחיד: מציגים אחר וחוקי"
+     },
+     {
+      "bankId": "24A-A-Q2b",
+      "recap": "כיסוי נקודות: החלפה של הקטע הראשון, ואחר כך תת-מבנה",
+      "recapHtml": "כיסוי נקודות: החלפה של הקטע הראשון, ואחר כך תת-מבנה"
+     },
+     {
+      "bankId": "24A-C-Q2a",
+      "recap": "משקל עולה כשהערך יורד: חמדן לפי משקל",
+      "recapHtml": "משקל עולה כשהערך יורד: חמדן לפי משקל"
+     },
+     {
+      "bankId": "24B-A-Q2c",
+      "recap": "הכי קרוב לחמדן: מחליפים את הנבדל הראשון",
+      "recapHtml": "הכי קרוב לחמדן: מחליפים את הנבדל הראשון"
+     },
+     {
+      "bankId": "22A-B-Q4a",
+      "recap": "חבלים = הופמן: שני הקצרים כל פעם",
+      "recapHtml": "חבלים = הופמן: שני הקצרים כל פעם"
+     },
+     {
+      "bankId": "22A-B-Q4b",
+      "recap": "הלמה של הופמן: החלפה, והפרש עלויות אי-שלילי",
+      "recapHtml": "הלמה של הופמן: החלפה, והפרש עלויות אי-שלילי"
+     }
+    ]
+   }
+  ]
+ },
+ "kmp_prefix": {
+  "levels": [
+   {
+    "id": "C01",
+    "order": 1,
+    "icon": "🔤",
+    "title": "רישא, סיפא ו-border: מהו π",
+    "goal": "להגדיר border ולחשב ערך בודד של π לפי ההגדרה, בלי אלגוריתם.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n    <p>מחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> נכתבת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>⋯</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1]P[2]\\cdots P[m]</annotation></semantics></math></span> (האינדקסים מתחילים מ-1). <b>רישא</b> היא קטע מההתחלה, <b>סיפא</b> היא קטע מהסוף, ו-<b>אמיתית</b> פירושו קצרה מהמחרוזת כולה. הסימון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span> הוא הרישא באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span>.</p>\n    <div class=\"lesson-rule\">🔑 <b>border</b> של מחרוזת הוא רישא אמיתית שהיא גם סיפא שלה. <b><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[q]</annotation></semantics></math></span></b> הוא האורך של ה-border <b>הארוך ביותר</b> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span> (ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> אם אין אף border לא ריק).</div>\n    <div class=\"lesson-ex\">דוגמה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code>ABABA</code>. ל-<code>ABABA</code> יש שני borders לא ריקים: <code>A</code> (אורך 1) ו-<code>ABA</code> (אורך 3). הארוך ביותר באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=3</annotation></semantics></math></span>.</div>\n    <table><thead><tr><th><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span></th><th>הרישא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span></th><th>ה-border הארוך ביותר</th><th><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[q]</annotation></semantics></math></span></th></tr></thead>\n    <tbody>\n    <tr><td>1</td><td><code>A</code></td><td>אין</td><td>0</td></tr>\n    <tr><td>2</td><td><code>AB</code></td><td>אין</td><td>0</td></tr>\n    <tr><td>3</td><td><code>ABA</code></td><td><code>A</code></td><td>1</td></tr>\n    <tr><td>4</td><td><code>ABAB</code></td><td><code>AB</code></td><td>2</td></tr>\n    <tr><td>5</td><td><code>ABABA</code></td><td><code>ABA</code></td><td>3</td></tr>\n    </tbody></table>\n    <p>שני דברים שנכונים תמיד: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[1]=0</annotation></semantics></math></span> (לרישא באורך 1 אין רישא אמיתית לא ריקה), ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[q]&lt;q</annotation></semantics></math></span> (כי ה-border אמיתי).</p>\n    <div class=\"lesson-trap\">⚠️ המחרוזת עצמה אינה border של עצמה, ולכן לא נספר אותה. ⚠️ <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[q]</annotation></semantics></math></span> מתייחס רק לרישא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span> ולא לתבנית כולה, וכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> נבדק לחוד.</div>\n    <p>איך בודקים border באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span>? משווים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> האותיות הראשונות של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> האותיות האחרונות שלה. מנסים מהארוך אל הקצר, ועוצרים בהתאמה הראשונה.</p>"
+    },
+    "questions": [
+     {
+      "id": "C01-Q1",
+      "question": "מהו $\\pi[5]$ עבור התבנית $P=$`AABAA` ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "1",
+        "type": "text",
+        "html": "1"
+       },
+       {
+        "id": "b",
+        "value": "2",
+        "type": "text",
+        "html": "2"
+       },
+       {
+        "id": "c",
+        "value": "3",
+        "type": "text",
+        "html": "3"
+       },
+       {
+        "id": "d",
+        "value": "5",
+        "type": "text",
+        "html": "5"
+       }
+      ],
+      "correctId": "b",
+      "explanation": "הרישאות של `AABAA` הן `A`, `AA`, `AAB`, `AABA`. הסיפאות הן `A`, `AA`, `BAA`, `ABAA`. הם שווים עבור `A` ו-`AA`, ולכן ה-border הארוך ביותר הוא `AA` באורך 2. הערך 1 הוא border קצר יותר, לא הארוך ביותר. הערך 3 לא תקין כי `AAB` שונה מ-`BAA`. הערך 5 הוא המחרוזת עצמה, וזו לא רישא אמיתית.",
+      "recap": "π[q] = אורך ה-border הארוך ביותר; המחרוזת עצמה לא נספרת",
+      "questionHtml": "מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[5]</annotation></semantics></math></span> עבור התבנית <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AABAA</code> ?",
+      "explanationHtml": "הרישאות של <code class=\"tok\" dir=\"ltr\">AABAA</code> הן <code class=\"tok\" dir=\"ltr\">A</code>, <code class=\"tok\" dir=\"ltr\">AA</code>, <code class=\"tok\" dir=\"ltr\">AAB</code>, <code class=\"tok\" dir=\"ltr\">AABA</code>. הסיפאות הן <code class=\"tok\" dir=\"ltr\">A</code>, <code class=\"tok\" dir=\"ltr\">AA</code>, <code class=\"tok\" dir=\"ltr\">BAA</code>, <code class=\"tok\" dir=\"ltr\">ABAA</code>. הם שווים עבור <code class=\"tok\" dir=\"ltr\">A</code> ו-<code class=\"tok\" dir=\"ltr\">AA</code>, ולכן ה-border הארוך ביותר הוא <code class=\"tok\" dir=\"ltr\">AA</code> באורך 2. הערך 1 הוא border קצר יותר, לא הארוך ביותר. הערך 3 לא תקין כי <code class=\"tok\" dir=\"ltr\">AAB</code> שונה מ-<code class=\"tok\" dir=\"ltr\">BAA</code>. הערך 5 הוא המחרוזת עצמה, וזו לא רישא אמיתית.",
+      "recapHtml": "π[q] = אורך ה-border הארוך ביותר; המחרוזת עצמה לא נספרת"
+     },
+     {
+      "id": "C01-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "עבור $P=$`ABCABD` חשבו את $\\pi[5]$. כלומר, מהו האורך של ה-border הארוך ביותר של הרישא `ABCAB` ?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "הרישא היא `ABCAB`. הסיפא `AB` שווה לרישא `AB`. באורך 3 משווים את `ABC` ל-`CAB` ואין התאמה, ובאורך 4 את `ABCA` ל-`BCAB`, גם אין. לכן $\\pi[5]=2$.",
+       "promptHtml": "עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABCABD</code> חשבו את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[5]</annotation></semantics></math></span>. כלומר, מהו האורך של ה-border הארוך ביותר של הרישא <code class=\"tok\" dir=\"ltr\">ABCAB</code> ?",
+       "explainHtml": "הרישא היא <code class=\"tok\" dir=\"ltr\">ABCAB</code>. הסיפא <code class=\"tok\" dir=\"ltr\">AB</code> שווה לרישא <code class=\"tok\" dir=\"ltr\">AB</code>. באורך 3 משווים את <code class=\"tok\" dir=\"ltr\">ABC</code> ל-<code class=\"tok\" dir=\"ltr\">CAB</code> ואין התאמה, ובאורך 4 את <code class=\"tok\" dir=\"ltr\">ABCA</code> ל-<code class=\"tok\" dir=\"ltr\">BCAB</code>, גם אין. לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=2</annotation></semantics></math></span>."
+      },
+      "recap": "מנסים אורכים מהארוך לקצר, ועוצרים בהתאמה הראשונה",
+      "recapHtml": "מנסים אורכים מהארוך לקצר, ועוצרים בהתאמה הראשונה"
+     },
+     {
+      "id": "C01-Q3",
+      "step": {
+       "type": "choice",
+       "prompt": "מהי טבלת $\\pi$ המלאה של $P=$`ABABA` ?",
+       "options": [
+        {
+         "id": "a",
+         "value": "$0,0,1,1,1$",
+         "type": "text",
+         "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,1,1</annotation></semantics></math></span>"
+        },
+        {
+         "id": "b",
+         "value": "$0,0,1,2,2$",
+         "type": "text",
+         "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,2,2</annotation></semantics></math></span>"
+        },
+        {
+         "id": "c",
+         "value": "$0,0,1,2,3$",
+         "type": "text",
+         "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,2,3</annotation></semantics></math></span>"
+        },
+        {
+         "id": "d",
+         "value": "$0,1,2,3,4$",
+         "type": "text",
+         "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">0,1,2,3,4</annotation></semantics></math></span>"
+        }
+       ],
+       "correctId": "c",
+       "explain": "הטבלה שחושבה בשיעור: $0,0,1,2,3$. הטבלה $0,1,2,3,4$ היא של `AAAAA` (שם `AB` אינה border כי $P[2]=B$). בשתי הטבלאות האחרות הערכים של $q=4$ ו-$q=5$ קטנים מדי, כי `AB` הוא border של `ABAB` ו-`ABA` הוא border של `ABABA`.",
+       "promptHtml": "מהי טבלת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> המלאה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABABA</code> ?",
+       "explainHtml": "הטבלה שחושבה בשיעור: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,2,3</annotation></semantics></math></span>. הטבלה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">0,1,2,3,4</annotation></semantics></math></span> היא של <code class=\"tok\" dir=\"ltr\">AAAAA</code> (שם <code class=\"tok\" dir=\"ltr\">AB</code> אינה border כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[2]=B</annotation></semantics></math></span>). בשתי הטבלאות האחרות הערכים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">q=4</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">q=5</annotation></semantics></math></span> קטנים מדי, כי <code class=\"tok\" dir=\"ltr\">AB</code> הוא border של <code class=\"tok\" dir=\"ltr\">ABAB</code> ו-<code class=\"tok\" dir=\"ltr\">ABA</code> הוא border של <code class=\"tok\" dir=\"ltr\">ABABA</code>."
+      },
+      "recap": "ל-ABABA הטבלה היא 0,0,1,2,3",
+      "recapHtml": "ל-ABABA הטבלה היא 0,0,1,2,3"
+     },
+     {
+      "id": "C01-Q4",
+      "question": "איזה משפט נכון לכל מחרוזת $P$ ולכל $q$ ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$\\pi[q]<q$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[q]&lt;q</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$\\pi[q]\\ge\\pi[q-1]$, כלומר הטבלה לא יורדת לעולם",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>≥</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[q]\\ge\\pi[q-1]</annotation></semantics></math></span>, כלומר הטבלה לא יורדת לעולם"
+       },
+       {
+        "id": "c",
+        "value": "אם אות מסוימת מופיעה ב-$P$ פעמיים, אז $\\pi[m]\\ge 1$",
+        "type": "text",
+        "html": "אם אות מסוימת מופיעה ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> פעמיים, אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo><mo>≥</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[m]\\ge 1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$\\pi[q]=q-1$ לכל $q\\ge 2$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>q</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[q]=q-1</annotation></semantics></math></span> לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>≥</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">q\\ge 2</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "ה-border אמיתי, ולכן קצר מהרישא: $\\pi[q]<q$. הטענה על טבלה שלא יורדת שגויה: ל-`AAB` הטבלה היא $0,1,0$. הטענה על אות שחוזרת שגויה: ל-`ABB` הטבלה היא $0,0,0$ ו-$\\pi[3]=0$. הטענה על $q-1$ שגויה: ל-`AB` הטבלה היא $0,0$.",
+      "recap": "הכלל היחיד שתמיד נכון: π[q] < q",
+      "questionHtml": "איזה משפט נכון לכל מחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> ולכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> ?",
+      "explanationHtml": "ה-border אמיתי, ולכן קצר מהרישא: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[q]&lt;q</annotation></semantics></math></span>. הטענה על טבלה שלא יורדת שגויה: ל-<code class=\"tok\" dir=\"ltr\">AAB</code> הטבלה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0</annotation></semantics></math></span>. הטענה על אות שחוזרת שגויה: ל-<code class=\"tok\" dir=\"ltr\">ABB</code> הטבלה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0,0,0</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[3]=0</annotation></semantics></math></span>. הטענה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">q-1</annotation></semantics></math></span> שגויה: ל-<code class=\"tok\" dir=\"ltr\">AB</code> הטבלה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0,0</annotation></semantics></math></span>.",
+      "recapHtml": "הכלל היחיד שתמיד נכון: π[q] &lt; q"
+     },
+     {
+      "id": "C01-Q5",
+      "step": {
+       "type": "numeric",
+       "prompt": "עבור $P=$`AAAAA` מה הערך של $\\pi[5]$ ?",
+       "answer": 4,
+       "tol": 0,
+       "explain": "הרישא `AAAA` היא גם סיפא של `AAAAA`, והיא רישא אמיתית באורך 4. אי אפשר 5, כי זו המחרוזת עצמה. בכלל, ל-$P=a^m$ מתקבל $\\pi[m]=m-1$.",
+       "promptHtml": "עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AAAAA</code> מה הערך של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[5]</annotation></semantics></math></span> ?",
+       "explainHtml": "הרישא <code class=\"tok\" dir=\"ltr\">AAAA</code> היא גם סיפא של <code class=\"tok\" dir=\"ltr\">AAAAA</code>, והיא רישא אמיתית באורך 4. אי אפשר 5, כי זו המחרוזת עצמה. בכלל, ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo><msup><mi>a</mi><mi>m</mi></msup></mrow><annotation encoding=\"application/x-tex\">P=a^m</annotation></semantics></math></span> מתקבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>m</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[m]=m-1</annotation></semantics></math></span>."
+      },
+      "recap": "ל-a^m: π[m] = m−1",
+      "recapHtml": "ל-a^m: π[m] = m−1"
+     }
+    ]
+   },
+   {
+    "id": "C02",
+    "order": 2,
+    "icon": "✍️",
+    "title": "חישוב π ביד, תו אחרי תו",
+    "goal": "לחשב טבלת π שלמה בשיטת המועמד k, כולל נסיגות (fallbacks), בלי לבדוק כל border מחדש.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n    <p>בלי לבדוק כל border מאפס: מחשבים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo>…</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[2],\\pi[3],\\dots</annotation></semantics></math></span> לפי הסדר, ובכל צעד <b>ממשיכים את ה-border הקודם</b>. נסמן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k=\\pi[q-1]</annotation></semantics></math></span>, האורך של ה-border הארוך ביותר של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q-1]</annotation></semantics></math></span>. הוא המועמד להתארך באות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q]</annotation></semantics></math></span>.</p>\n    <div class=\"lesson-rule\">🔑 <b>המתכון לחישוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[q]</annotation></semantics></math></span>:</b><br>\n    1. מתחילים עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k=\\pi[q-1]</annotation></semantics></math></span>.<br>\n    2. משווים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[k+1]</annotation></semantics></math></span> (האות שאחרי המועמד) עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q]</annotation></semantics></math></span> (האות החדשה).<br>\n    3. שוות: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>k</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[q]=k+1</annotation></semantics></math></span> ומסיימים.<br>\n    4. שונות ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">k&gt;0</annotation></semantics></math></span>: <b>נסיגה</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k\\leftarrow\\pi[k]</annotation></semantics></math></span> וחוזרים לשלב 2.<br>\n    5. שונות ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">k=0</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[q]=0</annotation></semantics></math></span>.</div>\n<pre>Compute-Prefix(P)\n  pi[1] &lt;- 0 ; k &lt;- 0\n  for q &lt;- 2 to m\n      while k &gt; 0 and P[k+1] != P[q]   k &lt;- pi[k]\n      if P[k+1] = P[q]                 k &lt;- k + 1\n      pi[q] &lt;- k</pre>\n    <div class=\"lesson-ex\">דוגמה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code>ABAABAB</code>. הטבלה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,1,2,3,2</annotation></semantics></math></span>. ננתח את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">q=7</annotation></semantics></math></span> (האות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>7</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[7]=B</annotation></semantics></math></span>): <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[6]=3</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi><mo mathvariant=\"normal\">≠</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[4]=A\\ne B</annotation></semantics></math></span>, לכן נסיגה אחת: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[3]=1</annotation></semantics></math></span>. עכשיו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[2]=B</annotation></semantics></math></span> שווה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>7</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[7]=1+1=2</annotation></semantics></math></span>. גם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">q=4</annotation></semantics></math></span> דורש נסיגה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[3]=1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi><mo mathvariant=\"normal\">≠</mo><mi>A</mi><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[2]=B\\ne A=P[4]</annotation></semantics></math></span>, אז נסיגה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[1]=0</annotation></semantics></math></span>, ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[1]=A</annotation></semantics></math></span> שווה, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[4]=1</annotation></semantics></math></span>.</div>\n    <div class=\"lesson-trap\">⚠️ הנסיגה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k\\leftarrow\\pi[k]</annotation></semantics></math></span> ולא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">k-1</annotation></semantics></math></span> ולא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>: רק הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[k]</annotation></semantics></math></span> הוא ה-border הבא בגודלו של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..k]</annotation></semantics></math></span>. ⚠️ משווים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[k+1]</annotation></semantics></math></span> ולא את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[k]</annotation></semantics></math></span>, ומתחילים מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">q=2</annotation></semantics></math></span>.</div>\n    <p>ספירת נסיגות: <b>נסיגה</b> היא ביצוע אחד של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k\\leftarrow\\pi[k]</annotation></semantics></math></span>. בחישוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>7</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[7]</annotation></semantics></math></span> שלמעלה יש נסיגה אחת.</p>"
+    },
+    "questions": [
+     {
+      "id": "C02-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "חשבו את $\\pi[8]$ עבור $P=$`ABACABAB`. הטבלה עד $q=7$ היא $0,0,1,0,1,2,3$.",
+       "answer": 2,
+       "tol": 0,
+       "explain": "$k=\\pi[7]=3$ ו-$P[4]=C\\ne B=P[8]$, ולכן נסיגה: $k=\\pi[3]=1$. $P[2]=B=P[8]$, לכן $\\pi[8]=2$. ה-border הוא `AB`.",
+       "promptHtml": "חשבו את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[8]</annotation></semantics></math></span> עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABACABAB</code>. הטבלה עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">q=7</annotation></semantics></math></span> היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,0,1,2,3</annotation></semantics></math></span>.",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>7</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[7]=3</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>C</mi><mo mathvariant=\"normal\">≠</mo><mi>B</mi><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[4]=C\\ne B=P[8]</annotation></semantics></math></span>, ולכן נסיגה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[3]=1</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[2]=B=P[8]</annotation></semantics></math></span>, לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[8]=2</annotation></semantics></math></span>. ה-border הוא <code class=\"tok\" dir=\"ltr\">AB</code>."
+      },
+      "recap": "מתחילים מ-π[q−1] ונסוגים בשרשרת π עד התאמה",
+      "recapHtml": "מתחילים מ-π[q−1] ונסוגים בשרשרת π עד התאמה"
+     },
+     {
+      "id": "C02-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "כמה נסיגות (ביצועים של $k\\leftarrow\\pi[k]$) מתבצעות בזמן חישוב $\\pi[8]$ עבור $P=$`ABACABAB` ?",
+       "answer": 1,
+       "tol": 0,
+       "explain": "מ-$k=3$ עוברים ל-$k=\\pi[3]=1$ בנסיגה אחת. שם נמצאת התאמה ($P[2]=B$), ולכן אין נסיגה נוספת.",
+       "promptHtml": "כמה נסיגות (ביצועים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k\\leftarrow\\pi[k]</annotation></semantics></math></span>) מתבצעות בזמן חישוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[8]</annotation></semantics></math></span> עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABACABAB</code> ?",
+       "explainHtml": "מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">k=3</annotation></semantics></math></span> עוברים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[3]=1</annotation></semantics></math></span> בנסיגה אחת. שם נמצאת התאמה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[2]=B</annotation></semantics></math></span>), ולכן אין נסיגה נוספת."
+      },
+      "recap": "נסיגה = ביצוע אחד של k ← π[k]",
+      "recapHtml": "נסיגה = ביצוע אחד של k ← π[k]"
+     },
+     {
+      "id": "C02-Q3",
+      "step": {
+       "type": "choice",
+       "prompt": "מהי טבלת $\\pi$ של $P=$`AABAABAAAB` ?",
+       "options": [
+        {
+         "id": "a",
+         "value": "$0,1,0,1,2,3,4,5,5,6$",
+         "type": "text",
+         "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0,1,2,3,4,5,5,6</annotation></semantics></math></span>"
+        },
+        {
+         "id": "b",
+         "value": "$0,1,0,1,2,3,4,5,2,3$",
+         "type": "text",
+         "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0,1,2,3,4,5,2,3</annotation></semantics></math></span>"
+        },
+        {
+         "id": "c",
+         "value": "$0,1,0,1,2,3,4,5,1,0$",
+         "type": "text",
+         "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0,1,2,3,4,5,1,0</annotation></semantics></math></span>"
+        },
+        {
+         "id": "d",
+         "value": "$0,1,0,1,2,3,4,5,0,0$",
+         "type": "text",
+         "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0,1,2,3,4,5,0,0</annotation></semantics></math></span>"
+        }
+       ],
+       "correctId": "b",
+       "explain": "עד $q=8$ הערך עולה ב-1 בכל צעד. ב-$q=9$ ($P[9]=A$): $k=5$ ו-$P[6]=B\\ne A$, נסיגה ל-$k=\\pi[5]=2$; $P[3]=B\\ne A$, נסיגה ל-$k=\\pi[2]=1$; $P[2]=A$ שווה, לכן $\\pi[9]=2$. ב-$q=10$ ($P[10]=B$): $k=2$ ו-$P[3]=B$ שווה, לכן $\\pi[10]=3$. הטבלה שמסתיימת ב-$5,6$ מתעלמת מהאי-התאמה, זו שמסתיימת ב-$1,0$ נסוגה תמיד לאפס, וזו שמסתיימת ב-$0,0$ לא נסוגה בכלל.",
+       "promptHtml": "מהי טבלת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AABAABAAAB</code> ?",
+       "explainHtml": "עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">q=8</annotation></semantics></math></span> הערך עולה ב-1 בכל צעד. ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">q=9</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[9]=A</annotation></semantics></math></span>): <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">k=5</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi><mo mathvariant=\"normal\">≠</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[6]=B\\ne A</annotation></semantics></math></span>, נסיגה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[5]=2</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi><mo mathvariant=\"normal\">≠</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[3]=B\\ne A</annotation></semantics></math></span>, נסיגה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[2]=1</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[2]=A</annotation></semantics></math></span> שווה, לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[9]=2</annotation></semantics></math></span>. ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">q=10</annotation></semantics></math></span> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[10]=B</annotation></semantics></math></span>): <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">k=2</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[3]=B</annotation></semantics></math></span> שווה, לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[10]=3</annotation></semantics></math></span>. הטבלה שמסתיימת ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo separator=\"true\">,</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">5,6</annotation></semantics></math></span> מתעלמת מהאי-התאמה, זו שמסתיימת ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">1,0</annotation></semantics></math></span> נסוגה תמיד לאפס, וזו שמסתיימת ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0,0</annotation></semantics></math></span> לא נסוגה בכלל."
+      },
+      "recap": "אחרי אי-התאמה נסוגים בשרשרת π, לא לאפס ולא ב-1",
+      "recapHtml": "אחרי אי-התאמה נסוגים בשרשרת π, לא לאפס ולא ב-1"
+     },
+     {
+      "id": "C02-Q4",
+      "step": {
+       "type": "findbug",
+       "prompt": "בקוד לחישוב $\\pi$ יש שורה אחת שגויה. סמנו אותה.",
+       "code": true,
+       "bugIndex": 1,
+       "lines": [
+        "pi[1] <- 0",
+        "k <- 1",
+        "for q <- 2 to m",
+        "    while k > 0 and P[k+1] != P[q]",
+        "        k <- pi[k]",
+        "    if P[k+1] = P[q]",
+        "        k <- k + 1",
+        "    pi[q] <- k"
+       ],
+       "explain": "בתחילת הריצה $k$ הוא ה-border של $P[1..1]$, כלומר $0$. עם `k <- 1` ב-$q=2$ משווים את $P[2]$ לעצמו, ומתקבל תמיד $\\pi[2]=2$, וזה לא אפשרי כי $\\pi[2]<2$. לדוגמה ל-`ABACABAB` הקוד השגוי מחזיר $\\pi[2]=2$ במקום $0$.",
+       "promptHtml": "בקוד לחישוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> יש שורה אחת שגויה. סמנו אותה.",
+       "explainHtml": "בתחילת הריצה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> הוא ה-border של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..1]</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>. עם <code class=\"tok\" dir=\"ltr\">k &lt;- 1</code> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">q=2</annotation></semantics></math></span> משווים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[2]</annotation></semantics></math></span> לעצמו, ומתקבל תמיד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[2]=2</annotation></semantics></math></span>, וזה לא אפשרי כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[2]&lt;2</annotation></semantics></math></span>. לדוגמה ל-<code class=\"tok\" dir=\"ltr\">ABACABAB</code> הקוד השגוי מחזיר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[2]=2</annotation></semantics></math></span> במקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>.",
+       "linesHtml": [
+        "pi[1] &lt;- 0",
+        "k &lt;- 1",
+        "for q &lt;- 2 to m",
+        "    while k &gt; 0 and P[k+1] != P[q]",
+        "        k &lt;- pi[k]",
+        "    if P[k+1] = P[q]",
+        "        k &lt;- k + 1",
+        "    pi[q] &lt;- k"
+       ]
+      },
+      "recap": "k מתחיל ב-0, ו-q מתחיל ב-2",
+      "recapHtml": "k מתחיל ב-0, ו-q מתחיל ב-2"
+     },
+     {
+      "id": "C02-Q5",
+      "question": "מהו $\\pi[9]$ עבור $P=$`ABCABCABD` ? הטבלה עד $q=8$ היא $0,0,0,1,2,3,4,5$.",
+      "options": [
+       {
+        "id": "a",
+        "value": "0",
+        "type": "text",
+        "html": "0"
+       },
+       {
+        "id": "b",
+        "value": "2",
+        "type": "text",
+        "html": "2"
+       },
+       {
+        "id": "c",
+        "value": "3",
+        "type": "text",
+        "html": "3"
+       },
+       {
+        "id": "d",
+        "value": "6",
+        "type": "text",
+        "html": "6"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "$P[9]=D$. מ-$k=5$: $P[6]=C\\ne D$, נסיגה ל-$k=\\pi[5]=2$; $P[3]=C\\ne D$, נסיגה ל-$k=\\pi[2]=0$; $P[1]=A\\ne D$. אי אפשר לרדת עוד, ולכן $\\pi[9]=0$. האות `D` לא מופיעה בתבנית קודם, ולכן אף border לא יכול להסתיים בה. הערכים 2, 3 ו-6 הם ערכים שנגיע אליהם באמצע הדרך ולא התאמות אמיתיות.",
+      "recap": "אות חדשה שלא הופיעה: נסיגה עד 0 ו-π = 0",
+      "questionHtml": "מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[9]</annotation></semantics></math></span> עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABCABCABD</code> ? הטבלה עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">q=8</annotation></semantics></math></span> היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">0,0,0,1,2,3,4,5</annotation></semantics></math></span>.",
+      "explanationHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">P[9]=D</annotation></semantics></math></span>. מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">k=5</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>C</mi><mo mathvariant=\"normal\">≠</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">P[6]=C\\ne D</annotation></semantics></math></span>, נסיגה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[5]=2</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>C</mi><mo mathvariant=\"normal\">≠</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">P[3]=C\\ne D</annotation></semantics></math></span>, נסיגה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[2]=0</annotation></semantics></math></span>; <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi><mo mathvariant=\"normal\">≠</mo><mi>D</mi></mrow><annotation encoding=\"application/x-tex\">P[1]=A\\ne D</annotation></semantics></math></span>. אי אפשר לרדת עוד, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[9]=0</annotation></semantics></math></span>. האות <code class=\"tok\" dir=\"ltr\">D</code> לא מופיעה בתבנית קודם, ולכן אף border לא יכול להסתיים בה. הערכים 2, 3 ו-6 הם ערכים שנגיע אליהם באמצע הדרך ולא התאמות אמיתיות.",
+      "recapHtml": "אות חדשה שלא הופיעה: נסיגה עד 0 ו-π = 0"
+     }
+    ]
+   },
+   {
+    "id": "C03",
+    "order": 3,
+    "icon": "⛓️",
+    "title": "π כרשימת borders: שרשרת הנסיגה",
+    "goal": "לקרוא מטבלת π את כל ה-borders של כל רישא, ולהבין למה הנסיגה היא דווקא k ← π[k].",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n    <p>הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[q]</annotation></semantics></math></span> נותן את ה-border הארוך ביותר של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span>. אבל יש לרישא הזו עוד borders, קצרים יותר. אפשר למצוא את כולם מהטבלה.</p>\n    <div class=\"lesson-rule\">🔑 <b>שרשרת ה-borders:</b> האורכים של כל ה-borders הלא ריקים של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span> הם בדיוק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mi>π</mi><mo stretchy=\"false\">[</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mtext> </mtext><mi>π</mi><mo stretchy=\"false\">[</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo>…</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[q],\\ \\pi[\\pi[q]],\\ \\pi[\\pi[\\pi[q]]],\\dots</annotation></semantics></math></span> עד שמגיעים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>. הסיבה: border של border הוא border. אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> הוא border של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span> באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k=\\pi[q]</annotation></semantics></math></span>, אז ה-border הארוך ביותר של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> עצמו, שאורכו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[k]</annotation></semantics></math></span>, הוא גם border של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span>.</div>\n    <div class=\"lesson-ex\">דוגמה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code>ABABABA</code> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,0,1,2,3,4,5</annotation></semantics></math></span>. עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">q=7</annotation></semantics></math></span> השרשרת היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">5,3,1</annotation></semantics></math></span> ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>. לכן ל-<code>ABABABA</code> שלושה borders לא ריקים: <code>ABABA</code> (5), <code>ABA</code> (3) ו-<code>A</code> (1). מספר ה-borders הלא ריקים הוא מספר האיברים בשרשרת לפני ה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>.</div>\n    <p><b>למה הנסיגה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k\\leftarrow\\pi[k]</annotation></semantics></math></span>?</b> כשה-border באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> לא מצליח להתארך באות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q]</annotation></semantics></math></span>, מחפשים את ה-border הבא בגודלו של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q-1]</annotation></semantics></math></span>, כי רק border כזה יכול להתארך. ה-border הבא בגודלו של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..k]</annotation></semantics></math></span> הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[k]</annotation></semantics></math></span>. ערכים באמצע, כמו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">k-1</annotation></semantics></math></span>, בדרך כלל אינם borders בכלל, ובדיקה שלהם היא בזבוז או טעות.</p>\n    <div class=\"lesson-trap\">⚠️ אין לצפות שהשרשרת תרד ב-1 בכל פעם. בדוגמה למעלה היא יורדת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo>→</mo><mn>3</mn><mo>→</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">5\\to3\\to1</annotation></semantics></math></span> (פעמיים ב-2), כי רק האורכים האלה הם borders.</div>"
+    },
+    "questions": [
+     {
+      "id": "C03-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "טבלת $\\pi$ של $P=$`AABAABAA` היא $0,1,0,1,2,3,4,5$. כמה borders לא ריקים יש למחרוזת `AABAABAA` כולה ($q=8$) ?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "השרשרת מ-$q=8$: $\\pi[8]=5$, אחר כך $\\pi[5]=2$, אחר כך $\\pi[2]=1$, ואז $\\pi[1]=0$. שלושה אורכים: 5, 2 ו-1. ה-borders הם `AABAA`, `AA` ו-`A`.",
+       "promptHtml": "טבלת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AABAABAA</code> היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0,1,2,3,4,5</annotation></semantics></math></span>. כמה borders לא ריקים יש למחרוזת <code class=\"tok\" dir=\"ltr\">AABAABAA</code> כולה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">q=8</annotation></semantics></math></span>) ?",
+       "explainHtml": "השרשרת מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">q=8</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[8]=5</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=2</annotation></semantics></math></span>, אחר כך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[2]=1</annotation></semantics></math></span>, ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[1]=0</annotation></semantics></math></span>. שלושה אורכים: 5, 2 ו-1. ה-borders הם <code class=\"tok\" dir=\"ltr\">AABAA</code>, <code class=\"tok\" dir=\"ltr\">AA</code> ו-<code class=\"tok\" dir=\"ltr\">A</code>."
+      },
+      "recap": "מספר ה-borders הלא ריקים = אורך שרשרת π עד 0",
+      "recapHtml": "מספר ה-borders הלא ריקים = אורך שרשרת π עד 0"
+     },
+     {
+      "id": "C03-Q2",
+      "question": "מהם אורכי כל ה-borders הלא ריקים של `AABAABAA` (הטבלה: $0,1,0,1,2,3,4,5$) ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$5,4,3,2,1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">5,4,3,2,1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$5,3,1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">5,3,1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$5,2,1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">5,2,1</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$5,2$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">5,2</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "c",
+      "explanation": "השרשרת היא $\\pi[8]=5$, $\\pi[5]=2$, $\\pi[2]=1$. אפשר לוודא: `AABAA` היא רישא וסיפא, וגם `AA`, וגם `A`. אורך 4 אינו border כי הרישא `AABA` שונה מהסיפא `ABAA`. אורך 3 אינו border כי `AAB` שונה מ-`BAA`. הרשימה $5,2$ שוכחת את `A`.",
+      "recap": "borders: π[q], π[π[q]], ... עד 0",
+      "questionHtml": "מהם אורכי כל ה-borders הלא ריקים של <code class=\"tok\" dir=\"ltr\">AABAABAA</code> (הטבלה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0,1,2,3,4,5</annotation></semantics></math></span>) ?",
+      "explanationHtml": "השרשרת היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[8]=5</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=2</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[2]=1</annotation></semantics></math></span>. אפשר לוודא: <code class=\"tok\" dir=\"ltr\">AABAA</code> היא רישא וסיפא, וגם <code class=\"tok\" dir=\"ltr\">AA</code>, וגם <code class=\"tok\" dir=\"ltr\">A</code>. אורך 4 אינו border כי הרישא <code class=\"tok\" dir=\"ltr\">AABA</code> שונה מהסיפא <code class=\"tok\" dir=\"ltr\">ABAA</code>. אורך 3 אינו border כי <code class=\"tok\" dir=\"ltr\">AAB</code> שונה מ-<code class=\"tok\" dir=\"ltr\">BAA</code>. הרשימה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">5,2</annotation></semantics></math></span> שוכחת את <code class=\"tok\" dir=\"ltr\">A</code>.",
+      "recapHtml": "borders: π[q], π[π[q]], ... עד 0"
+     },
+     {
+      "id": "C03-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "מהו אורך ה-border השני בגודלו של `AABAABAA` ? (הטבלה: $0,1,0,1,2,3,4,5$)",
+       "answer": 2,
+       "tol": 0,
+       "explain": "ה-border הארוך ביותר הוא $\\pi[8]=5$, וה-border הבא אחריו הוא $\\pi[5]=2$ (`AA`).",
+       "promptHtml": "מהו אורך ה-border השני בגודלו של <code class=\"tok\" dir=\"ltr\">AABAABAA</code> ? (הטבלה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0,1,2,3,4,5</annotation></semantics></math></span>)",
+       "explainHtml": "ה-border הארוך ביותר הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[8]=5</annotation></semantics></math></span>, וה-border הבא אחריו הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=2</annotation></semantics></math></span> (<code class=\"tok\" dir=\"ltr\">AA</code>)."
+      },
+      "recap": "ה-border הבא: π של הקודם",
+      "recapHtml": "ה-border הבא: π של הקודם"
+     },
+     {
+      "id": "C03-Q4",
+      "step": {
+       "type": "numeric",
+       "prompt": "מחשבים $\\pi[9]$ עבור תבנית שמתחילה ב-`AABAABAA` (הטבלה עד $q=8$: $0,1,0,1,2,3,4,5$). אחרי $k=\\pi[8]=5$ מתברר ש-$P[6]\\ne P[9]$. לאיזה ערך $k$ הקוד נסוג ?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "הנסיגה היא $k\\leftarrow\\pi[5]=2$. המועמד $k-1=4$ לא יכול להיות border של `AABAA`: הרישא `AABA` שונה מהסיפא `ABAA`.",
+       "promptHtml": "מחשבים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[9]</annotation></semantics></math></span> עבור תבנית שמתחילה ב-<code class=\"tok\" dir=\"ltr\">AABAABAA</code> (הטבלה עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">q=8</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0,1,2,3,4,5</annotation></semantics></math></span>). אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">k=\\pi[8]=5</annotation></semantics></math></span> מתברר ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>9</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[6]\\ne P[9]</annotation></semantics></math></span>. לאיזה ערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> הקוד נסוג ?",
+       "explainHtml": "הנסיגה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">k\\leftarrow\\pi[5]=2</annotation></semantics></math></span>. המועמד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>−</mo><mn>1</mn><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">k-1=4</annotation></semantics></math></span> לא יכול להיות border של <code class=\"tok\" dir=\"ltr\">AABAA</code>: הרישא <code class=\"tok\" dir=\"ltr\">AABA</code> שונה מהסיפא <code class=\"tok\" dir=\"ltr\">ABAA</code>."
+      },
+      "recap": "נסיגה ל-π[k], לא ל-k−1",
+      "recapHtml": "נסיגה ל-π[k], לא ל-k−1"
+     },
+     {
+      "id": "C03-Q5",
+      "step": {
+       "type": "fillblank",
+       "prompt": "השלימו את שורת הנסיגה בלולאה של חישוב $\\pi$.",
+       "code": true,
+       "blankIndex": 3,
+       "lines": [
+        "pi[1] <- 0 ; k <- 0",
+        "for q <- 2 to m",
+        "    while k > 0 and P[k+1] != P[q]",
+        "        k <- ___",
+        "    if P[k+1] = P[q]",
+        "        k <- k + 1",
+        "    pi[q] <- k"
+       ],
+       "options": [
+        {
+         "id": "a",
+         "value": "k - 1",
+         "type": "text",
+         "html": "k - 1"
+        },
+        {
+         "id": "b",
+         "value": "0",
+         "type": "text",
+         "html": "0"
+        },
+        {
+         "id": "c",
+         "value": "pi[k]",
+         "type": "text",
+         "html": "pi[k]"
+        },
+        {
+         "id": "d",
+         "value": "pi[k - 1]",
+         "type": "text",
+         "html": "pi[k - 1]"
+        }
+       ],
+       "correctId": "c",
+       "explain": "הנסיגה הנכונה היא `pi[k]`. נסיגה ל-`k - 1` נכשלת למשל על `ABABB`. נסיגה ל-`0` נכשלת למשל על `AABAAA`, ונסיגה ל-`pi[k - 1]` נכשלת גם היא על `AABAAA`. בכל אחד מהמקרים הטבלה שמתקבלת שונה מהטבלה הנכונה.",
+       "promptHtml": "השלימו את שורת הנסיגה בלולאה של חישוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span>.",
+       "explainHtml": "הנסיגה הנכונה היא <code class=\"tok\" dir=\"ltr\">pi[k]</code>. נסיגה ל-<code class=\"tok\" dir=\"ltr\">k - 1</code> נכשלת למשל על <code class=\"tok\" dir=\"ltr\">ABABB</code>. נסיגה ל-<code class=\"tok\" dir=\"ltr\">0</code> נכשלת למשל על <code class=\"tok\" dir=\"ltr\">AABAAA</code>, ונסיגה ל-<code class=\"tok\" dir=\"ltr\">pi[k - 1]</code> נכשלת גם היא על <code class=\"tok\" dir=\"ltr\">AABAAA</code>. בכל אחד מהמקרים הטבלה שמתקבלת שונה מהטבלה הנכונה.",
+       "linesHtml": [
+        "pi[1] &lt;- 0 ; k &lt;- 0",
+        "for q &lt;- 2 to m",
+        "    while k &gt; 0 and P[k+1] != P[q]",
+        "        k &lt;- ___",
+        "    if P[k+1] = P[q]",
+        "        k &lt;- k + 1",
+        "    pi[q] &lt;- k"
+       ]
+      },
+      "recap": "השורה: k ← π[k]",
+      "recapHtml": "השורה: k ← π[k]"
+     }
+    ]
+   },
+   {
+    "id": "C04",
+    "order": 4,
+    "icon": "🔁",
+    "title": "לולאת ההתאמה של KMP וספירת השוואות",
+    "goal": "לעקוב אחרי המצב q לאורך הטקסט, ולספור כמה השוואות עולה כל אות.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n    <p>בטקסט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> מחפשים תבנית <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span>. המשתנה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> הוא <b>כמה אותיות מהתבנית מתאימות כרגע</b> לסוף מה שקראנו: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span> הוא סיפא של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[1..i]</annotation></semantics></math></span>. האות הבאה של התבנית שמחכה להשוואה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q+1]</annotation></semantics></math></span>.</p>\n<pre>KMP(T, P)\n  pi &lt;- Compute-Prefix(P) ; q &lt;- 0\n  for i &lt;- 1 to n\n      while q &gt; 0 and P[q+1] != T[i]   q &lt;- pi[q]\n      if P[q+1] = T[i]                 q &lt;- q + 1\n      if q = m   report an occurrence ending at i ; q &lt;- pi[q]</pre>\n    <div class=\"lesson-rule\">🔑 <b>לכל אות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[i]</annotation></semantics></math></span>:</b> משווים אותה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q+1]</annotation></semantics></math></span>. אם יש התאמה, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> גדל ב-1. אם אין התאמה ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q&gt;0</annotation></semantics></math></span>, נסוגים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow\\pi[q]</annotation></semantics></math></span> ומשווים <b>את אותה אות</b> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q+1]</annotation></semantics></math></span> החדשה. כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q=0</annotation></semantics></math></span> ואין התאמה, עוברים לאות הבאה. <b>האינדקס <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span> בטקסט לעולם לא חוזר אחורה.</b></div>\n    <p><b>ספירת השוואות:</b> כל זוג (אות בטקסט, אות בתבנית) נספר פעם אחת, גם ההשוואה האחרונה כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q=0</annotation></semantics></math></span>, וגם השוואה מוצלחת. אות בטקסט שגורמת לשרשרת נסיגות של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>r</mi></mrow><annotation encoding=\"application/x-tex\">r</annotation></semantics></math></span> נסיגות עולה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>r</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">r+1</annotation></semantics></math></span> השוואות.</p>\n    <div class=\"lesson-ex\">דוגמה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code>ABABAC</code> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,0,1,2,3,0</annotation></semantics></math></span>, והטקסט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code>ABABABA</code>. ארבע האותיות הראשונות מתאימות, ואחריהן האות החמישית <code>A</code> גם מתאימה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">q=5</annotation></semantics></math></span>). האות השישית היא <code>B</code>: משווים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">P[6]=C</annotation></semantics></math></span> (אין התאמה), נסוגים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">q=\\pi[5]=3</annotation></semantics></math></span>, ומשווים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[4]=B</annotation></semantics></math></span> (התאמה), כך ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">q=4</annotation></semantics></math></span>. זו האות היחידה שעלתה שתי השוואות. אחריה <code>A</code> מתאימה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[5]</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">q=5</annotation></semantics></math></span>. המצבים אחרי כל אות: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">1,2,3,4,5,4,5</annotation></semantics></math></span>. סך הכול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span> השוואות ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">7</annotation></semantics></math></span> אותיות.</div>\n    <div class=\"lesson-trap\">⚠️ אות בטקסט שלא מופיעה בתבנית בכלל גורמת לנסיגה עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q=0</annotation></semantics></math></span>: אם היה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">q=5</annotation></semantics></math></span> ושרשרת הנסיגות הייתה באורך 3, זה עולה 4 השוואות, והמצב נשאר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>. ⚠️ ההשוואה היא תמיד ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q+1]</annotation></semantics></math></span>, לא ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q]</annotation></semantics></math></span>.</div>\n    <p><b>למה KMP לינארי?</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> גדל לכל היותר ב-1 לכל אות בטקסט, וכל נסיגה מקטינה אותו לפחות ב-1 בלי לרדת מתחת ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>. לכן סך כל הנסיגות לאורך הריצה לא עולה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span> (ניתוח לשיעורין), גם אם אות אחת מסוימת גורמת לשרשרת ארוכה.</p>"
+    },
+    "questions": [
+     {
+      "id": "C04-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "$P=$`AABAAC` עם $\\pi=0,1,0,1,2,0$. בטקסט נקראו האותיות `AABAA` ולכן $q=5$. כעת מגיעה האות `D`. כמה השוואות של האות `D` מול אותיות התבנית מתבצעות ?",
+       "answer": 4,
+       "tol": 0,
+       "explain": "משווים את `D` ל-$P[6]=C$ (אין התאמה) ונסוגים ל-$q=\\pi[5]=2$; ל-$P[3]=B$ (אין) ונסוגים ל-$q=\\pi[2]=1$; ל-$P[2]=A$ (אין) ונסוגים ל-$q=\\pi[1]=0$; ולבסוף ל-$P[1]=A$ (אין). סך הכול 4 השוואות, והמצב נשאר $0$. `D` לא מופיעה בתבנית.",
+       "promptHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AABAAC</code> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,1,0,1,2,0</annotation></semantics></math></span>. בטקסט נקראו האותיות <code class=\"tok\" dir=\"ltr\">AABAA</code> ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">q=5</annotation></semantics></math></span>. כעת מגיעה האות <code class=\"tok\" dir=\"ltr\">D</code>. כמה השוואות של האות <code class=\"tok\" dir=\"ltr\">D</code> מול אותיות התבנית מתבצעות ?",
+       "explainHtml": "משווים את <code class=\"tok\" dir=\"ltr\">D</code> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">P[6]=C</annotation></semantics></math></span> (אין התאמה) ונסוגים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">q=\\pi[5]=2</annotation></semantics></math></span>; ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[3]=B</annotation></semantics></math></span> (אין) ונסוגים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">q=\\pi[2]=1</annotation></semantics></math></span>; ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[2]=A</annotation></semantics></math></span> (אין) ונסוגים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q=\\pi[1]=0</annotation></semantics></math></span>; ולבסוף ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[1]=A</annotation></semantics></math></span> (אין). סך הכול 4 השוואות, והמצב נשאר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>. <code class=\"tok\" dir=\"ltr\">D</code> לא מופיעה בתבנית."
+      },
+      "recap": "אות שלא בתבנית: אורך השרשרת + 1 השוואות, ו-q חוזר ל-0",
+      "recapHtml": "אות שלא בתבנית: אורך השרשרת + 1 השוואות, ו-q חוזר ל-0"
+     },
+     {
+      "id": "C04-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "אותה תבנית ($P=$`AABAAC`, $\\pi=0,1,0,1,2,0$), אחרי `AABAA` ($q=5$) מגיעה האות `B`. כמה השוואות מתבצעות עבורה ?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "משווים ל-$P[6]=C$ (אין התאמה) ונסוגים ל-$q=\\pi[5]=2$. משווים ל-$P[3]=B$ (יש התאמה) ו-$q=3$. סך הכול 2 השוואות.",
+       "promptHtml": "אותה תבנית (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AABAAC</code>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,1,0,1,2,0</annotation></semantics></math></span>), אחרי <code class=\"tok\" dir=\"ltr\">AABAA</code> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">q=5</annotation></semantics></math></span>) מגיעה האות <code class=\"tok\" dir=\"ltr\">B</code>. כמה השוואות מתבצעות עבורה ?",
+       "explainHtml": "משווים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">P[6]=C</annotation></semantics></math></span> (אין התאמה) ונסוגים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">q=\\pi[5]=2</annotation></semantics></math></span>. משווים ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[3]=B</annotation></semantics></math></span> (יש התאמה) ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">q=3</annotation></semantics></math></span>. סך הכול 2 השוואות."
+      },
+      "recap": "אחרי התאמה בנסיגה הספירה נעצרת",
+      "recapHtml": "אחרי התאמה בנסיגה הספירה נעצרת"
+     },
+     {
+      "id": "C04-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "אותה תבנית ($P=$`AABAAC`). הטקסט הוא `AABAABAA`. מהו $q$ אחרי קריאת כל 8 האותיות ?",
+       "answer": 5,
+       "tol": 0,
+       "explain": "המצבים אחרי כל אות: $1,2,3,4,5$ ל-`AABAA`. האות השישית `B` נתקלת ב-$P[6]=C$ ונסוגה ל-$q=2$, ואז $P[3]=B$ מתאים ו-$q=3$. אחריה `A` ו-`A` מעלות ל-$q=4$ ול-$q=5$. אין עדיין מופע, כי $5<6$.",
+       "promptHtml": "אותה תבנית (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AABAAC</code>). הטקסט הוא <code class=\"tok\" dir=\"ltr\">AABAABAA</code>. מהו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> אחרי קריאת כל 8 האותיות ?",
+       "explainHtml": "המצבים אחרי כל אות: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">1,2,3,4,5</annotation></semantics></math></span> ל-<code class=\"tok\" dir=\"ltr\">AABAA</code>. האות השישית <code class=\"tok\" dir=\"ltr\">B</code> נתקלת ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>C</mi></mrow><annotation encoding=\"application/x-tex\">P[6]=C</annotation></semantics></math></span> ונסוגה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">q=2</annotation></semantics></math></span>, ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[3]=B</annotation></semantics></math></span> מתאים ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">q=3</annotation></semantics></math></span>. אחריה <code class=\"tok\" dir=\"ltr\">A</code> ו-<code class=\"tok\" dir=\"ltr\">A</code> מעלות ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">q=4</annotation></semantics></math></span> ול-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">q=5</annotation></semantics></math></span>. אין עדיין מופע, כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo>&lt;</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">5&lt;6</annotation></semantics></math></span>."
+      },
+      "recap": "q = כמה אותיות מתאימות כרגע בסוף מה שנקרא",
+      "recapHtml": "q = כמה אותיות מתאימות כרגע בסוף מה שנקרא"
+     },
+     {
+      "id": "C04-Q4",
+      "step": {
+       "type": "numeric",
+       "prompt": "אותה תבנית ואותו טקסט (`AABAABAA`). כמה השוואות בסך הכול מתבצעות לאורך כל הריצה ?",
+       "answer": 9,
+       "tol": 0,
+       "explain": "חמש האותיות הראשונות עולות השוואה אחת כל אחת (5). האות השישית עולה 2 (ראו שלב קודם). שתי האחרונות עולות אחת כל אחת. סך הכול $5+2+1+1=9$ השוואות, ל-8 אותיות.",
+       "promptHtml": "אותה תבנית ואותו טקסט (<code class=\"tok\" dir=\"ltr\">AABAABAA</code>). כמה השוואות בסך הכול מתבצעות לאורך כל הריצה ?",
+       "explainHtml": "חמש האותיות הראשונות עולות השוואה אחת כל אחת (5). האות השישית עולה 2 (ראו שלב קודם). שתי האחרונות עולות אחת כל אחת. סך הכול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>5</mn><mo>+</mo><mn>2</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">5+2+1+1=9</annotation></semantics></math></span> השוואות, ל-8 אותיות."
+      },
+      "recap": "השוואה מוצלחת אחת לאות + השוואה לכל נסיגה",
+      "recapHtml": "השוואה מוצלחת אחת לאות + השוואה לכל נסיגה"
+     },
+     {
+      "id": "C04-Q5",
+      "question": "למה הזמן של שלב החיפוש ב-KMP הוא $\\Theta(n)$, אף על פי שאות אחת בטקסט עלולה לגרום ל-$\\Theta(m)$ נסיגות ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "כי $q$ גדל לכל היותר ב-1 לכל אות בטקסט וכל נסיגה מקטינה אותו, ולכן סך הנסיגות לא עולה על $n$",
+        "type": "text",
+        "html": "כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> גדל לכל היותר ב-1 לכל אות בטקסט וכל נסיגה מקטינה אותו, ולכן סך הנסיגות לא עולה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "כי כל אות בטקסט מושווית לכל היותר פעמיים",
+        "type": "text",
+        "html": "כי כל אות בטקסט מושווית לכל היותר פעמיים"
+       },
+       {
+        "id": "c",
+        "value": "כי בכל אי-התאמה האינדקס בטקסט חוזר אחורה רק ב-1",
+        "type": "text",
+        "html": "כי בכל אי-התאמה האינדקס בטקסט חוזר אחורה רק ב-1"
+       },
+       {
+        "id": "d",
+        "value": "כי הנסיגה אף פעם לא ארוכה מ-2 צעדים",
+        "type": "text",
+        "html": "כי הנסיגה אף פעם לא ארוכה מ-2 צעדים"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "זה ניתוח לשיעורין: אין חסם טוב לנסיגות של אות בודדת, אבל הסכום מוגבל על ידי הגידול הכולל של $q$. התשובה על 'לכל היותר פעמיים' שגויה: ל-$P=$`AAAAAC` ולאות `B` אחרי `AAAAA` יש 6 השוואות לאות אחת. האינדקס בטקסט אינו חוזר אחורה בכלל, והנסיגה יכולה להיות ארוכה מ-2 צעדים.",
+      "recap": "KMP לינארי בגלל ניתוח לשיעורין של q",
+      "questionHtml": "למה הזמן של שלב החיפוש ב-KMP הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>n</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(n)</annotation></semantics></math></span>, אף על פי שאות אחת בטקסט עלולה לגרום ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi mathvariant=\"normal\">Θ</mi><mo stretchy=\"false\">(</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">\\Theta(m)</annotation></semantics></math></span> נסיגות ?",
+      "explanationHtml": "זה ניתוח לשיעורין: אין חסם טוב לנסיגות של אות בודדת, אבל הסכום מוגבל על ידי הגידול הכולל של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span>. התשובה על 'לכל היותר פעמיים' שגויה: ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AAAAAC</code> ולאות <code class=\"tok\" dir=\"ltr\">B</code> אחרי <code class=\"tok\" dir=\"ltr\">AAAAA</code> יש 6 השוואות לאות אחת. האינדקס בטקסט אינו חוזר אחורה בכלל, והנסיגה יכולה להיות ארוכה מ-2 צעדים.",
+      "recapHtml": "KMP לינארי בגלל ניתוח לשיעורין של q"
+     }
+    ]
+   },
+   {
+    "id": "C05",
+    "order": 5,
+    "icon": "🎯",
+    "title": "אחרי התאמה מלאה: q ← π[m] ומיקומי מופעים",
+    "goal": "לדעת מה קורה כש-q מגיע ל-m, למצוא מופעים חופפים ולמקם אותם בטקסט.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n    <p>כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> מגיע ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> התבנית כולה התאימה: יש <b>מופע</b> שמסתיים באות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[i]</annotation></semantics></math></span> ומתחיל במקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>−</mo><mi>m</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">i-m+1</annotation></semantics></math></span>. מדווחים עליו, ואז צריך להמשיך לחפש.</p>\n    <div class=\"lesson-rule\">🔑 <b>אחרי התאמה מלאה מציבים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow\\pi[m]</annotation></semantics></math></span></b> (ככה מוגדר ב-CLRS). לא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> ולא להשאיר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">q=m</annotation></semantics></math></span>. הסיבה: ה-border הארוך ביותר של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> הוא הסיפא הארוכה ביותר של מה שהתאים ושעדיין יכולה להיות תחילת מופע חדש, ולכן המופע הבא יכול <b>לחפוף</b> את הקודם.</div>\n    <div class=\"lesson-ex\">דוגמה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code>ABAB</code> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,0,1,2</annotation></semantics></math></span>) והטקסט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code>ABABABAB</code>. המצבים אחרי כל אות הם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">1,2,3,2,3,2,3,2</annotation></semantics></math></span>: אחרי האות הרביעית <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>4</mn><mo>=</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">q=4=m</annotation></semantics></math></span> ומדווחים, ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">q=\\pi[4]=2</annotation></semantics></math></span> כי <code>AB</code> כבר מתאים. המופעים מסתיימים באינדקסים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn><mo separator=\"true\">,</mo><mn>6</mn><mo separator=\"true\">,</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">4,6,8</annotation></semantics></math></span> ומתחילים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">1,3,5</annotation></semantics></math></span>, ושניים סמוכים חופפים ב-2 אותיות.</div>\n    <ul>\n    <li>אילו היינו מאפסים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow0</annotation></semantics></math></span>, היינו מפספסים מופעים חופפים (כאן את המופע שמתחיל ב-3).</li>\n    <li>אילו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> היה נשאר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span>, השוואה הבאה הייתה מול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>m</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[m+1]</annotation></semantics></math></span> שלא קיים.</li>\n    <li>השורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow\\pi[q]</annotation></semantics></math></span> שאחרי המופע <b>אינה</b> חלק מלולאת ה-while הפנימית (לולאת הנסיגה), ואינה עולה השוואה. ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo><msup><mi>a</mi><mi>m</mi></msup></mrow><annotation encoding=\"application/x-tex\">P=a^m</annotation></semantics></math></span> מול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo><msup><mi>a</mi><mi>n</mi></msup></mrow><annotation encoding=\"application/x-tex\">T=a^n</annotation></semantics></math></span> לולאת ה-while הפנימית אינה רצה אף פעם, אבל יש מופע כמעט בכל אות.</li>\n    </ul>\n    <div class=\"lesson-trap\">⚠️ מקום המופע: אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">q=m</annotation></semantics></math></span> אחרי קריאת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>i</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[i]</annotation></semantics></math></span>, ההתחלה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>−</mo><mi>m</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">i-m+1</annotation></semantics></math></span> ולא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>−</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">i-m</annotation></semantics></math></span> ולא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi></mrow><annotation encoding=\"application/x-tex\">i</annotation></semantics></math></span>. ⚠️ מספר המופעים כולל את החופפים, ולא רק את אלה שלא חולקים אותיות.</div>"
+    },
+    "questions": [
+     {
+      "id": "C05-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "כמה מופעים (כולל חופפים) של $P=$`AAA` יש בטקסט $T=$`AAAAAA` ?",
+       "answer": 4,
+       "tol": 0,
+       "explain": "מופע יכול להתחיל במקומות 1, 2, 3 ו-4. אחרי כל מופע $q=\\pi[3]=2$, ולכן אות `A` אחת נוספת משלימה מופע חדש. מופעים: 4.",
+       "promptHtml": "כמה מופעים (כולל חופפים) של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AAA</code> יש בטקסט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AAAAAA</code> ?",
+       "explainHtml": "מופע יכול להתחיל במקומות 1, 2, 3 ו-4. אחרי כל מופע <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">q=\\pi[3]=2</annotation></semantics></math></span>, ולכן אות <code class=\"tok\" dir=\"ltr\">A</code> אחת נוספת משלימה מופע חדש. מופעים: 4."
+      },
+      "recap": "אחרי מופע q=π[m], ולכן אות אחת יכולה לסיים מופע חדש",
+      "recapHtml": "אחרי מופע q=π[m], ולכן אות אחת יכולה לסיים מופע חדש"
+     },
+     {
+      "id": "C05-Q2",
+      "step": {
+       "type": "numeric",
+       "prompt": "באותה ריצה ($P=$`AAA`, $T=$`AAAAAA`), כמה פעמים מתבצע גוף לולאת ה-while הפנימית (הנסיגה $q\\leftarrow\\pi[q]$ שבתוכה) ?",
+       "answer": 0,
+       "tol": 0,
+       "explain": "כל אות של הטקסט מתאימה ל-$P[q+1]$, ולכן אין אף אי-התאמה ולולאת הנסיגה לא רצה. השורה $q\\leftarrow\\pi[q]$ אחרי מופע היא שורה נפרדת, מחוץ ללולאה. לכן גם ריצה עם מופעים רבים יכולה לעבור בלי להפעיל את הלולאה הפנימית אף פעם.",
+       "promptHtml": "באותה ריצה (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AAA</code>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AAAAAA</code>), כמה פעמים מתבצע גוף לולאת ה-while הפנימית (הנסיגה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow\\pi[q]</annotation></semantics></math></span> שבתוכה) ?",
+       "explainHtml": "כל אות של הטקסט מתאימה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q+1]</annotation></semantics></math></span>, ולכן אין אף אי-התאמה ולולאת הנסיגה לא רצה. השורה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow\\pi[q]</annotation></semantics></math></span> אחרי מופע היא שורה נפרדת, מחוץ ללולאה. לכן גם ריצה עם מופעים רבים יכולה לעבור בלי להפעיל את הלולאה הפנימית אף פעם."
+      },
+      "recap": "השורה q ← π[q] אחרי מופע אינה בתוך לולאת ה-while",
+      "recapHtml": "השורה q ← π[q] אחרי מופע אינה בתוך לולאת ה-while"
+     },
+     {
+      "id": "C05-Q3",
+      "question": "$P=$`AABAA` עם $\\pi=0,1,0,1,2$. אחרי התאמה מלאה, מה הערך של $q$ ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "0",
+        "type": "text",
+        "html": "0"
+       },
+       {
+        "id": "b",
+        "value": "2",
+        "type": "text",
+        "html": "2"
+       },
+       {
+        "id": "c",
+        "value": "4",
+        "type": "text",
+        "html": "4"
+       },
+       {
+        "id": "d",
+        "value": "5",
+        "type": "text",
+        "html": "5"
+       }
+      ],
+      "correctId": "b",
+      "explanation": "$q\\leftarrow\\pi[5]=2$, כי `AA` היא גם רישא וגם סיפא של `AABAA`, ולכן אחרי המופע שתי האותיות האחרונות כבר יכולות להיות תחילת מופע חדש. הערך 0 היה מפספס מופעים חופפים כמו ב-`AABAABAA`. הערך 5 משאיר את $q=m$ בלי $P[6]$ להשוות מולו. הערך 4 הוא $m-1$ ואינו border.",
+      "recap": "q ← π[m], כאן 2",
+      "questionHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AABAA</code> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,1,0,1,2</annotation></semantics></math></span>. אחרי התאמה מלאה, מה הערך של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> ?",
+      "explanationHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow\\pi[5]=2</annotation></semantics></math></span>, כי <code class=\"tok\" dir=\"ltr\">AA</code> היא גם רישא וגם סיפא של <code class=\"tok\" dir=\"ltr\">AABAA</code>, ולכן אחרי המופע שתי האותיות האחרונות כבר יכולות להיות תחילת מופע חדש. הערך 0 היה מפספס מופעים חופפים כמו ב-<code class=\"tok\" dir=\"ltr\">AABAABAA</code>. הערך 5 משאיר את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">q=m</annotation></semantics></math></span> בלי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[6]</annotation></semantics></math></span> להשוות מולו. הערך 4 הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">m-1</annotation></semantics></math></span> ואינו border.",
+      "recapHtml": "q ← π[m], כאן 2"
+     },
+     {
+      "id": "C05-Q4",
+      "step": {
+       "type": "numeric",
+       "prompt": "ב-$T=$`ABABABA` מחפשים את $P=$`ABA`. באיזה מקום (מ-1) מתחיל המופע האחרון ?",
+       "answer": 5,
+       "tol": 0,
+       "explain": "המופעים מסתיימים באינדקסים 3, 5 ו-7 ($q=3=m$ אחרי האות השלישית, החמישית והשביעית), ולכן מתחילים ב-$i-m+1=1,3,5$. המופע האחרון מתחיל ב-5.",
+       "promptHtml": "ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABABABA</code> מחפשים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABA</code>. באיזה מקום (מ-1) מתחיל המופע האחרון ?",
+       "explainHtml": "המופעים מסתיימים באינדקסים 3, 5 ו-7 (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>3</mn><mo>=</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">q=3=m</annotation></semantics></math></span> אחרי האות השלישית, החמישית והשביעית), ולכן מתחילים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>i</mi><mo>−</mo><mi>m</mi><mo>+</mo><mn>1</mn><mo>=</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">i-m+1=1,3,5</annotation></semantics></math></span>. המופע האחרון מתחיל ב-5."
+      },
+      "recap": "התחלה = i − m + 1",
+      "recapHtml": "התחלה = i − m + 1"
+     },
+     {
+      "id": "C05-Q5",
+      "step": {
+       "type": "findbug",
+       "prompt": "בלולאה של KMP יש שורה אחת שגויה שמפספסת מופעים חופפים. סמנו אותה.",
+       "code": true,
+       "bugIndex": 8,
+       "lines": [
+        "q <- 0",
+        "for i <- 1 to n",
+        "    while q > 0 and P[q+1] != T[i]",
+        "        q <- pi[q]",
+        "    if P[q+1] = T[i]",
+        "        q <- q + 1",
+        "    if q = m",
+        "        report an occurrence ending at i",
+        "        q <- 0"
+       ],
+       "explain": "אחרי מופע צריך $q\\leftarrow\\pi[q]$ ולא $q\\leftarrow0$. לדוגמה עם `ABA` ב-`ABABA`: הקוד התקין מדווח על שני מופעים (מסתיימים ב-3 וב-5), והשגוי רק על אחד, כי הוא שוכח ש-`A` האחרונה כבר התאימה.",
+       "promptHtml": "בלולאה של KMP יש שורה אחת שגויה שמפספסת מופעים חופפים. סמנו אותה.",
+       "explainHtml": "אחרי מופע צריך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow\\pi[q]</annotation></semantics></math></span> ולא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow0</annotation></semantics></math></span>. לדוגמה עם <code class=\"tok\" dir=\"ltr\">ABA</code> ב-<code class=\"tok\" dir=\"ltr\">ABABA</code>: הקוד התקין מדווח על שני מופעים (מסתיימים ב-3 וב-5), והשגוי רק על אחד, כי הוא שוכח ש-<code class=\"tok\" dir=\"ltr\">A</code> האחרונה כבר התאימה.",
+       "linesHtml": [
+        "q &lt;- 0",
+        "for i &lt;- 1 to n",
+        "    while q &gt; 0 and P[q+1] != T[i]",
+        "        q &lt;- pi[q]",
+        "    if P[q+1] = T[i]",
+        "        q &lt;- q + 1",
+        "    if q = m",
+        "        report an occurrence ending at i",
+        "        q &lt;- 0"
+       ]
+      },
+      "recap": "אחרי מופע: q ← π[q]",
+      "recapHtml": "אחרי מופע: q ← π[q]"
+     },
+     {
+      "id": "C05-Q6",
+      "question": "אם בקוד היינו מאפסים $q\\leftarrow 0$ אחרי כל מופע במקום $q\\leftarrow\\pi[q]$, באיזה מהמקרים הבאים היינו מפספסים מופע ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$P=$`ABC` בטקסט `ABCABC`",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABC</code> בטקסט <code class=\"tok\" dir=\"ltr\">ABCABC</code>"
+       },
+       {
+        "id": "b",
+        "value": "$P=$`ABA` בטקסט `ABABA`",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABA</code> בטקסט <code class=\"tok\" dir=\"ltr\">ABABA</code>"
+       },
+       {
+        "id": "c",
+        "value": "$P=$`AB` בטקסט `ABAB`",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">AB</code> בטקסט <code class=\"tok\" dir=\"ltr\">ABAB</code>"
+       },
+       {
+        "id": "d",
+        "value": "$P=$`ABCD` בטקסט `ABCDABCD`",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">ABCD</code> בטקסט <code class=\"tok\" dir=\"ltr\">ABCDABCD</code>"
+       }
+      ],
+      "correctId": "b",
+      "explanation": "רק ב-`ABA` יש border לא ריק (`A`), ולכן שני מופעים יכולים לחפוף: ב-`ABABA` מופעים מתחילים ב-1 וב-3. עם איפוס ל-0 המופע השני לא נמצא. בשלושת המקרים האחרים $\\pi[m]=0$, ולכן $\\pi[m]$ ו-$0$ זהים ולא נפספס כלום.",
+      "recap": "איפוס ל-0 מפספס מופעים רק כש-π[m] > 0",
+      "questionHtml": "אם בקוד היינו מאפסים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow 0</annotation></semantics></math></span> אחרי כל מופע במקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow\\pi[q]</annotation></semantics></math></span>, באיזה מהמקרים הבאים היינו מפספסים מופע ?",
+      "explanationHtml": "רק ב-<code class=\"tok\" dir=\"ltr\">ABA</code> יש border לא ריק (<code class=\"tok\" dir=\"ltr\">A</code>), ולכן שני מופעים יכולים לחפוף: ב-<code class=\"tok\" dir=\"ltr\">ABABA</code> מופעים מתחילים ב-1 וב-3. עם איפוס ל-0 המופע השני לא נמצא. בשלושת המקרים האחרים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[m]=0</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[m]</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> זהים ולא נפספס כלום.",
+      "recapHtml": "איפוס ל-0 מפספס מופעים רק כש-π[m] &gt; 0"
+     }
+    ]
+   },
+   {
+    "id": "C06",
+    "order": 6,
+    "icon": "🧩",
+    "title": "האם קיימת מחרוזת עם π נתון?",
+    "goal": "להכריע אם טבלה נתונה היא π של איזושהי מחרוזת: לתרגם ערכים לשוויונות בין אותיות ולמצוא סתירה.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n    <p>שאלה קלאסית במבחן: נותנים טבלת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> ושואלים אם יש מחרוזת שזו הטבלה שלה, ואם כן מבקשים דוגמה.</p>\n    <div class=\"lesson-rule\">🔑 <b>תרגום כל ערך לאותיות.</b><br>\n    • <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>k</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[q]=k&gt;0</annotation></semantics></math></span>: ה-border באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">k</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q]</annotation></semantics></math></span> מסתיים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q]</annotation></semantics></math></span> ומסתיים בהתאמה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[k]</annotation></semantics></math></span>, לכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q]=P[k]</annotation></semantics></math></span>. ובנוסף <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>k</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..k-1]</annotation></semantics></math></span> הוא border של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..</mn><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1..q-1]</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">k-1</annotation></semantics></math></span> שייך לשרשרת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">]</mo><mo separator=\"true\">,</mo><mo>…</mo><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[q-1],\\pi[\\pi[q-1]],\\dots,0</annotation></semantics></math></span>.<br>\n    • <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[q]=0</annotation></semantics></math></span>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q]</annotation></semantics></math></span> שונה מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[j+1]</annotation></semantics></math></span> לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> בשרשרת של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">q-1</annotation></semantics></math></span>, כולל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">j=0</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q]\\ne P[1]</annotation></semantics></math></span>.<br>\n    • <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>k</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[q]=k</annotation></semantics></math></span> הוא <b>הארוך ביותר</b>: אף <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>&gt;</mo><mi>k</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">j&gt;k-1</annotation></semantics></math></span> בשרשרת לא יכול להתארך, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[j+1]\\ne P[q]</annotation></semantics></math></span> לכל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> כזה.</div>\n    <p><b>תנאים הכרחיים מהירים:</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[1]=0</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[q]\\le\\pi[q-1]+1</annotation></semantics></math></span> (border חדש הוא border ישן שהתארך באות אחת). אם הטבלה מפרה אחד מהם, אין מחרוזת.</p>\n    <p><b>שיטה:</b> מעבירים את הערכים לשוויונות ואי-שוויונות בין אותיות, קובעים את המחרוזת בצורה כללית (למשל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">P[1]=a</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>b</mi></mrow><annotation encoding=\"application/x-tex\">P[2]=b</annotation></semantics></math></span>), ובודקים שהטבלה של המחרוזת שהתקבלה היא באמת הטבלה הנתונה. אם הערך חייב להתקיים ויוצא ערך אחר, יש סתירה.</p>\n    <div class=\"lesson-ex\">דוגמה: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,1,2,1</annotation></semantics></math></span>. הערכים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[2]=1</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[3]=2</annotation></semantics></math></span> מכריחים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[2]=P[1]</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[3]=P[2]</annotation></semantics></math></span>, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1..3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>a</mi><mi>a</mi><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">P[1..3]=aaa</annotation></semantics></math></span>. עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">q=4</annotation></semantics></math></span> יש רק שתי אפשרויות: אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">P[4]=a</annotation></semantics></math></span> אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[4]=3</annotation></semantics></math></span>, ואם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>a</mi></mrow><annotation encoding=\"application/x-tex\">P[4]\\ne a</annotation></semantics></math></span> אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[4]=0</annotation></semantics></math></span>. הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> לא אפשרי, ולכן אין מחרוזת כזו. (התנאי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[4]\\le\\pi[3]+1=3</annotation></semantics></math></span> מתקיים, ובכל זאת אין מחרוזת, ולכן התנאי הכרחי אבל לא מספיק.)</div>\n    <div class=\"lesson-trap\">⚠️ לפני שמחליטים \"אין\", בודקים גם אפשרות שאותיות שונות הן בעצם אותה אות, ולפני שמחליטים \"יש\" מחשבים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> של הדוגמה במלואה, כי ערך גבוה מדי (כמו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> במקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span>) הוא הסתירה הנפוצה.</div>"
+    },
+    "questions": [
+     {
+      "id": "C06-Q1",
+      "question": "איזו מהטבלאות הבאות אינה טבלת $\\pi$ של אף מחרוזת (מעל אלפבית כלשהו) ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "$0,1,0,1,2,3$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,1,0,1,2,3</annotation></semantics></math></span>"
+       },
+       {
+        "id": "b",
+        "value": "$0,0,1,2,3,4$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,2,3,4</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "$0,0,1,0,1,3$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,0,1,3</annotation></semantics></math></span>"
+       },
+       {
+        "id": "d",
+        "value": "$0,1,2,0,0,1$",
+        "type": "text",
+        "html": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">0,1,2,0,0,1</annotation></semantics></math></span>"
+       }
+      ],
+      "correctId": "c",
+      "explanation": "בטבלה $0,0,1,0,1,3$ הערך האחרון הוא $3$ אחרי $\\pi[5]=1$, אבל $\\pi[6]\\le\\pi[5]+1=2$. לכן היא בלתי אפשרית. שלוש האחרות אפשריות: `AABAAB`, `ABABAB` ו-`AAABBA`.",
+      "recap": "π[q] ≤ π[q−1] + 1 הכרחי",
+      "questionHtml": "איזו מהטבלאות הבאות אינה טבלת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> של אף מחרוזת (מעל אלפבית כלשהו) ?",
+      "explanationHtml": "בטבלה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,0,1,3</annotation></semantics></math></span> הערך האחרון הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> אחרי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=1</annotation></semantics></math></span>, אבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[6]\\le\\pi[5]+1=2</annotation></semantics></math></span>. לכן היא בלתי אפשרית. שלוש האחרות אפשריות: <code class=\"tok\" dir=\"ltr\">AABAAB</code>, <code class=\"tok\" dir=\"ltr\">ABABAB</code> ו-<code class=\"tok\" dir=\"ltr\">AAABBA</code>.",
+      "recapHtml": "π[q] ≤ π[q−1] + 1 הכרחי"
+     },
+     {
+      "id": "C06-Q2",
+      "step": {
+       "type": "choice",
+       "prompt": "אין אף מחרוזת עם $\\pi=0,0,1,2,1$. מה הסיבה ?",
+       "options": [
+        {
+         "id": "a",
+         "value": "כי הערך האחרון $1$ מכריח $P[5]=P[1]$, אבל אז `ABA` היא border של `ABABA` וצריך להיות $\\pi[5]=3$",
+         "type": "text",
+         "html": "כי הערך האחרון <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">1</annotation></semantics></math></span> מכריח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[5]=P[1]</annotation></semantics></math></span>, אבל אז <code class=\"tok\" dir=\"ltr\">ABA</code> היא border של <code class=\"tok\" dir=\"ltr\">ABABA</code> וצריך להיות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=3</annotation></semantics></math></span>"
+        },
+        {
+         "id": "b",
+         "value": "כי $\\pi[5]>\\pi[4]+1$",
+         "type": "text",
+         "html": "כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>&gt;</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]&gt;\\pi[4]+1</annotation></semantics></math></span>"
+        },
+        {
+         "id": "c",
+         "value": "כי מחרוזת כזו קיימת רק מעל אלפבית של שלוש אותיות ומעלה",
+         "type": "text",
+         "html": "כי מחרוזת כזו קיימת רק מעל אלפבית של שלוש אותיות ומעלה"
+        },
+        {
+         "id": "d",
+         "value": "כי $\\pi[3]=1$ מכריח ש-$P[3]$ שונה מ-$P[1]$",
+         "type": "text",
+         "html": "כי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[3]=1</annotation></semantics></math></span> מכריח ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[3]</annotation></semantics></math></span> שונה מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1]</annotation></semantics></math></span>"
+        }
+       ],
+       "correctId": "a",
+       "explain": "מ-$\\pi[2]=0$ מקבלים $P[1]\\ne P[2]$, נאמר `AB`. $\\pi[3]=1$ נותן $P[3]=A$ ו-$\\pi[4]=2$ נותן $P[4]=B$. עכשיו $\\pi[5]=1$ מכריח $P[5]=P[1]=A$, אבל `ABABA` היא סיפא ורישא באורך 3 (`ABA`), ולכן $\\pi[5]=3$. סתירה. התנאי $\\pi[5]\\le\\pi[4]+1$ דווקא מתקיים ($1\\le3$). אין בעיה של אלפבית: אף אלפבית לא עוזר. ו-$\\pi[3]=1$ דורש $P[3]=P[1]$, לא שונה.",
+       "promptHtml": "אין אף מחרוזת עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,0,1,2,1</annotation></semantics></math></span>. מה הסיבה ?",
+       "explainHtml": "מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[2]=0</annotation></semantics></math></span> מקבלים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1]\\ne P[2]</annotation></semantics></math></span>, נאמר <code class=\"tok\" dir=\"ltr\">AB</code>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[3]=1</annotation></semantics></math></span> נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[3]=A</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[4]=2</annotation></semantics></math></span> נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">P[4]=B</annotation></semantics></math></span>. עכשיו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=1</annotation></semantics></math></span> מכריח <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[5]=P[1]=A</annotation></semantics></math></span>, אבל <code class=\"tok\" dir=\"ltr\">ABABA</code> היא סיפא ורישא באורך 3 (<code class=\"tok\" dir=\"ltr\">ABA</code>), ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=3</annotation></semantics></math></span>. סתירה. התנאי <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]\\le\\pi[4]+1</annotation></semantics></math></span> דווקא מתקיים (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>1</mn><mo>≤</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">1\\le3</annotation></semantics></math></span>). אין בעיה של אלפבית: אף אלפבית לא עוזר. ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[3]=1</annotation></semantics></math></span> דורש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[3]=P[1]</annotation></semantics></math></span>, לא שונה."
+      },
+      "recap": "מחשבים את π של המחרוזת המכוונת ומחפשים סתירה",
+      "recapHtml": "מחשבים את π של המחרוזת המכוונת ומחפשים סתירה"
+     },
+     {
+      "id": "C06-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "מהו מספר האותיות השונות המינימלי במחרוזת שה-$\\pi$ שלה הוא $0,0,0,1,2,0$ ?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "$\\pi[2]=0$ ו-$\\pi[3]=0$ נותנים $P[2]\\ne P[1]$ ו-$P[3]\\ne P[1]$. $\\pi[4]=1$ נותן $P[4]=P[1]$, ו-$\\pi[5]=2$ נותן $P[5]=P[2]$. עבור $\\pi[6]=0$ האות $P[6]$ צריכה להיות שונה מ-$P[1]$ ומ-$P[3]$, ו-$P[3]$ יכולה להיות שווה ל-$P[2]$. לדוגמה `ABBABC`. אי אפשר בשתי אותיות: `ABBAB` ואז $P[6]$ חייבת להיות שונה גם מ-`A` וגם מ-`B`.",
+       "promptHtml": "מהו מספר האותיות השונות המינימלי במחרוזת שה-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> שלה הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0,0,0,1,2,0</annotation></semantics></math></span> ?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[2]=0</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[3]=0</annotation></semantics></math></span> נותנים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[2]\\ne P[1]</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[3]\\ne P[1]</annotation></semantics></math></span>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[4]=1</annotation></semantics></math></span> נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[4]=P[1]</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=2</annotation></semantics></math></span> נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[5]=P[2]</annotation></semantics></math></span>. עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[6]=0</annotation></semantics></math></span> האות <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[6]</annotation></semantics></math></span> צריכה להיות שונה מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[1]</annotation></semantics></math></span> ומ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[3]</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[3]</annotation></semantics></math></span> יכולה להיות שווה ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[2]</annotation></semantics></math></span>. לדוגמה <code class=\"tok\" dir=\"ltr\">ABBABC</code>. אי אפשר בשתי אותיות: <code class=\"tok\" dir=\"ltr\">ABBAB</code> ואז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[6]</annotation></semantics></math></span> חייבת להיות שונה גם מ-<code class=\"tok\" dir=\"ltr\">A</code> וגם מ-<code class=\"tok\" dir=\"ltr\">B</code>."
+      },
+      "recap": "שוויונות ואי-שוויונות בין אותיות קובעים את גודל האלפבית",
+      "recapHtml": "שוויונות ואי-שוויונות בין אותיות קובעים את גודל האלפבית"
+     },
+     {
+      "id": "C06-Q4",
+      "question": "איזו מהמחרוזות הבאות היא היחידה עם $\\pi=0,0,1,2,0,1$ ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "`ABABAA`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">ABABAA</code>"
+       },
+       {
+        "id": "b",
+        "value": "`ABACAB`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">ABACAB</code>"
+       },
+       {
+        "id": "c",
+        "value": "`ABABCB`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">ABABCB</code>"
+       },
+       {
+        "id": "d",
+        "value": "`ABABCA`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">ABABCA</code>"
+       }
+      ],
+      "correctId": "d",
+      "explanation": "`ABABCA`: אחרי `ABAB` ($\\pi=2$) האות `C` חדשה ולכן $\\pi[5]=0$, ו-`A` אחריה חוזרת ל-border באורך 1, $\\pi[6]=1$. ב-`ABABAA` הערך $\\pi[5]=3$. ב-`ABACAB` הטבלה היא $0,0,1,0,1,2$. ב-`ABABCB` הערך האחרון הוא $0$ כי `B` לא מתחילה את המחרוזת.",
+      "recap": "מחשבים את π של כל מועמד ומשווים",
+      "questionHtml": "איזו מהמחרוזות הבאות היא היחידה עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,0,1,2,0,1</annotation></semantics></math></span> ?",
+      "explanationHtml": "<code class=\"tok\" dir=\"ltr\">ABABCA</code>: אחרי <code class=\"tok\" dir=\"ltr\">ABAB</code> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=2</annotation></semantics></math></span>) האות <code class=\"tok\" dir=\"ltr\">C</code> חדשה ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=0</annotation></semantics></math></span>, ו-<code class=\"tok\" dir=\"ltr\">A</code> אחריה חוזרת ל-border באורך 1, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>6</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[6]=1</annotation></semantics></math></span>. ב-<code class=\"tok\" dir=\"ltr\">ABABAA</code> הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=3</annotation></semantics></math></span>. ב-<code class=\"tok\" dir=\"ltr\">ABACAB</code> הטבלה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,0,1,2</annotation></semantics></math></span>. ב-<code class=\"tok\" dir=\"ltr\">ABABCB</code> הערך האחרון הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span> כי <code class=\"tok\" dir=\"ltr\">B</code> לא מתחילה את המחרוזת.",
+      "recapHtml": "מחשבים את π של כל מועמד ומשווים"
+     },
+     {
+      "id": "C06-Q5",
+      "step": {
+       "type": "numeric",
+       "prompt": "כמה מחרוזות באורך 5 מעל האלפבית $\\{a,b\\}$ יש להן $\\pi=0,1,0,1,2$ ?",
+       "answer": 2,
+       "tol": 0,
+       "explain": "$\\pi[2]=1$ נותן $P[2]=P[1]$, ו-$\\pi[3]=0$ נותן $P[3]\\ne P[1]$. מעל שתי אותיות זה קובע `AAB`. $\\pi[4]=1$ נותן $P[4]=A$ ו-$\\pi[5]=2$ נותן $P[5]=A$. התוצאה `AABAA`. החלפת שמות האותיות נותנת גם `BBABB`. סך הכול 2 מחרוזות.",
+       "promptHtml": "כמה מחרוזות באורך 5 מעל האלפבית <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">{</mo><mi>a</mi><mo separator=\"true\">,</mo><mi>b</mi><mo stretchy=\"false\">}</mo></mrow><annotation encoding=\"application/x-tex\">\\{a,b\\}</annotation></semantics></math></span> יש להן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi=0,1,0,1,2</annotation></semantics></math></span> ?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[2]=1</annotation></semantics></math></span> נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>2</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[2]=P[1]</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[3]=0</annotation></semantics></math></span> נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>3</mn><mo stretchy=\"false\">]</mo><mo mathvariant=\"normal\">≠</mo><mi>P</mi><mo stretchy=\"false\">[</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[3]\\ne P[1]</annotation></semantics></math></span>. מעל שתי אותיות זה קובע <code class=\"tok\" dir=\"ltr\">AAB</code>. <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[4]=1</annotation></semantics></math></span> נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>4</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[4]=A</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=2</annotation></semantics></math></span> נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">P[5]=A</annotation></semantics></math></span>. התוצאה <code class=\"tok\" dir=\"ltr\">AABAA</code>. החלפת שמות האותיות נותנת גם <code class=\"tok\" dir=\"ltr\">BBABB</code>. סך הכול 2 מחרוזות."
+      },
+      "recap": "אפשר להחליף שמות אותיות, וזה נותן מחרוזת נוספת עם אותו π",
+      "recapHtml": "אפשר להחליף שמות אותיות, וזה נותן מחרוזת נוספת עם אותו π"
+     }
+    ]
+   },
+   {
+    "id": "C07",
+    "order": 7,
+    "icon": "🪄",
+    "title": "טריקים: P#T, מחזוריות, הפוך ורוטציה",
+    "goal": "להשתמש בטבלת π לבד, או ב-KMP כקופסה שחורה, כדי לפתור את הרדוקציות הקלאסיות של המבחנים.",
+    "source": "ai-verified",
+    "boss": false,
+    "lesson": {
+     "html": "\n    <h3>1. הטריק של P#T</h3>\n    <p>במקום להריץ את לולאת החיפוש, מחשבים את טבלת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> של המחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo>=</mo><mi>P</mi><mi mathvariant=\"normal\">#</mi><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">S=P\\#T</annotation></semantics></math></span>, כשהתו <code>#</code> אינו באלפבית. בגלל <code>#</code> אף border לא יכול לחצות אותו, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[j]\\le m</annotation></semantics></math></span> בכל מקום.</p>\n    <div class=\"lesson-rule\">🔑 <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo stretchy=\"false\">]</mo><mo>=</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[j]=m</annotation></semantics></math></span> אם ורק אם מופע של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> מסתיים במקום <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi></mrow><annotation encoding=\"application/x-tex\">j</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">S</annotation></semantics></math></span>. במונחי הטקסט: הוא מסתיים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo stretchy=\"false\">[</mo><mi>j</mi><mo>−</mo><mi>m</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">T[j-m-1]</annotation></semantics></math></span> ומתחיל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>−</mo><mn>2</mn><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">j-2m</annotation></semantics></math></span> (מ-1).</div>\n    <div class=\"lesson-ex\"><span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code>aba</code>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code>ababa</code>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">S=</annotation></semantics></math></span><code>aba#ababa</code>. הטבלה היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>0</mn><mo separator=\"true\">,</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn><mo separator=\"true\">,</mo><mn>2</mn><mo separator=\"true\">,</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">0,0,1,0,1,2,3,2,3</annotation></semantics></math></span>. הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn><mo>=</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">3=m</annotation></semantics></math></span> מופיע ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">j=7</annotation></semantics></math></span> וב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">j=9</annotation></semantics></math></span>, ולכן מופעים מתחילים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn><mo>−</mo><mn>6</mn><mo>=</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">7-6=1</annotation></semantics></math></span> וב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn><mo>−</mo><mn>6</mn><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">9-6=3</annotation></semantics></math></span>.</div>\n    <h3>2. מחזוריות</h3>\n    <p>לכל מחרוזת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> באורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span>: <b>התקופה המינימלית</b> היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>p</mi><mo>=</mo><mi>n</mi><mo>−</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>n</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">p=n-\\pi[n]</annotation></semantics></math></span> (האורך הקצר ביותר ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi></mrow><annotation encoding=\"application/x-tex\">A</annotation></semantics></math></span> חוזרת עליו).</p>\n    <div class=\"lesson-rule\">🔑 <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>=</mo><msup><mi>B</mi><mi>k</mi></msup></mrow><annotation encoding=\"application/x-tex\">A=B^k</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>≥</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">k\\ge2</annotation></semantics></math></span> אם ורק אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>n</mi><mo stretchy=\"false\">]</mo><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[n]&gt;0</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>p</mi><mo>=</mo><mi>n</mi><mo>−</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>n</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">p=n-\\pi[n]</annotation></semantics></math></span> מחלק את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">n</annotation></semantics></math></span>. אז <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>B</mi></mrow><annotation encoding=\"application/x-tex\">B</annotation></semantics></math></span> הוא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>p</mi></mrow><annotation encoding=\"application/x-tex\">p</annotation></semantics></math></span> האותיות הראשונות ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>n</mi><mi mathvariant=\"normal\">/</mi><mi>p</mi></mrow><annotation encoding=\"application/x-tex\">k=n/p</annotation></semantics></math></span>.</div>\n    <p>דוגמאות: <code>abcabcabc</code> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mo>=</mo><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">n=9</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[9]=6</annotation></semantics></math></span>) נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>p</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">p=3</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> מחלק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">9</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>a</mi><mi>b</mi><mi>c</mi><msup><mo stretchy=\"false\">)</mo><mn>3</mn></msup></mrow><annotation encoding=\"application/x-tex\">(abc)^3</annotation></semantics></math></span>. <code>abcabcab</code> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>n</mi><mo>=</mo><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">n=8</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>8</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>5</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[8]=5</annotation></semantics></math></span>) נותן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>p</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">p=3</annotation></semantics></math></span>, אבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> לא מחלק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>8</mn></mrow><annotation encoding=\"application/x-tex\">8</annotation></semantics></math></span>, ולכן אינה חזקה (יש תקופה, אבל אין חלוקה שלמה).</p>\n    <h3>3. הפוך ורוטציה</h3>\n    <ul>\n    <li><b>תבנית שמופיעה \"הפוך\":</b> שואלים אם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>P</mi><mi>R</mi></msup></mrow><annotation encoding=\"application/x-tex\">P^R</annotation></semantics></math></span> (ההפוכה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span>) מופיעה ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span>. הופכים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> בזמן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>O</mi><mo stretchy=\"false\">(</mo><mi>m</mi><mo stretchy=\"false\">)</mo></mrow><annotation encoding=\"application/x-tex\">O(m)</annotation></semantics></math></span> ומריצים KMP על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>P</mi><mi>R</mi></msup></mrow><annotation encoding=\"application/x-tex\">P^R</annotation></semantics></math></span>.</li>\n    <li><b>רוטציה מעגלית:</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span> היא רוטציה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_1</annotation></semantics></math></span> אם ורק אם האורכים שווים ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span> מופיעה בתוך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><msub><mi>S</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_1S_1</annotation></semantics></math></span>. מריצים KMP על הטקסט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><msub><mi>S</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_1S_1</annotation></semantics></math></span> (אורך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">2n</annotation></semantics></math></span>) עם התבנית <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span>.</li>\n    </ul>\n    <div class=\"lesson-trap\">⚠️ בלי <code>#</code> הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> יכול לגדול מעל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> ולעבור את גבול התבנית לתוך הטקסט, ואז \"<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo>=</mo><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">\\pi=m</annotation></semantics></math></span>\" כבר לא מסמן מופע בצורה נקייה. ⚠️ מחזורי פירושו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>≥</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">k\\ge2</annotation></semantics></math></span>: מחרוזת כמו <code>abc</code> היא <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>a</mi><mi>b</mi><mi>c</mi><msup><mo stretchy=\"false\">)</mo><mn>1</mn></msup></mrow><annotation encoding=\"application/x-tex\">(abc)^1</annotation></semantics></math></span> ואינה מחזורית.</div>"
+    },
+    "questions": [
+     {
+      "id": "C07-Q1",
+      "step": {
+       "type": "numeric",
+       "prompt": "עבור $A=$`abcdabcdab` (אורך 10) ידוע ש-$\\pi[10]=6$. מהי התקופה המינימלית $p=n-\\pi[n]$ ?",
+       "answer": 4,
+       "tol": 0,
+       "explain": "$p=10-6=4$: המחרוזת חוזרת על `abcd`. אבל $4$ אינו מחלק את $10$, ולכן `abcdabcdab` אינה מחזורית במובן $B^k$ עם $k\\ge2$.",
+       "promptHtml": "עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">A=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">abcdabcdab</code> (אורך 10) ידוע ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>10</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[10]=6</annotation></semantics></math></span>. מהי התקופה המינימלית <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>p</mi><mo>=</mo><mi>n</mi><mo>−</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>n</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">p=n-\\pi[n]</annotation></semantics></math></span> ?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>p</mi><mo>=</mo><mn>10</mn><mo>−</mo><mn>6</mn><mo>=</mo><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">p=10-6=4</annotation></semantics></math></span>: המחרוזת חוזרת על <code class=\"tok\" dir=\"ltr\">abcd</code>. אבל <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>4</mn></mrow><annotation encoding=\"application/x-tex\">4</annotation></semantics></math></span> אינו מחלק את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>10</mn></mrow><annotation encoding=\"application/x-tex\">10</annotation></semantics></math></span>, ולכן <code class=\"tok\" dir=\"ltr\">abcdabcdab</code> אינה מחזורית במובן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>B</mi><mi>k</mi></msup></mrow><annotation encoding=\"application/x-tex\">B^k</annotation></semantics></math></span> עם <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>≥</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">k\\ge2</annotation></semantics></math></span>."
+      },
+      "recap": "p = n − π[n]",
+      "recapHtml": "p = n − π[n]"
+     },
+     {
+      "id": "C07-Q2",
+      "question": "איזו מהמחרוזות הבאות היא מחזורית, כלומר $A=B^k$ עבור $k\\ge 2$ ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "`abcdabcdab`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">abcdabcdab</code>"
+       },
+       {
+        "id": "b",
+        "value": "`abaabaab`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">abaabaab</code>"
+       },
+       {
+        "id": "c",
+        "value": "`abcabcabc`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">abcabcabc</code>"
+       },
+       {
+        "id": "d",
+        "value": "`aabaabaa`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">aabaabaa</code>"
+       }
+      ],
+      "correctId": "c",
+      "explanation": "ב-`abcabcabc`: $\\pi[9]=6$, $p=3$, ו-$3$ מחלק $9$, ולכן $(abc)^3$. ב-`abcdabcdab` התקופה 4 לא מחלקת 10. ב-`abaabaab` ו-`aabaabaa` התקופה 3 לא מחלקת 8.",
+      "recap": "מחזורית: π[n] > 0 ו-(n − π[n]) מחלק את n",
+      "questionHtml": "איזו מהמחרוזות הבאות היא מחזורית, כלומר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>A</mi><mo>=</mo><msup><mi>B</mi><mi>k</mi></msup></mrow><annotation encoding=\"application/x-tex\">A=B^k</annotation></semantics></math></span> עבור <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>≥</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">k\\ge 2</annotation></semantics></math></span> ?",
+      "explanationHtml": "ב-<code class=\"tok\" dir=\"ltr\">abcabcabc</code>: <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>9</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>6</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[9]=6</annotation></semantics></math></span>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>p</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">p=3</annotation></semantics></math></span>, ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> מחלק <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>9</mn></mrow><annotation encoding=\"application/x-tex\">9</annotation></semantics></math></span>, ולכן <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>a</mi><mi>b</mi><mi>c</mi><msup><mo stretchy=\"false\">)</mo><mn>3</mn></msup></mrow><annotation encoding=\"application/x-tex\">(abc)^3</annotation></semantics></math></span>. ב-<code class=\"tok\" dir=\"ltr\">abcdabcdab</code> התקופה 4 לא מחלקת 10. ב-<code class=\"tok\" dir=\"ltr\">abaabaab</code> ו-<code class=\"tok\" dir=\"ltr\">aabaabaa</code> התקופה 3 לא מחלקת 8.",
+      "recapHtml": "מחזורית: π[n] &gt; 0 ו-(n − π[n]) מחלק את n"
+     },
+     {
+      "id": "C07-Q3",
+      "step": {
+       "type": "numeric",
+       "prompt": "מחשבים את $\\pi$ של $S=$`aab#aabaabaab` ($P=$`aab`, $T=$`aabaabaab`). הערך $3$ מופיע באינדקסים $7,10,13$ של $S$. באיזה מקום בטקסט $T$ (מ-1) מתחיל המופע האחרון ?",
+       "answer": 7,
+       "tol": 0,
+       "explain": "המופע האחרון מסתיים ב-$j=13$ ב-$S$, ולכן מתחיל ב-$j-2m=13-6=7$. בטקסט `aabaabaab` המופעים מתחילים ב-1, 4 וב-7.",
+       "promptHtml": "מחשבים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">S=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">aab#aabaabaab</code> (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">aab</code>, <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">aabaabaab</code>). הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>3</mn></mrow><annotation encoding=\"application/x-tex\">3</annotation></semantics></math></span> מופיע באינדקסים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>7</mn><mo separator=\"true\">,</mo><mn>10</mn><mo separator=\"true\">,</mo><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">7,10,13</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">S</annotation></semantics></math></span>. באיזה מקום בטקסט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> (מ-1) מתחיל המופע האחרון ?",
+       "explainHtml": "המופע האחרון מסתיים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>=</mo><mn>13</mn></mrow><annotation encoding=\"application/x-tex\">j=13</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>S</mi></mrow><annotation encoding=\"application/x-tex\">S</annotation></semantics></math></span>, ולכן מתחיל ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>j</mi><mo>−</mo><mn>2</mn><mi>m</mi><mo>=</mo><mn>13</mn><mo>−</mo><mn>6</mn><mo>=</mo><mn>7</mn></mrow><annotation encoding=\"application/x-tex\">j-2m=13-6=7</annotation></semantics></math></span>. בטקסט <code class=\"tok\" dir=\"ltr\">aabaabaab</code> המופעים מתחילים ב-1, 4 וב-7."
+      },
+      "recap": "התחלה בטקסט = j − 2m",
+      "recapHtml": "התחלה בטקסט = j − 2m"
+     },
+     {
+      "id": "C07-Q4",
+      "question": "למה מוסיפים את התו `#` בין $P$ ל-$T$ כשמחשבים את $\\pi$ של $P\\#T$ ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "כדי ש-$\\pi$ לא יעלה על $m$, וכך הערך $m$ מסמן בדיוק מופע",
+        "type": "text",
+        "html": "כדי ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> לא יעלה על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span>, וכך הערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> מסמן בדיוק מופע"
+       },
+       {
+        "id": "b",
+        "value": "כי בלי התו הזה $\\pi$ אף פעם לא מגיע ל-$m$",
+        "type": "text",
+        "html": "כי בלי התו הזה <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> אף פעם לא מגיע ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span>"
+       },
+       {
+        "id": "c",
+        "value": "כי אלגוריתם חישוב $\\pi$ קורס על מחרוזת בלי תו מפריד",
+        "type": "text",
+        "html": "כי אלגוריתם חישוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> קורס על מחרוזת בלי תו מפריד"
+       }
+      ],
+      "correctId": "a",
+      "explanation": "בלי תו מפריד ערך $\\pi$ יכול לעלות על $m$: ל-$P=$`aa` ו-$T=$`aaa` המחרוזת `aaaaa` נותנת $\\pi[5]=4>2$, ואילו `aa#aaa` נותנת לכל היותר $2$. הטענה שבלי התו $\\pi$ לא מגיע ל-$m$ שגויה (הוא מגיע ואף עובר). והאלגוריתם לא קורס, פשוט התוצאה כבר לא מסמנת מופע.",
+      "recap": "# מבטיח π ≤ m",
+      "questionHtml": "למה מוסיפים את התו <code class=\"tok\" dir=\"ltr\">#</code> בין <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span> כשמחשבים את <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mi mathvariant=\"normal\">#</mi><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">P\\#T</annotation></semantics></math></span> ?",
+      "explanationHtml": "בלי תו מפריד ערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> יכול לעלות על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span>: ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">aa</code> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">aaa</code> המחרוזת <code class=\"tok\" dir=\"ltr\">aaaaa</code> נותנת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mn>5</mn><mo stretchy=\"false\">]</mo><mo>=</mo><mn>4</mn><mo>&gt;</mo><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[5]=4&gt;2</annotation></semantics></math></span>, ואילו <code class=\"tok\" dir=\"ltr\">aa#aaa</code> נותנת לכל היותר <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>2</mn></mrow><annotation encoding=\"application/x-tex\">2</annotation></semantics></math></span>. הטענה שבלי התו <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> לא מגיע ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> שגויה (הוא מגיע ואף עובר). והאלגוריתם לא קורס, פשוט התוצאה כבר לא מסמנת מופע.",
+      "recapHtml": "# מבטיח π ≤ m"
+     },
+     {
+      "id": "C07-Q5",
+      "step": {
+       "type": "numeric",
+       "prompt": "הטקסט $T=$`cbacbaxcba`. כמה פעמים מופיעה ההפוכה של $P=$`abc` בטקסט (חיפוש $P^R$ ב-$T$) ?",
+       "answer": 3,
+       "tol": 0,
+       "explain": "$P^R=$`cba`. היא מופיעה במקומות 1, 4 ו-8 של `cbacbaxcba`. כלומר שלוש פעמים. ($P$ עצמה, `abc`, לא מופיעה כלל.)",
+       "promptHtml": "הטקסט <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">T=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">cbacbaxcba</code>. כמה פעמים מופיעה ההפוכה של <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">abc</code> בטקסט (חיפוש <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>P</mi><mi>R</mi></msup></mrow><annotation encoding=\"application/x-tex\">P^R</annotation></semantics></math></span> ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi></mrow><annotation encoding=\"application/x-tex\">T</annotation></semantics></math></span>) ?",
+       "explainHtml": "<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>P</mi><mi>R</mi></msup><mo>=</mo></mrow><annotation encoding=\"application/x-tex\">P^R=</annotation></semantics></math></span><code class=\"tok\" dir=\"ltr\">cba</code>. היא מופיעה במקומות 1, 4 ו-8 של <code class=\"tok\" dir=\"ltr\">cbacbaxcba</code>. כלומר שלוש פעמים. (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi></mrow><annotation encoding=\"application/x-tex\">P</annotation></semantics></math></span> עצמה, <code class=\"tok\" dir=\"ltr\">abc</code>, לא מופיעה כלל.)"
+      },
+      "recap": "מחפשים את P^R עם KMP רגיל",
+      "recapHtml": "מחפשים את P^R עם KMP רגיל"
+     },
+     {
+      "id": "C07-Q6",
+      "question": "איזו מהמחרוזות הבאות היא רוטציה מעגלית של `abcde` ?",
+      "options": [
+       {
+        "id": "a",
+        "value": "`abced`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">abced</code>"
+       },
+       {
+        "id": "b",
+        "value": "`edcba`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">edcba</code>"
+       },
+       {
+        "id": "c",
+        "value": "`cdeab`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">cdeab</code>"
+       },
+       {
+        "id": "d",
+        "value": "`acbde`",
+        "type": "text",
+        "html": "<code class=\"tok\" dir=\"ltr\">acbde</code>"
+       }
+      ],
+      "correctId": "c",
+      "explanation": "`abcdeabcde` מכילה את `cdeab` (מהמקום השלישי), ולכן היא רוטציה. `abced`, `edcba` ו-`acbde` הן תמורות של האותיות, אבל אף אחת מהן לא מופיעה בתוך `abcdeabcde`.",
+      "recap": "רוטציה ⇔ מופיעה ב-S1S1 (באורכים שווים)",
+      "questionHtml": "איזו מהמחרוזות הבאות היא רוטציה מעגלית של <code class=\"tok\" dir=\"ltr\">abcde</code> ?",
+      "explanationHtml": "<code class=\"tok\" dir=\"ltr\">abcdeabcde</code> מכילה את <code class=\"tok\" dir=\"ltr\">cdeab</code> (מהמקום השלישי), ולכן היא רוטציה. <code class=\"tok\" dir=\"ltr\">abced</code>, <code class=\"tok\" dir=\"ltr\">edcba</code> ו-<code class=\"tok\" dir=\"ltr\">acbde</code> הן תמורות של האותיות, אבל אף אחת מהן לא מופיעה בתוך <code class=\"tok\" dir=\"ltr\">abcdeabcde</code>.",
+      "recapHtml": "רוטציה ⇔ מופיעה ב-S1S1 (באורכים שווים)"
+     }
+    ]
+   },
+   {
+    "id": "C08",
+    "order": 8,
+    "icon": "🏆",
+    "title": "🏆 מבחן אמיתי: KMP ופונקציית רישא",
+    "goal": "לפתור שאלות KMP אמיתיות ממבחנים: חישוב π, ספירת השוואות, קיום טבלה, ניתוח הלולאה הפנימית ורדוקציה.",
+    "source": "ai-verified",
+    "boss": true,
+    "lesson": {
+     "html": "\n    <p>שש שאלות אמיתיות ממבחנים קודמים. לפני שמתחילים, תזכורת של הכלים משלבי הקורס:</p>\n    <div class=\"lesson-rule\">🔑 <b>חישוב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span>:</b> מ-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>=</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k=\\pi[q-1]</annotation></semantics></math></span> משווים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[k+1]</annotation></semantics></math></span> ל-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">P[q]</annotation></semantics></math></span>; אחרי אי-התאמה נסוגים ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>k</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>k</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">k\\leftarrow\\pi[k]</annotation></semantics></math></span> עד התאמה או עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">0</annotation></semantics></math></span>. הרישא ש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[q]</annotation></semantics></math></span> מודד היא אמיתית (<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>&lt;</mo><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">\\pi[q]&lt;q</annotation></semantics></math></span>).</div>\n    <div class=\"lesson-rule\">🔑 <b>ספירת השוואות לאות בטקסט:</b> שרשרת הנסיגות מהמצב <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span> עד התאמה (או עד <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q=0</annotation></semantics></math></span>), וכל זוג (אות בטקסט, אות בתבנית) נספר פעם אחת. אות שלא בתבנית: אורך השרשרת + 1.</div>\n    <div class=\"lesson-rule\">🔑 <b>אחרי מופע מלא:</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>←</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>m</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">q\\leftarrow\\pi[m]</annotation></semantics></math></span>, ושורה זו אינה חלק מלולאת ה-while הפנימית. ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>P</mi><mo>=</mo><msup><mi>a</mi><mi>m</mi></msup></mrow><annotation encoding=\"application/x-tex\">P=a^m</annotation></semantics></math></span> מול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo><msup><mi>b</mi><mi>n</mi></msup></mrow><annotation encoding=\"application/x-tex\">T=b^n</annotation></semantics></math></span> ומול <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>T</mi><mo>=</mo><msup><mi>a</mi><mi>n</mi></msup></mrow><annotation encoding=\"application/x-tex\">T=a^n</annotation></semantics></math></span> הלולאה הפנימית אינה רצה.</div>\n    <div class=\"lesson-rule\">🔑 <b>האם קיים <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span> כזה:</b> <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo><mo>≤</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo>−</mo><mn>1</mn><mo stretchy=\"false\">]</mo><mo>+</mo><mn>1</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[q]\\le\\pi[q-1]+1</annotation></semantics></math></span>, מתרגמים לשוויונות בין אותיות, ובודקים סתירה מול הערך שהמחרוזת באמת נותנת.</div>\n    <div class=\"lesson-rule\">🔑 <b>רדוקציות:</b> רוטציה ⇔ <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_2</annotation></semantics></math></span> מופיעה ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><msub><mi>S</mi><mn>1</mn></msub></mrow><annotation encoding=\"application/x-tex\">S_1S_1</annotation></semantics></math></span>; מחזורית ⇔ <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>n</mi><mo stretchy=\"false\">]</mo><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">\\pi[n]&gt;0</annotation></semantics></math></span> ו-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mo stretchy=\"false\">(</mo><mi>n</mi><mo>−</mo><mi>π</mi><mo stretchy=\"false\">[</mo><mi>n</mi><mo stretchy=\"false\">]</mo><mo stretchy=\"false\">)</mo><mo>∣</mo><mi>n</mi></mrow><annotation encoding=\"application/x-tex\">(n-\\pi[n])\\mid n</annotation></semantics></math></span>; הפוך ⇔ KMP על <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mi>P</mi><mi>R</mi></msup></mrow><annotation encoding=\"application/x-tex\">P^R</annotation></semantics></math></span>; מופעים לפי <code>P#T</code> כשהערך <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>m</mi></mrow><annotation encoding=\"application/x-tex\">m</annotation></semantics></math></span> מופיע בטבלת <span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi></mrow><annotation encoding=\"application/x-tex\">\\pi</annotation></semantics></math></span>.</div>\n    <div class=\"lesson-trap\">⚠️ המלכודות בשאלות האלה: האינדקסים מ-1; הסיום ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>π</mi><mo stretchy=\"false\">[</mo><mi>q</mi><mo stretchy=\"false\">]</mo></mrow><annotation encoding=\"application/x-tex\">\\pi[q]</annotation></semantics></math></span> ולא ב-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi></mrow><annotation encoding=\"application/x-tex\">q</annotation></semantics></math></span>; ספירת השוואה אחרונה כש-<span class=\"math-inline\"><math dir=\"ltr\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding=\"application/x-tex\">q=0</annotation></semantics></math></span>; ושורת האיפוס אחרי מופע אינה \"לולאה פנימית\".</div>"
+    },
+    "questions": [
+     {
+      "bankId": "25B-A-Q3c",
+      "recap": "חישוב π בשיטת k והנסיגות",
+      "recapHtml": "חישוב π בשיטת k והנסיגות"
+     },
+     {
+      "bankId": "25B-A-Q3d",
+      "recap": "אות שלא בתבנית: שרשרת הנסיגות + 1 השוואות",
+      "recapHtml": "אות שלא בתבנית: שרשרת הנסיגות + 1 השוואות"
+     },
+     {
+      "bankId": "26B-A-Q4e",
+      "recap": "נסיגה בשרשרת π ורק אחר כך התאמה",
+      "recapHtml": "נסיגה בשרשרת π ורק אחר כך התאמה"
+     },
+     {
+      "bankId": "22B-A-Q1b",
+      "recap": "בדיקת קיום π: סתירה מול הערך האמיתי",
+      "recapHtml": "בדיקת קיום π: סתירה מול הערך האמיתי"
+     },
+     {
+      "bankId": "26A-B-Q5b",
+      "recap": "הלולאה הפנימית יכולה לא לרוץ בכלל",
+      "recapHtml": "הלולאה הפנימית יכולה לא לרוץ בכלל"
+     },
+     {
+      "bankId": "SAMP-1-Q2a",
+      "recap": "רוטציה מעגלית: KMP על S1S1",
+      "recapHtml": "רוטציה מעגלית: KMP על S1S1"
+     }
+    ]
+   }
+  ]
+ }
+};
