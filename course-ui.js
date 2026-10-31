@@ -102,6 +102,7 @@
       `<div class="q-head"><span class="chip">שלב ${L.order} מתוך ${C.levels.length}</span>` +
       `<span class="chip soft">${L.questions.length} שאלות${nReal(L) ? ` · ${nReal(L)} מהמבחנים` : ""}</span></div>` +
       `<h2 class="learn-h">${esc(L.icon || "")} ${titleH(L)}</h2><p class="sub crs-goal">${goalH(L)}</p>` +
+      (window.VIDEO_UI ? window.VIDEO_UI.lessonButtons(L.id, C.id) : "") +   // video-ui.js: "▶ צפו בסרטון של השלב"
       `<div class="lesson-body">${lessonHtml(L)}</div>` +
       (NOTE[L.source] ? `<div class="crs-note">${NOTE[L.source]}</div>` : "");
     view("crsLessonView");

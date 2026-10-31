@@ -126,7 +126,7 @@ console.log("1. boot");
   const A = boot();
   const B = A.window.OPEN_BANK;
   assert(B && Array.isArray(B.questions) && B.questions.length > 0, "OPEN_BANK loaded with questions: " + QS.length);
-  const SCRIPTS = ["questions.js", "learn.js", "courses.js", "normalize.js", "graph.js", "steps.js", "aiprompt.js", "app.js", "feedback.js", "course-ui.js"];
+  const SCRIPTS = ["questions.js", "learn.js", "courses.js", "normalize.js", "graph.js", "steps.js", "aiprompt.js", "app.js", "feedback.js", "videos.js", "video-ui.js", "course-ui.js"];
   assert(A.scripts.join() === SCRIPTS.join(), "scripts: " + A.scripts.join(", "));
   assert(A.doc.documentElement.getAttribute("dir") === "rtl", "page is dir=rtl");
   assert(B.meta.course.storePrefix === CFG.storePrefix, `bank meta storePrefix == course.config.json (${CFG.storePrefix})`);
@@ -656,6 +656,58 @@ console.log("10. feedback links");
     assert(!!cl && new RegExp(`טעות בשאלה ${NH[0].id}-L\\d+-Q1$`).test(mailParts(cl).subject), "course question has a report link with course-level-index id: " + (cl && mailParts(cl).subject));
   }
   assert(A.errors.length === 0 && A2.errors.length === 0, "no errors");
+}
+
+/* 8c. video course ("🎬 קורס וידאו": videos.js from tools/video/build_manifest.py + video-ui.js) */
+console.log("8c. video course");
+{
+  const A = boot(), w = A.window, VC = w.VIDEO_COURSE;
+  const all = (w.VIDEO_UI && w.VIDEO_UI.all) || [];
+  const VKEY = `${CFG.storePrefix}_video_v1`;
+  assert(A.scripts.includes("videos.js") && A.scripts.includes("video-ui.js"), "index.html loads videos.js and video-ui.js");
+  if (!all.length) {
+    assert(A.$$(".vid-entry").every(el => el.style.display === "none"), "no videos: the video entries are hidden");
+  } else {
+    const lv = c => (((w.COURSES || {})[c] || {}).levels || []);
+    assert(VC.courses.every(c => c.videos.every(v => lv(c.id).some(L => L.id === v.level))), `every one of ${all.length} videos maps to a guided level of its course`);
+    A.click(A.$("#vidEntry"));
+    assert(A.visible(A.$("#screen-video")) && A.visible(A.$("#vidListView")), "header entry opens the video list");
+    assert(A.$$("#vidCourses .vid-row").length === all.length, `video list shows ${all.length} videos`);
+    // no youtube id: local <video>, and on a load error the "not uploaded yet" note
+    const noYt = all.find(v => !v.youtube);
+    if (noYt) {
+      A.click(A.$(`.vid-row[data-vid="${noYt.id}"]`));
+      const vel = A.$("#vidFrame video");
+      assert(A.visible(A.$("#vidPlayView")) && !!vel && vel.getAttribute("src") === `videos/out/${noYt.id}/${noYt.id}.mp4`, `${noYt.id}: no youtube id -> local <video>`);
+      vel.dispatchEvent(new w.Event("error"));
+      assert(!!A.$("#vidFrame .vid-missing"), "video load error -> 'not uploaded yet' note");
+    }
+    const first = all[0], had = first.youtube; first.youtube = "AbCdEfGhIjK";
+    w.VIDEO_UI.openVideo(first.id);
+    const ifr = A.$("#vidFrame iframe");
+    assert(!!ifr && ifr.getAttribute("src").startsWith("https://www.youtube-nocookie.com/embed/AbCdEfGhIjK"), "youtube id -> youtube-nocookie embed");
+    if (had) first.youtube = had; else delete first.youtube;
+    assert(A.$("#vidPrev").disabled && !A.$("#vidNext").disabled, "first video: prev disabled, next enabled");
+    A.click(A.$("#vidNext"));
+    assert(A.$("#vidHead").textContent.includes(all[1].id), "next -> second video");
+    A.click(A.$("#vidWatchBtn"));
+    const st = JSON.parse(w.localStorage.getItem(VKEY) || "{}");
+    assert(st.watched && st.watched[all[1].id], `watched mark saved in ${VKEY}`);
+    A.click(A.$("#vidLevel"));
+    assert(A.visible(A.$("#screen-course")) && A.visible(A.$("#crsLessonView")), `${all[1].id} -> practice opens its guided lesson`);
+    const lb = A.$$("#crsLesson .vid-open").map(b => b.dataset.vid);
+    assert(lb.includes(all[1].id), `lesson shows its video button (${lb.join()})`);
+    A.click(A.$(`#crsLesson .vid-open[data-vid="${all[1].id}"]`));
+    assert(A.visible(A.$("#vidPlayView")) && A.$("#vidBack").textContent.includes("לשיעור"), "lesson button opens the player");
+    A.click(A.$("#vidBack"));
+    assert(A.visible(A.$("#crsLessonView")), "back from the player returns to the lesson");
+    w.VIDEO_UI.openVideo(first.id); A.click(A.$("#brandHome"));
+    assert(!A.visible(A.$("#screen-video")) && A.visible(A.$("#screen-start")), "brand click from the player goes home");
+    const D = boot({ search: `?video=${all[all.length - 1].id}` });
+    assert(D.visible(D.$("#vidPlayView")) && D.$("#vidHead").textContent.includes(all[all.length - 1].id), "?video=<ID> deep link opens the player");
+    assert(D.errors.length === 0, "video deep link: no errors" + (D.errors.length ? ": " + D.errors.join(" | ") : ""));
+  }
+  assert(A.errors.length === 0, "video course: no errors" + (A.errors.length ? ": " + A.errors.join(" | ") : ""));
 }
 
 // fenced code blocks in the built bank must all be dir=ltr
