@@ -1,0 +1,28 @@
+/* dp_ladder widgets (w_dp_ladder.py), every class prefixed dl- */
+svg.dl-grid{overflow:visible;display:block}
+svg.dl-grid text{dominant-baseline:central;text-anchor:middle;font-family:"Cambria Math",serif}
+svg.dl-grid .dl-head{font-size:var(--dl-fs);fill:var(--muted);font-style:italic}
+svg.dl-grid .dl-corner{font-size:calc(var(--dl-fs) * .8);fill:var(--brand)}
+svg.dl-grid .dl-cell{fill:var(--card);stroke:rgba(255,255,255,.18);stroke-width:1.5}
+svg.dl-grid .dl-cell.void{fill:rgba(255,255,255,.02);stroke:rgba(255,255,255,.07)}
+svg.dl-grid .dl-val{font-size:var(--dl-fs);fill:var(--ink)}
+svg.dl-grid .dl-cur{fill:rgba(45,212,191,.20);stroke:var(--brand);stroke-width:5}
+svg.dl-grid .dl-dep{fill:rgba(56,189,248,.26);stroke:var(--brand2);stroke-width:2.5}
+svg.dl-grid .dl-pth{fill:rgba(251,191,36,.16);stroke:var(--warn);stroke-width:5}
+svg.dl-grid .dl-hhl{fill:rgba(251,191,36,.22)}
+svg.dl-grid .dl-arrow{stroke:var(--warn);stroke-width:4.5;fill:none}
+svg.dl-grid .dl-ahead{fill:var(--warn)}
+.dl-eqs{display:flex;flex-direction:column;align-items:center;gap:14px;direction:ltr;width:100%}
+.dl-eq{white-space:nowrap;text-align:center}
+.dl-chips{display:flex;gap:8px;direction:ltr}
+.dl-chip{display:flex;flex-direction:column;align-items:center;min-width:64px;border:2px solid var(--line);border-radius:12px;
+  background:var(--card);padding:4px 8px;font-family:"Cambria Math",serif}
+.dl-chip i{font-size:22px;color:var(--muted);font-style:normal}
+.dl-chip b{font-size:36px;font-weight:400;color:var(--ink)}
+.dl-stack{display:flex;flex-direction:column;align-items:center;gap:22px;width:100%}
+.dl-row{display:flex;align-items:center;justify-content:center;gap:30px;width:100%;direction:rtl}
+.dl-note{font-size:30px;color:var(--muted);direction:rtl;text-align:center}
+.dl-def{font-size:31px;line-height:1.45;direction:rtl;text-align:right;max-width:980px}
+.card.dl-sm{font-size:29px;line-height:1.42}
+.dl-q{font-size:29px;line-height:1.45;direction:rtl;text-align:right;width:100%}
+.dl-q .qid{font-size:22px}

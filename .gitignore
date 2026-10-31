@@ -24,3 +24,6 @@ docs/format_triage.md
 # scratch
 tools/tmp_*/
 tools/verify/refute_tmp/
+
+# rendered videos, review frames, TTS cache (regenerable)
+videos/out/

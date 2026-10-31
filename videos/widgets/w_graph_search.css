@@ -1,0 +1,76 @@
+/* graph_search widgets (w_graph_search.py), every class prefixed gs- */
+svg.gs-graph{overflow:visible;display:block}
+svg.gs-graph .gs-e{stroke:#8d92bb;stroke-width:3;fill:none}
+svg.gs-graph .gs-e-tree{stroke:#2dd4bf;stroke-width:8;fill:none}
+svg.gs-graph .gs-e-back{stroke:#fb7185;stroke-width:6;fill:none;stroke-dasharray:14 9}
+svg.gs-graph .gs-e-fwd{stroke:#fbbf24;stroke-width:6;fill:none;stroke-dasharray:4 8;stroke-linecap:round}
+svg.gs-graph .gs-e-cross{stroke:#38bdf8;stroke-width:6;fill:none;stroke-dasharray:20 8 4 8}
+svg.gs-graph .gs-e-hl{stroke:#fbbf24;stroke-width:9;fill:none}
+svg.gs-graph .gs-e-dim{stroke:#0a0c18;stroke-width:9;fill:none;stroke-opacity:.8}
+svg.gs-graph .gs-n{fill:#eef0ff;stroke:#c9cdf0;stroke-width:3}
+svg.gs-graph .gs-ng{fill:#7d82a8;stroke:#c9cdf0;stroke-width:3}
+svg.gs-graph .gs-nk{fill:#020308;stroke:#9aa0cf;stroke-width:3}
+svg.gs-graph .gs-ring{fill:none;stroke:var(--brand);stroke-width:6}
+svg.gs-graph .gs-mark{fill:rgba(251,191,36,.18);stroke:var(--warn);stroke-width:5}
+svg.gs-graph .gs-nl{font-family:"Segoe UI",Arial,sans-serif;font-weight:700;font-size:30px;fill:#fff;stroke:#0a0c18;
+  stroke-width:6;paint-order:stroke;text-anchor:middle;dominant-baseline:central}
+svg.gs-graph .gs-lab{font-family:"Segoe UI",Arial,sans-serif;font-size:25px;font-weight:700;fill:var(--warn);
+  text-anchor:middle;dominant-baseline:central;stroke:#0a0c18;stroke-width:5;paint-order:stroke}
+svg.gs-graph .gs-lab.gs-end{text-anchor:end}
+svg.gs-graph .gs-lab.gs-start{text-anchor:start}
+svg.gs-graph .gs-lab.gs-lf{fill:#c4b5fd}
+svg.gs-graph .gs-lab.gs-lp{fill:var(--brand2)}
+svg.gs-graph .gs-lab.gs-lok{fill:var(--ok)}
+svg.gs-graph .gs-lab.gs-lbad{fill:var(--bad)}
+
+/* queue / stack strip */
+.gs-strip{display:flex;align-items:center;gap:8px;direction:ltr}
+.gs-slab{font-size:28px;color:var(--muted);margin-inline-end:8px}
+.gs-head{font-size:26px;color:var(--muted);margin:0 6px}
+.gs-slot{position:relative;width:58px;height:62px;border:2px solid var(--line);border-radius:12px;background:var(--card)}
+.gs-qv{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--ink)}
+.gs-qx{position:absolute;inset:0;border-radius:10px;background:rgba(10,12,24,.55);
+  background-image:linear-gradient(135deg,transparent 46%,rgba(251,113,133,.8) 46%,rgba(251,113,133,.8) 54%,transparent 54%)}
+
+/* parenthesis string */
+.gs-parens{display:flex;flex-wrap:wrap;gap:6px 3px;justify-content:center;direction:ltr;max-width:1040px}
+.gs-par{display:flex;flex-direction:column;align-items:center;min-width:44px;font-size:26px;font-family:"Cambria Math",serif;
+  background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:2px 4px}
+.gs-par i{font-style:normal;font-size:18px;color:var(--muted)}
+
+/* legend, layout helpers */
+.gs-legend{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;direction:rtl;font-size:28px}
+.gs-lg{display:flex;align-items:center;gap:10px}
+.gs-sw{display:inline-block;width:54px;height:0;border-top:7px solid}
+.gs-sw-tree{border-color:#2dd4bf}
+.gs-sw-back{border-top-style:dashed;border-color:#fb7185}
+.gs-sw-fwd{border-top-style:dotted;border-color:#fbbf24}
+.gs-sw-cross{border-top-style:dashed;border-color:#38bdf8}
+.gs-stack{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
+.gs-row{display:flex;align-items:center;justify-content:center;gap:28px;width:100%}
+.gs-col{display:flex;flex-direction:column;align-items:center;gap:8px}
+.gs-cap{font-size:28px;color:var(--muted);direction:rtl;text-align:center}
+.gs-big{font-size:42px;direction:ltr;text-align:center}
+.gs-q{font-size:29px;line-height:1.45;direction:rtl;text-align:right;width:100%}
+.gs-q .qid{font-size:22px}
+.card.gs-sm{font-size:28px;line-height:1.4}
+table.gs-tab{font-size:30px}
+table.gs-tab th,table.gs-tab td{padding:6px 18px}
+.gs-steps{display:flex;flex-direction:column;gap:10px;width:100%;direction:rtl}
+.gs-steps>div{font-size:28px;line-height:1.4;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:8px 20px}
+.gs-steps>div .n{display:inline-block;min-width:38px;font-weight:700;color:var(--brand)}
+.gs-opts .opt{font-size:30px;padding:8px 18px}
+.gs-code{direction:ltr;text-align:left;font-family:Consolas,monospace;font-size:26px;line-height:1.5;
+  background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 22px;white-space:pre;color:var(--ink)}
+.gs-code .k{color:var(--brand)}
+.gs-code .c{color:var(--muted)}
+.gs-code.gs-sm{font-size:22px;line-height:1.42;padding:10px 18px}
+svg.gs-iv{overflow:visible;display:block}
+svg.gs-iv .gs-iv-grid{stroke:rgba(255,255,255,.08);stroke-width:1.5}
+svg.gs-iv .gs-iv-t{font-size:22px;fill:var(--muted);text-anchor:middle;font-family:"Segoe UI",Arial,sans-serif}
+svg.gs-iv .gs-iv-n{font-size:30px;font-weight:700;fill:var(--ink);text-anchor:end;dominant-baseline:central;font-family:"Segoe UI",Arial,sans-serif}
+svg.gs-iv .gs-iv-bar{fill:rgba(196,181,253,.28);stroke:#c4b5fd;stroke-width:2.5}
+svg.gs-iv .gs-iv-l{font-size:22px;fill:var(--ink);dominant-baseline:central;font-family:"Segoe UI",Arial,sans-serif}
+svg.gs-iv .gs-iv-l.gs-start{text-anchor:start}
+svg.gs-iv .gs-iv-l.gs-end{text-anchor:end}
+svg.gs-iv .gs-iv-hi{fill:none;stroke:var(--warn);stroke-width:4.5}

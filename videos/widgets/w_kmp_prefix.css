@@ -1,0 +1,36 @@
+/* kmp_prefix widgets (w_kmp_prefix.py), every class prefixed kp- */
+svg.kp-strip{overflow:visible;display:block}
+svg.kp-strip text{dominant-baseline:central;text-anchor:middle;font-family:"Cambria Math",serif}
+svg.kp-strip .kp-idx{font-size:calc(var(--kp-fs) * .72);fill:var(--muted)}
+svg.kp-strip .kp-idxl{font-size:calc(var(--kp-fs) * .72);fill:var(--muted);font-style:italic}
+svg.kp-strip .kp-label{font-size:var(--kp-fs);fill:var(--muted);font-style:italic}
+svg.kp-strip .kp-cell{fill:var(--card);stroke:rgba(255,255,255,.2);stroke-width:1.5}
+svg.kp-strip .kp-val{font-size:var(--kp-fs);fill:var(--ink)}
+svg.kp-strip .kp-cmp{fill:rgba(56,189,248,.30);stroke:var(--brand2);stroke-width:2.5}
+svg.kp-strip .kp-ok{fill:rgba(52,211,153,.30);stroke:var(--ok);stroke-width:3}
+svg.kp-strip .kp-bad{fill:rgba(251,113,133,.30);stroke:var(--bad);stroke-width:3}
+svg.kp-strip .kp-cur{fill:none;stroke:var(--brand);stroke-width:5}
+svg.kp-strip .kp-br{fill:none;stroke-width:5;stroke-linejoin:round}
+svg.kp-strip .kp-br.pre{stroke:var(--brand)}
+svg.kp-strip .kp-br.suf{stroke:var(--warn)}
+svg.kp-strip .kp-arc{fill:none;stroke:var(--warn);stroke-width:4}
+svg.kp-strip .kp-ahead{fill:var(--warn)}
+.kp-stack{display:flex;flex-direction:column;align-items:center;gap:22px;width:100%}
+.kp-row{display:flex;align-items:center;justify-content:center;gap:24px;width:100%}
+.kp-eqs{display:flex;flex-direction:column;align-items:center;gap:12px;direction:ltr;width:100%}
+.kp-eq{white-space:nowrap;text-align:center}
+.kp-code{font-family:Consolas,"Courier New",monospace;background:var(--card2);border:1px solid var(--line);border-radius:14px;
+  padding:12px 20px;line-height:1.5;text-align:left;white-space:pre}
+.kp-cl{position:relative}
+.kp-cl span{position:relative}
+.kp-clhl{position:absolute;left:-12px;right:-12px;top:0;bottom:0;border-radius:8px;background:rgba(45,212,191,.22)}
+.kp-q{font-size:29px;line-height:1.45;direction:rtl;text-align:right;width:100%}
+.kp-q .qid{font-size:22px}
+.kp-q code,code.kp-c{font-family:Consolas,"Courier New",monospace;direction:ltr;unicode-bidi:isolate;color:#fff}
+.card.kp-sm{font-size:29px;line-height:1.42}
+.kp-big{font-size:44px;direction:ltr;text-align:center;font-family:Consolas,"Courier New",monospace;letter-spacing:4px}
+.kp-cnt{font-size:34px;direction:rtl}
+.kp-eq code,.kp-line code{font-family:Consolas,"Courier New",monospace;color:#fff;letter-spacing:2px}
+.kp-yes{color:var(--ok);font-weight:700}
+.kp-no{color:var(--bad);font-weight:700}
+.kp-line{direction:ltr;font-size:34px;white-space:nowrap}
