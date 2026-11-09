@@ -71,7 +71,7 @@ let P = loadProgress();
 /* ---------- helpers ---------- */
 const $ = s => document.querySelector(s);
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-function show(id){ document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden")); $("#"+id).classList.remove("hidden"); window.scrollTo({top:0,behavior:"smooth"}); }
+function show(id){ if(window.navUrl&&(id==="screen-start"||id==="screen-results")) navUrl(null); document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden")); $("#"+id).classList.remove("hidden"); window.scrollTo({top:0,behavior:"smooth"}); }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m])); }
 function textToHtml(s){ return escapeHtml(s).replace(/\n/g,"<br>"); }
 function hasHebrew(s){ return /[֐-׿]/.test(String(s)); }
@@ -226,7 +226,7 @@ function initStart(){
 }
 
 /* ---------- session ---------- */
-function startSession(){
+function startSession(){ if(window.navUrl&&S.mode!=="course") navUrl(S.mode==="topic"&&S.topic?{practice:S.topic}:null);
   if(!QS.length) return;
   clearInterval(S.sim.timer);
   S.views={}; S.stepRes={};
@@ -632,7 +632,7 @@ let openLearnAt = null;   // set by initLearn; used by the ?learn= deep link
     toc.querySelectorAll("button").forEach(b=> b.onclick=()=>{ go(+b.dataset.i); closeDrawer(); });
     built=true;
   }
-  function go(i){
+  function go(i){ if(window.navUrl){ const c=data[Math.max(0,Math.min(data.length-1,i))]; navUrl(c&&c.id?{learn:c.id}:null); }
     idx=Math.max(0,Math.min(data.length-1,i));
     const s=data[idx];
     // each brief is written to be read then practiced, so surface the practice entry point

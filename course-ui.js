@@ -92,11 +92,11 @@
     $("#crsMap").querySelectorAll(".crs-lvl").forEach(b => b.onclick = () => openLesson(LV.find(L => L.id === b.dataset.id)));
     const real = $("#crsOverall [data-act=real]"); if(real) real.onclick = realExam;
   }
-  function openMap(id){ if(id) C = course(id); cur = null; S = null; renderMap(); view("crsMapView"); }
+  function openMap(id){ if(window.navUrl){ const cid=id||((typeof C!=="undefined"&&C)?C.id:null); if(cid) navUrl({course:cid, level:null}); } if(id) C = course(id); cur = null; S = null; renderMap(); view("crsMapView"); }
 
   /* ---------- lesson ---------- */
   const nReal = L => L.questions.filter(q => q.bankId).length;
-  function openLesson(L){
+  function openLesson(L){ if(window.navUrl){ const cid=(typeof C!=="undefined"&&C)?C.id:null; if(cid&&L) navUrl({course:cid, level:L.id}); }
     cur = L; S = null;
     $("#crsLesson").innerHTML =
       `<div class="q-head"><span class="chip">שלב ${L.order} מתוך ${C.levels.length}</span>` +
@@ -124,7 +124,7 @@
       return { key: q.id, bank: false, type: "mcq", q, recap: q.recapHtml || "" };
     }).filter(Boolean);
   }
-  function startLevel(L){
+  function startLevel(L){ if(window.navUrl){ const cid=(typeof C!=="undefined"&&C)?C.id:null; if(cid&&L) navUrl({course:cid, level:L.id, play:true}); }
     cur = L;
     S = { L, items: items(L), i: 0, run: {} };
     if(!S.items.length) return openLesson(L);

@@ -126,7 +126,7 @@ console.log("1. boot");
   const A = boot();
   const B = A.window.OPEN_BANK;
   assert(B && Array.isArray(B.questions) && B.questions.length > 0, "OPEN_BANK loaded with questions: " + QS.length);
-  const SCRIPTS = ["questions.js", "learn.js", "courses.js", "normalize.js", "graph.js", "steps.js", "aiprompt.js", "app.js", "feedback.js", "videos.js", "video-ui.js", "course-ui.js"];
+  const SCRIPTS = ["questions.js", "learn.js", "courses.js", "normalize.js", "graph.js", "steps.js", "aiprompt.js", "navurl.js", "app.js", "feedback.js", "videos.js", "video-ui.js", "course-ui.js"];
   assert(A.scripts.join() === SCRIPTS.join(), "scripts: " + A.scripts.join(", "));
   assert(A.doc.documentElement.getAttribute("dir") === "rtl", "page is dir=rtl");
   assert(B.meta.course.storePrefix === CFG.storePrefix, `bank meta storePrefix == course.config.json (${CFG.storePrefix})`);
