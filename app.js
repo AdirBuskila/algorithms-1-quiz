@@ -33,7 +33,7 @@ const AI_DRAFT_NOTE = "טיוטת AI — טרם נבדק";
 })();
 (function applyTitle(){
   if(COURSE.title){
-    document.title = COURSE.title;
+    document.title = COURSE.title + " — הכנה למבחן";   // tab + link previews; the header keeps the bare name
     const h = document.getElementById("appTitle"); if(h) h.textContent = COURSE.title;
   }
   const sub = document.getElementById("appSub");

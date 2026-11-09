@@ -131,7 +131,7 @@ console.log("1. boot");
   assert(A.doc.documentElement.getAttribute("dir") === "rtl", "page is dir=rtl");
   assert(B.meta.course.storePrefix === CFG.storePrefix, `bank meta storePrefix == course.config.json (${CFG.storePrefix})`);
   assert(A.$$("#topicGrid .topic-btn").length === B.meta.topics.length + 1, "topic buttons = topics + all");
-  assert(A.doc.title === B.meta.course.title, "title configured from meta: " + A.doc.title);
+  assert(A.doc.title === B.meta.course.title + " — הכנה למבחן", "title configured from meta: " + A.doc.title);
   assert(A.doc.documentElement.style.getPropertyValue("--brand") === B.meta.course.accent, "accent applied to --brand");
   assert(!A.$("#startBtn").disabled, "start enabled");
   assert(A.errors.length === 0, "no errors: " + A.errors.join(" | "));
